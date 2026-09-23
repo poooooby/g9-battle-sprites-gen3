@@ -111,12 +111,12 @@
 --       tunes the crystal's own opacity) and drawn ONLY where the
 --       sprite's own pixels are opaque, so it follows the creature's real
 --       silhouette instead of its square frame.
---     * DYNAMAX CLOUD -- a Dynamaxed or Gigantamaxed Pokemon wears the pack's
---       red cloud above its head, like a crown.  In a fixed picture box the
---       cloud claims a band off the top and the sheet is fitted into the rest
---       (so the cloud floats clear of the head and only a sprite tall enough to
---       have used that room up is shrunk at all); in a custom screen's natural-
---       size mode the frame simply grows upward instead.
+--     * DYNAMAX GROW -- a Dynamaxed or Gigantamaxed Pokemon grows to x1.5 its
+--       own size in four staged steps, and shrinks back at the very same rates
+--       when the transformation ends.  The persistent Dynamax visuals (the
+--       darkened field and the red aura) are drawn by the battle screen, which
+--       reads the live state and the size factor from this mod through
+--       mod.exports.dynamaxStateOf.  See the DYNAMAX GROW section below.
 --   Both are read from battle_forms' own describe() payload and are absent
 --   (no overlay, no error) when battle_forms is missing, older, or nothing is
 --   transformed.
@@ -344,13 +344,6 @@ return function(mod)
       description = "How see-through the TERA ART crystal is. The percentage is how much of the Pokemon's own colours show THROUGH the crystal, and the crystal keeps the rest -- so 30% is the 70/30 crystal-over-sprite blend the effect shipped with. 5% is an almost solid gem; 60% is a sheer, glassy film. Only the opacity of the crystal layer changes: its facet pattern, colours, bevels, rim, glints and sparkles are all untouched. This row only does anything when TERA ART is on.",
     },
     {
-      key = "dynamax_cloud",
-      label = "DYNAMAX CLOUD",
-      type = "toggle",
-      default = true,
-      description = "ON (default): a Pokemon that is Dynamaxed or Gigantamaxed right now wears the red Dynamax cloud above its head, like a crown. It is baked into EVERY frame of the animation (never a second draw pass, so it cannot flicker with the frame clock) and it is anchored to the sprite's own head -- sinking far enough that the puffs rest on the head instead of hovering over it -- while a fixed picture box gives the cloud its own band and fits the sheet into the rest, shrinking a sprite only as much as it must; a custom battle screen's natural-size frame simply grows upward instead. The state comes from battle_forms when a Pokemon is really Dynamaxed, or from the declaration a custom battle screen stamps on a wild RAID boss (a Dynamax/Gigantamax raid boss is announced but never mechanically activated, so the screen hands this mod the declared kind); without either (or with no gimmick active) nothing changes. OFF: Dynamaxed and declared-raid Pokemon keep their ordinary art.",
-    },
-    {
       key = "battle_shadows",
       label = "BATTLE SHADOWS",
       type = "toggle",
@@ -371,8 +364,27 @@ return function(mod)
   -- Frame building is spread across frames under this per-update time budget so
   -- a new sheet never stalls the game.  Scan rows per chunk bounds the work of
   -- one step even when a single step would blow the budget.
+  --
+  -- HOT_BUDGET is the budget used while a sheet is WANTED RIGHT NOW -- a
+  -- caller is asking for it every frame (a battle send-out, a Pokedex page, a
+  -- summary) and getting `pending` back.  The ordinary 8ms is sized so a
+  -- background bake never costs a frame; but a sheet nobody is waiting on can
+  -- afford to take its time, whereas one whose mon is about to land cannot.
+  -- So a sheet a caller is actively waiting on runs at the larger budget until
+  -- it is ready (or the caller stops asking), which is what lets a big sheet
+  -- finish inside the pokeball's 0.45s flight instead of trickling out of it.
+  -- The window is frames (the sheet clock), not wall time: every pending ask
+  -- re-arms it, so it stays hot exactly as long as someone is watching.
   local BUILD_BUDGET = 0.008
+  local HOT_BUILD_BUDGET = 0.020
+  local HOT_WINDOW = 20
   local SCAN_ROWS = 6
+  -- How many times a sheet that IS present but fails to decode (a partial
+  -- write mid-download, a momentary decoder hiccup) is retried before it is
+  -- latched as unusable.  Without this a file caught half-written is vanilla
+  -- for the rest of the session -- which looks exactly like a species whose
+  -- sheet simply never loads.
+  local FAIL_RETRIES = 3
   -- How many resolved sheets to keep before the least-recently-used one has its
   -- frame Images dropped (the raw png bytes are kept, so a rebuild is offline
   -- and cheap; any Image still referenced by a live battler simply stays alive
@@ -454,7 +466,6 @@ return function(mod)
     return n / 100
   end
   local function teraArtOn() return opt("tera_art", true) ~= false end
-  local function dynamaxOn() return opt("dynamax_cloud", true) ~= false end
   -- The on-screen diagnostics panel is disabled outright: it was useful while
   -- the sheet loader was being brought up, but it is not something a player
   -- should be able to switch on.  The diag code stays (it is the only way to
@@ -521,7 +532,7 @@ return function(mod)
   -- The pattern's own luminance is very high-key (measured #D3..FF, a 17%
   -- swing), so feeding it in raw would tint almost uniformly and the facets
   -- would be invisible at sprite scale.  A single contrast stretch around the
-  -- pattern's own measured min/max (see loadPattern) maps it onto this shade
+  -- pattern's own measured min/max (see TERA.loadPattern) maps it onto this shade
   -- range instead, and each flat facet plane is then coloured by a straight
   -- SHADOW -> LIT ramp of the type colour:
   --   * shadow facets are the type colour at FILM_DARK x its brightness, which
@@ -761,50 +772,6 @@ return function(mod)
       },
     },
   }
-
-  -- ---------------------------------------------------------------------------
-  -- DYNAMAX CLOUD (the red swirl above a Dynamaxed/Gigantamaxed Pokemon's head)
-  -- ---------------------------------------------------------------------------
-  -- A Dynamaxed or Gigantamaxed Pokemon wears the pack's own red cloud sprite
-  -- above its head, like a crown.  It is baked INTO every frame (never a second
-  -- draw pass), exactly like the Tera film and for the same reasons: it costs
-  -- nothing per frame, cannot desync from -- or flicker with -- the frame clock,
-  -- and follows the same nearest-neighbour resample as the sprite.
-  --
-  -- CLOUD_BAND is the share of the frame's height the cloud gets.  It is
-  -- measured against the BOX in a fixed picture box (the cloud claims a band off
-  -- the top and the sheet is fitted into the rest, so the cloud rides above the
-  -- head and caps it without covering the face; a sprite short enough to already
-  -- fit the remaining band is not shrunk at all) and against the SPRITE's own
-  -- baked height in a custom screen's natural-size mode (whose canvas simply
-  -- grows upward by the band, since there is no box to take it from).
-  --
-  -- The cloud is stored as one image with transparent margins; its content is
-  -- measured once (loadCloud) and drawn anchored to the sprite's own content,
-  -- so it sits over the head whatever the sheet's own padding happens to be.
-  local CLOUD_BAND = 0.26
-  local CLOUD_MIN_H = 5
-  -- How far the cloud's bottom edge sinks BELOW the sprite's own content top.
-  -- A crown rests ON the head rather than hovering above it, and this asset's
-  -- lower ~40% is a thin, faint tail while its dense mass sits above that -- so
-  -- sinking the whole bounding box by a fixed share of its height would leave
-  -- the MASS bottom (the part the eye actually reads as "the cloud") level with
-  -- the head, opening a visible gap wherever the arched mass climbs away from
-  -- the head's narrow top.  So the sink is derived from the asset's own mass
-  -- profile instead: CLOUD_MASS_BOT is the row (as a share of the cloud's
-  -- height, measured from its bottom) at which the mass thins into that tail,
-  -- and CLOUD_OVERLAP is how many pixels PAST the head the mass bottom lands,
-  -- i.e. the amount the puffs overlap what they rest on.  At least one pixel
-  -- always sinks.  (CLOUD_MASS_BOT is from this asset; a replacement cloud
-  -- should have it re-measured -- it is the last row still holding >= ~40% of
-  -- the cloud's widest row.)
-  local CLOUD_MASS_BOT = 0.585
-  local CLOUD_OVERLAP = 2
-  local function cloudSink(h)
-    local s = math.floor(h * (1 - CLOUD_MASS_BOT) + CLOUD_OVERLAP + 0.5)
-    if s < 1 then s = 1 elseif s > h - 1 then s = h - 1 end
-    return s
-  end
 
   -- SPRITE SIZE.  0 (MAX DETAIL, the default) means "the largest scale that
   -- fits this sheet's own box", i.e. 1:1 wherever the sheet already fits and a
@@ -1109,18 +1076,17 @@ return function(mod)
   -- ---------------------------------------------------------------------------
   -- The crystal pattern (assets/tera_crystal.png)
   -- ---------------------------------------------------------------------------
-  -- A Terastallized Pokemon's film is the pattern's own facets, colourised by
-  -- the Tera type.  The pattern is decoded once, through the same routed
-  -- decoders a sheet uses, and its luminance range is measured once (a strided
-  -- sample is plenty -- only the two stretch endpoints are wanted, and a stride
-  -- makes that a few thousand pixels instead of half a million).  A missing or
-  -- unreadable pattern is not fatal: TERA ART simply does nothing, which is why
-  -- this never stops the mod from loading.
-  local PATTERN = nil
-  local patternTried = false
-  local function loadPattern()
-    if PATTERN or patternTried then return PATTERN end
-    patternTried = true
+  -- Loaded LAZILY and cached, the way the shadow art is: the pattern is only
+  -- needed once a Terastallized sheet is baked, so a collection that never sees
+  -- one never pays for the decode.  Returned as { id, w, h } -- the exact shape
+  -- TERA.buildMap samples (pat.id:getPixel, pat.w, pat.h).  A missing or
+  -- unreadable asset caches `false` and warns ONCE, so a type sheet then bakes
+  -- exactly as if TERA ART were off (a plain sheet) rather than throwing on
+  -- every frame the film is asked for.  The three decode routes mirror the
+  -- sheet loader's own (decodeSheet): path, then raw bytes, then Image.
+  TERA.loadPattern = function()
+    local cached = TERA._pattern
+    if cached ~= nil then return cached or nil end
     local rel = "assets/tera_crystal.png"
     local id, why = decodeFromPath(rel)
     if not id then
@@ -1134,144 +1100,21 @@ return function(mod)
       local idc, whyc = decodeFromImage(rel)
       if idc then id = idc else why = whyc end
     end
-    if not id or type(id.getDimensions) ~= "function" then
-      mod.log:warn("g9-battle-sprites: assets/tera_crystal.png could not be "
-        .. "read (%s) -- TERA ART will do nothing", tostring(why))
-      return nil
-    end
-    local w, h = id:getDimensions()
-    if w < 2 or h < 2 then return nil end
-    local lo, hi = 1, 0
-    local step = (w < 64) and 1 or 4
-    for y = 0, h - 1, step do
-      for x = 0, w - 1, step do
-        local pr, pg, pb = id:getPixel(x, y)
-        local L = (pr + pg + pb) / 3
-        if L < lo then lo = L end
-        if L > hi then hi = L end
+    local pat = false
+    if id and type(id.getDimensions) == "function" then
+      local okd, w, h = pcall(id.getDimensions, id)
+      if okd and w and h and w >= 2 and h >= 2 then
+        pat = { id = id, w = w, h = h }
       end
     end
-    if hi - lo < 0.01 then lo, hi = 0, 1 end
-    PATTERN = { id = id, w = w, h = h, lo = lo, span = hi - lo }
-    mod.log:info("g9-battle-sprites: tera crystal pattern %dx%d ready "
-      .. "(luma %.3f..%.3f)", w, h, lo, hi)
-    return PATTERN
+    if not pat then
+      mod.log:warn("g9-battle-sprites: tera crystal pattern %s could not be read (%s) -- type sheets bake plain",
+        rel, tostring(why))
+    end
+    TERA._pattern = pat
+    return pat or nil
   end
 
-  -- The Dynamax cloud sprite (assets/dynamax_cloud.png).  Decoded through the
-  -- same three routes as every other asset, and its own CONTENT box is measured
-  -- once (the file ships with transparent margins), so the cloud can be anchored
-  -- to whatever it actually covers rather than to its padded frame.  A missing
-  -- or unreadable cloud is not fatal: DYNAMAX CLOUD simply does nothing, which
-  -- is why this never stops the mod from loading.
-  local CLOUD = nil
-  local cloudTried = false
-  local function loadCloud()
-    if CLOUD or cloudTried then return CLOUD end
-    cloudTried = true
-    local rel = "assets/dynamax_cloud.png"
-    local id, why = decodeFromPath(rel)
-    if not id then
-      local okr, bytes = pcall(mod.read, mod, rel)
-      if okr and type(bytes) == "string" and #bytes > 0 then
-        local idb, whyb = decodeFromBytes(bytes, "dynamax_cloud")
-        if idb then id = idb else why = whyb end
-      end
-    end
-    if not id then
-      local idc, whyc = decodeFromImage(rel)
-      if idc then id = idc else why = whyc end
-    end
-    if not id or type(id.getDimensions) ~= "function" then
-      mod.log:warn("g9-battle-sprites: assets/dynamax_cloud.png could not be "
-        .. "read (%s) -- DYNAMAX CLOUD will do nothing", tostring(why))
-      return nil
-    end
-    local w, h = id:getDimensions()
-    if w < 2 or h < 2 then return nil end
-    -- Exact content box: the cloud's own outline, transparent margins dropped.
-    -- Every pixel is read (once per session), because a bbox is only correct if
-    -- its edges are exact -- an off-by-a-stride here would clip or offset the
-    -- cloud by the sampled step.
-    local x0, y0, x1, y1 = w, h, -1, -1
-    for y = 0, h - 1 do
-      for x = 0, w - 1 do
-        local a = select(4, id:getPixel(x, y))
-        if a and a > 0 then
-          if x < x0 then x0 = x end
-          if x > x1 then x1 = x end
-          if y < y0 then y0 = y end
-          if y > y1 then y1 = y end
-        end
-      end
-    end
-    if x1 < x0 or y1 < y0 then
-      mod.log:warn("g9-battle-sprites: assets/dynamax_cloud.png has no opaque "
-        .. "pixels -- DYNAMAX CLOUD will do nothing")
-      return nil
-    end
-    CLOUD = { id = id, x0 = x0, y0 = y0, cw = x1 - x0 + 1, ch = y1 - y0 + 1 }
-    mod.log:info("g9-battle-sprites: dynamax cloud %dx%d ready (%dx%d content)",
-      w, h, CLOUD.cw, CLOUD.ch)
-    return CLOUD
-  end
-
-  -- The cloud, downsampled to a destination size and cached per size.
-  -- The cloud art is large (hundreds of pixels across) and is drawn only a few
-  -- dozen pixels wide, so a nearest-neighbour shrink -- right for the sprite art
-  -- itself, which keeps its hard pixel edges -- would skip over most of the
-  -- cloud's wispy rows and columns and punch holes in it, leaving a spray of
-  -- dropped pixels where a solid crown should be.  So the cloud is instead
-  -- AREA-filtered: every destination pixel averages the whole block of source
-  -- pixels it covers (alpha-weighted, with the average alpha as its coverage),
-  -- which keeps the silhouette solid and its full extent intact.  The result
-  -- depends only on the source, the content box and the destination size, so it
-  -- is computed once per size and reused by every frame and every sheet.
-  local function cloudScaled(c, cW, cH)
-    c.scaled = c.scaled or {}
-    local key = cW .. "x" .. cH
-    local got = c.scaled[key]
-    if got then return got end
-    local px = {}
-    local stepX, stepY = c.cw / cW, c.ch / cH
-    local lastX, lastY = c.x0 + c.cw - 1, c.y0 + c.ch - 1
-    for ty = 0, cH - 1 do
-      local sy0 = c.y0 + math.floor(ty * stepY)
-      local sy1 = c.y0 + math.ceil((ty + 1) * stepY) - 1
-      if sy0 < c.y0 then sy0 = c.y0 end
-      if sy1 > lastY then sy1 = lastY end
-      for tx = 0, cW - 1 do
-        local sx0 = c.x0 + math.floor(tx * stepX)
-        local sx1 = c.x0 + math.ceil((tx + 1) * stepX) - 1
-        if sx0 < c.x0 then sx0 = c.x0 end
-        if sx1 > lastX then sx1 = lastX end
-        local ar, ag, ab, aw, n = 0, 0, 0, 0, 0
-        for sy = sy0, sy1 do
-          for sx = sx0, sx1 do
-            n = n + 1
-            local r, g, bl, a = c.id:getPixel(sx, sy)
-            a = a or 0
-            if a > 0 then
-              ar, ag, ab, aw = ar + r * a, ag + g * a, ab + bl * a, aw + a
-            end
-          end
-        end
-        local o = (ty * cW + tx) * 4
-        if aw > 0 and n > 0 then
-          local ca = aw / n
-          if ca > 1 then ca = 1 end
-          px[o + 1], px[o + 2], px[o + 3], px[o + 4] = ar / aw, ag / aw, ab / aw, ca
-        else
-          px[o + 1], px[o + 2], px[o + 3], px[o + 4] = 0, 0, 0, 0
-        end
-      end
-    end
-    local img = { w = cW, h = cH, px = px }
-    c.scaled[key] = img
-    return img
-  end
-
-  -- ---------------------------------------------------------------------------
   -- BATTLE SHADOWS (the contact shadow under every battler)
   -- ---------------------------------------------------------------------------
   -- The game's own battle screens draw no shadow at all, so the mod supplies
@@ -1490,8 +1333,92 @@ return function(mod)
     return key
   end
 
-  local function teraTypeOf(mon, battler)
+  -- Is a custom battle screen holding the film back on this battler?  The value
+  -- is either `true` (held until the screen clears it) or a NUMBER -- an
+  -- absolute love.timer deadline, which g9-Battle-Scene writes so the flag can
+  -- never hide the film forever even if a clear is somehow missed.  Every read
+  -- is forgiving: no battler, no flag or no clock all answer false (= paint).
+  local function teraHoldActive(battler)
+    local v = type(battler) == "table" and battler.__g9TeraHold
+    if v == nil or v == false then return false end
+    if type(v) == "number" then
+      local ok, now = pcall(function()
+        return (love and love.timer and love.timer.getTime) and love.timer.getTime() or nil
+      end)
+      if ok and type(now) == "number" then return now < v end
+      return false
+    end
+    return true
+  end
+
+  -- The LIVE state read the crystal film actually paints from.  battle_forms
+  -- owns WHEN a Terastallization happens, but its `describe()` payload is not a
+  -- shape this mod can rely on across builds -- and the ENGINE is the mod that
+  -- RECORDS the result: g9-battle-engine sets `mon.teraActive` on its own
+  -- `mod.battle_forms.tera_applied` listener and owns the per-mon type
+  -- (gigantamax/tera_state.lua's getTeraType).  Reading that means the film is
+  -- painted from the very value the engine's combat code uses, instead of from
+  -- a payload field that may simply not be there (which is why a transformed
+  -- Pokemon could draw without its crystal layer at all).  battle_forms'
+  -- describe() is still consulted below, as the second source.
+  local enginePeer = nil
+  local function engineExports()
+    if enginePeer then return enginePeer end
+    if type(mod.find) ~= "function" then return nil end
+    local ok, handle = pcall(mod.find, mod, "g9-battle-engine")
+    if ok and type(handle) == "table" and type(handle.exports) == "table" then
+      enginePeer = handle.exports
+    end
+    return enginePeer
+  end
+
+  local function engineTeraType(mon)
+    if type(mon) ~= "table" or not mon.teraActive then return nil end
+    local api = engineExports()
+    if api and type(api.getTeraType) == "function" then
+      local ok, t = pcall(api.getTeraType, mon)
+      if ok and type(t) == "string" and t ~= "" then return t end
+    end
+    local t = mon.teraType or mon.battleFormsTeraType
+    if type(t) == "string" and t ~= "" then return t end
+    return nil
+  end
+
+  -- A custom battle screen may also DECLARE the live type on the battler (or
+  -- through the draw seam as ctx.liveTeraType).  g9-Battle-Scene reads the same
+  -- engine state, so the two always agree; this is trusted as-is.
+  local function declaredLiveTeraType(ctx, battler)
+    if type(battler) == "table" then
+      local t = battler.liveTeraType
+      if type(t) == "string" and t ~= "" then return t end
+    end
+    if type(ctx) == "table" then
+      local t = ctx.liveTeraType
+      if type(t) == "string" and t ~= "" then return t end
+    end
+    return nil
+  end
+
+  local function teraTypeOf(mon, battler, ctx)
     if not teraArtOn() then return nil end
+    -- A custom battle screen hiding the film while its tera transformation
+    -- sequence builds the crystal construct: g9-Battle-Scene sets `__g9TeraHold`
+    -- on the battler and clears it the frame the construct breaks, so the film
+    -- lands exactly on the reveal (see its TERA block). Without this an enemy
+    -- whose tera is already live would wear the film through the whole show.
+    if teraHoldActive(battler) then return nil end
+    -- 1/ the scene's own declaration, 2/ the engine's live record -- both of
+    -- which survive battle_forms' payload shape changing under us.
+    local declared = declaredLiveTeraType(ctx, battler)
+    if declared then
+      local k = teraKeyFor(declared)
+      if k then return k end
+    end
+    local live = engineTeraType(mon)
+    if live then
+      local k = teraKeyFor(live)
+      if k then return k end
+    end
     local exports = formsExports()
     if not (exports and type(exports.describe) == "function") then return nil end
     local ok, payload = pcall(exports.describe, mon, battler)
@@ -1510,18 +1437,27 @@ return function(mod)
   -- is Dynamaxed right now, and nil otherwise -- as { turns, form }: `form` is
   -- the Gigantamax shape's own suffix, or nil for a plain Dynamax.  Both are a
   -- real answer here (a Gigantamax IS a Dynamax with a form laid on it), so the
-  -- test is simply "is `dynamax` a table", and the cloud covers both.
+  -- test is simply "is `dynamax` a table", and the size ladder covers both.
   --
   -- `dynamaxLevel` is deliberately NOT the test: it is a persistent per-mon
   -- property (0-10) that every Pokemon has whether or not it ever transforms,
-  -- so clouding on it would put a cloud over Pokemon that never Dynamaxed.
+  -- so growing on it would grow Pokemon that never Dynamaxed.
   --
   -- The lookup is as forgiving as the Tera one and for the same reason:
   -- battle_forms is optional, may arrive after this mod, and may be an older
   -- build, so a missing handle/export, a raised error or a missing field all
-  -- answer false (= no cloud) rather than breaking a draw.
-  local function dynamaxOf(mon, battler)
-    if not dynamaxOn() then return false end
+  -- answer false (= no Dynamax) rather than breaking a draw.
+  -- The RAW read (no option gate): is this Pokemon Dynamaxed/Gigantamaxed right
+  -- now?
+  local function dynamaxActive(mon, battler)
+    -- A custom battle screen staging the Dynamax grow sequence raises this hold
+    -- on the battler so the size ladder does not start until the reveal beat
+    -- (battle_screen's `__g9DynHold`).  With the hold up the mon is drawn at its
+    -- ordinary size; the screen drops it the frame its own clip breaks, which is
+    -- when the ladder's clock starts.  Same shape as the Tera film's own
+    -- `__g9TeraHold` above and for the same reason: a transformation the screen
+    -- is still costuming must not show through the sprite.
+    if type(battler) == "table" and battler.__g9DynHold == true then return false end
     local exports = formsExports()
     if not (exports and type(exports.describe) == "function") then return false end
     local ok, payload = pcall(exports.describe, mon, battler)
@@ -1564,7 +1500,7 @@ return function(mod)
   -- every frame we mark was registered here.
   local ourFrames = setmetatable({}, { __mode = "k" })
 
-  local function sheetKey(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, tera, cloud, shadow, front, flip, portrait)
+  local function sheetKey(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip, portrait)
     local tag = box and ("@" .. box.w .. "x" .. box.h) or ""
     -- The uniform scale (divisor) and the integer zoom the screen will draw
     -- the baked box at belong in the identity too: they decide how every
@@ -1591,10 +1527,6 @@ return function(mod)
     -- of the identity: the plain sheet and each type's filmed sheet are
     -- different Images and must never be handed to one another.
     local te = tera and ("T" .. tera) or ""
-    -- DYNAMAX CLOUD is likewise part of the identity: a clouded sheet is a
-    -- different Image from the plain one, and must never be handed to a reader
-    -- of the other.
-    local cl = cloud and "D" or ""
     -- BATTLE SHADOWS is likewise part of the identity: a shadowed sheet is a
     -- different Image from the plain one (and is only ever asked for in battle,
     -- so the dex/summary keep the plain sheet for the same box).
@@ -1615,7 +1547,7 @@ return function(mod)
     -- be handed to a reader expecting either (the union bake has spare rows
     -- above frame 1's head; this one does not).  "O" = one-frame portrait.
     local po = portrait and "O" or ""
-    return (back and "b" or "f") .. (shiny and "s" or "n") .. tag .. div .. z .. sc .. m .. f .. nat .. te .. cl .. sh .. fr .. fl .. po .. "/" .. stem
+    return (back and "b" or "f") .. (shiny and "s" or "n") .. tag .. div .. z .. sc .. m .. f .. nat .. te .. sh .. fr .. fl .. po .. "/" .. stem
   end
 
   -- The pic box a sheet is baked into.  `override` lets a custom battle screen
@@ -1637,15 +1569,199 @@ return function(mod)
     return frameCounter / 60
   end
 
+  ---------------------------------------------------------------------------
+  -- DYNAMAX GROW (the size ladder)
+  ---------------------------------------------------------------------------
+  -- A Pokemon that starts a Dynamax/Gigantamax grows to x1.5 its own size in
+  -- four staged steps, each eased on a PARABOLA so the growth leaves a step
+  -- slowly and lands the next step's jump with all the speed it has -- the
+  -- start grows slightly slower, and each phase is dramatic close to its end:
+  --
+  --   x1.00 -> x1.05 in 0.30s -> x1.10 in 0.40s
+  --         -> x1.20 in 0.50s -> x1.50 in 0.80s      (2.00s, then held)
+  --
+  -- The ladder is read at DRAW time from wall-clock elapsed, so it advances
+  -- with zero interference in the battle's turn flow (battle_forms owns the
+  -- turn clock -- this is pure presentation and never blocks a resolve).  A
+  -- Dynamax ENDING plays the ladder back DOWN, at the very rates it climbed:
+  -- the shrink is the grow run in reverse -- the same phase durations and the
+  -- same t*t curve, from the size the mon actually reached back down to x1 --
+  -- so a mon that made it to 1.50x takes the same 2.00s to come back.  A mon
+  -- must not snap from 1.5x to its ordinary size the instant the transformation
+  -- ends, and the two halves should look like one motion.
+  --
+  -- The sprite is what grows, so the ladder lives here and is applied wherever
+  -- this mod's frames are drawn:
+  --   * Gen 1 native  -- the draw call is wrapped and scaled about the pic's
+  --     own bottom-centre (see installGen1);
+  --   * Gen 2 native  -- picScale is multiplied (see installGen2);
+  --   * a custom battle screen -- it reads the factor this module stamps on
+  --     the battler (__g9DynamaxGrow) and folds it into its own blit.
+  -- battle_forms' own Gen 2 grow (a flat x1.15 for a Dynamax with no
+  -- Gigantamax picture) MULTIPLIES with this one on that one screen: both are
+  -- factors on the same engine scale, and neither writes a field the other
+  -- reads, so they compose rather than collide (the near side is unaffected --
+  -- a Gigantamax has a form, so battle_forms grows nothing there).
+  local GROW = {
+    phases = {
+      { to = 1.05, dur = 0.30 },
+      { to = 1.10, dur = 0.40 },
+      { to = 1.20, dur = 0.50 },
+      { to = 1.50, dur = 0.80 },
+    },
+    start = 1.00,
+    -- mon -> { t0, falling, from, fallT }.  Weak keys: a released mon leaves none.
+    state = setmetatable({}, { __mode = "k" }),
+  }
+  GROW.top = GROW.phases[#GROW.phases].to
+
+  function GROW.on() return opt("dynamax_grow", true) ~= false end
+
+  -- One step's own curve: t*t is 0 on the step's first frame (so the growth
+  -- starts slowly) and 1 on its last (so the jump into the next step is the
+  -- dramatic part).  Linear would spread the movement evenly; an ease-out would
+  -- do the opposite of what the reference does.
+  function GROW.curve(from, to, t) return from + (to - from) * t * t end
+
+  function GROW.ladder(elapsed)
+    local at, t = GROW.start, elapsed
+    for i = 1, #GROW.phases do
+      local ph = GROW.phases[i]
+      if t <= ph.dur then return GROW.curve(at, ph.to, t / ph.dur) end
+      t = t - ph.dur
+      at = ph.to
+    end
+    return GROW.top
+  end
+
+  -- The grow time at which the ladder reaches factor `f` -- ladder's own
+  -- inverse, so the shrink can be the exact time-reversal of the climb that
+  -- actually happened.  Each phase is from + (to-from) * u^2, so u = sqrt of
+  -- the progress through that phase; walk the phases accumulating their
+  -- durations until `f` falls inside one.
+  function GROW.elapsedFor(f)
+    local at, e = GROW.start, 0
+    for i = 1, #GROW.phases do
+      local ph = GROW.phases[i]
+      if f <= ph.to + 1e-6 then
+        local span = ph.to - at
+        if span <= 1e-6 then return e end
+        local u = (f - at) / span
+        if u < 0 then u = 0 elseif u > 1 then u = 1 end
+        return e + math.sqrt(u) * ph.dur
+      end
+      e = e + ph.dur
+      at = ph.to
+    end
+    return e
+  end
+
+  function GROW.factorFor(mon)
+    if not GROW.on() then return 1 end
+    local st = mon and GROW.state[mon]
+    if not st then return 1 end
+    local e = now() - st.t0
+    if st.falling then
+      -- The shrink is the grow run BACKWARDS from the size the mon reached, so
+      -- it falls at the rates it climbed (a 1.50x mon takes the full 2.00s,
+      -- each phase the same duration and curve as its climb).  `fallT` is the
+      -- grow time that had reached `st.from`, so an interrupted grow still
+      -- falls proportionally.
+      local T = st.fallT or GROW.elapsedFor(st.from or GROW.top)
+      if e >= T then GROW.state[mon] = nil return 1 end
+      return GROW.ladder(T - e)
+    end
+    return GROW.ladder(e)
+  end
+
+  -- Called once per draw with the mon's live Dynamax state.  The transition is
+  -- read here rather than subscribed to battle_forms' event so it also works
+  -- for a DECLARED raid gimmick (a wild boss battle_forms never activates, so
+  -- it never emits an event for) and for a boot with no battle_forms at all.
+  function GROW.note(mon, active)
+    if type(mon) ~= "table" or not GROW.on() then return end
+    local st = GROW.state[mon]
+    if active then
+      if not st then
+        GROW.state[mon] = { t0 = now(), falling = false }
+      elseif st.falling then
+        st.falling = false
+        st.t0 = now()
+      end
+    elseif st and not st.falling then
+      st.from = GROW.ladder(now() - st.t0)
+      st.fallT = GROW.elapsedFor(st.from)
+      st.falling = true
+      st.t0 = now()
+    end
+  end
+
+  ---------------------------------------------------------------------------
+  -- The live Dynamax state, for the battle screen (g9-Battle-Scene)
+  ---------------------------------------------------------------------------
+  -- The persistent Dynamax FX -- the darkened field, the red aura and the burst
+  -- when a Dynamaxed mon faints -- are SCREEN-space effects, so the battle
+  -- screen draws them itself (this mod draws only the sprite frames).  It needs
+  -- to know which of its battlers is transformed, and how far the grow/shrink
+  -- has run so it can keep a fainting mon on screen until the shrink is done.
+  -- This is that read: the live state from battle_forms (a battler carries a
+  -- declared raid gimmick the screen has not activated, so pass its battler and
+  -- the screen's own declared flag through ctx -- see the battle.mon_pic wrap),
+  -- plus the current size factor and whether the mon is on the shrink.
+  --
+  -- Never raises: a missing battle_forms answers active = false, exactly as if
+  -- nothing were transformed.
+  mod.exports.dynamaxStateOf = function(mon, battler)
+    if type(mon) ~= "table" then
+      return { active = false, known = false, grow = 1, shrinking = false }
+    end
+    local st = GROW.state[mon]
+    local active = dynamaxActive(mon, battler)
+    local grow = 1
+    if st ~= nil or active then grow = GROW.factorFor(mon) end
+    -- Read the record AGAIN after factorFor: the call that rides out the last
+    -- frame of a shrink clears it, and that same frame must already report
+    -- "not transformed" so the screen ends its held faint right there.
+    --
+    -- `known` -- the ladder still holds a record for this mon, so it is either
+    -- transformed or on its shrink-back.  `active` is the live state; the two
+    -- differ for exactly one beat: the frame battle_forms reverts the mon, when
+    -- `active` has gone false but the shrink has not started yet (the ladder
+    -- only learns of the change on the next draw).  The screen keys its held
+    -- faint on `known`, so a fainting mon is never dropped a frame early.
+    st = GROW.state[mon]
+    local known = st ~= nil
+    local shrinking = (st ~= nil and st.falling == true)
+    return { active = active, known = known, grow = grow, shrinking = shrinking }
+  end
+
   -- -- shared sheet lifecycle ---------------------------------------------
   -- (declared ahead of the builder that calls them)
 
   local function finishFailed(sheet, why)
-    -- A file that is present but unusable (corrupt, or a sheet with no opaque
-    -- pixels).  Say so out loud and latch it: a sheet that silently never
-    -- arrives looks exactly like the mod not working at all.
+    -- A file that is present but unusable: corrupt, a sheet with no opaque
+    -- pixels -- or, the real recurring case, a PNG caught mid-write by a
+    -- download still in flight.  That last one is transient, so retry a bounded
+    -- number of times before giving up: without this a file grabbed
+    -- half-written pins the species to its vanilla pic for the whole session,
+    -- which reads to the player as "the mod has no art for this mon".  (This is
+    -- the Farfetch'd symptom.)  Retries are immediate -- no retryAt -- because
+    -- the whole point is to re-read the file the moment it might have landed;
+    -- FAIL_RETRIES bounds the cost of a sheet that is genuinely broken.
     sheet.build = nil
     sheet.bytes = nil
+    local tries = (sheet.tries or 0) + 1
+    sheet.tries = tries
+    if tries < FAIL_RETRIES then
+      sheet.status = "new"
+      sheet.frames = nil
+      sheet.retryAt = nil
+      diagPush("%s BUILD RETRY %d/%d (%s)", sheet.stem, tries, FAIL_RETRIES,
+        tostring(why))
+      return
+    end
+    -- Out of retries.  Say so out loud and latch it: a sheet that silently
+    -- never arrives looks exactly like the mod not working at all.
     sheet.status = "failed"
     diag.stats.failed = diag.stats.failed + 1
     diag.lastFail = tostring(sheet.stem)
@@ -1712,17 +1828,9 @@ return function(mod)
     -- missing pattern) bakes a plain sheet, exactly as if TERA ART were off.
     local tera
     if sheet.tera then
-      local pat = loadPattern()
+      local pat = TERA.loadPattern()
       local tint = TERA_TINT[sheet.tera]
       if pat and tint then tera = { pat = pat, tint = tint } end
-    end
-    -- DYNAMAX CLOUD: the cloud sprite is resolved once here too (see loadCloud).
-    -- A missing cloud file simply leaves the sheet plain, exactly as if DYNAMAX
-    -- CLOUD were off.
-    local cloud
-    if sheet.cloud then
-      local c = loadCloud()
-      if c then cloud = c end
     end
     -- BATTLE SHADOWS: resolved once per sheet too.  Only a battle seam sets
     -- sheet.shadow (see getBattleFrames), so the dex and summary never bake a
@@ -1736,7 +1844,6 @@ return function(mod)
     sheet.build = {
       id = imageData, W = W, H = H, count = count, fw = fw,
       tera = tera,
-      cloud = cloud,
       shadowArt = shadowArt, shadowSize = shadowSize, shadowSx = shadowSx,
       box = boxFor(sheet.back, sheet.box),
       divisor = sheet.divisor, zoom = sheet.zoom or 1,
@@ -1831,24 +1938,9 @@ return function(mod)
       local dw = math.max(1, round(cw * scale))
       local dh = math.max(1, round(ch * scale))
       local pad = round(lift * scale)
-      -- DYNAMAX CLOUD: a natural-size frame IS its content, so there is no box
-      -- to take a cloud band from -- the canvas simply grows upward by what the
-      -- cloud needs ABOVE the sprite's own top (its full height minus the part
-      -- that sinks onto the head, see CLOUD_SINK), and the content keeps its
-      -- bottom edge (plus the floater pad, if any), so the sprite's feet stay
-      -- on the ground line the screen anchors to and the cloud rides on the
-      -- head.
-      local grow = 0
-      local cloudH = 0
-      if b.cloud then
-        cloudH = math.max(CLOUD_MIN_H, round(dh * CLOUD_BAND))
-        grow = cloudH - cloudSink(cloudH)
-      end
       b.cw, b.ch, b.dw, b.dh, b.scale = cw, ch, dw, dh, scale
-      b.box = { w = dw, h = dh + grow + pad }
-      b.ox, b.oy = 0, grow
-      b.cloudH = cloudH
-      b.cloudSink = (cloudH > 0) and cloudSink(cloudH) or 0
+      b.box = { w = dw, h = dh + pad }
+      b.ox, b.oy = 0, 0
       b.phase = "frames"
       b.frame = 0
       return true
@@ -1887,24 +1979,6 @@ return function(mod)
     -- instead of letting its head be clipped.
     local fitW = box.w
     local fitH = b.maxH and math.min(box.h, b.maxH) or box.h
-    -- DYNAMAX CLOUD: in a fixed box the cloud claims a band off the top (see
-    -- CLOUD_BAND and buildOneFrame), so the sheet is fitted into what is left --
-    -- which is what keeps the cloud above the head rather than over the face.
-    -- Only the part of the cloud that rides ABOVE the head has to come out of
-    -- the box; the part that sinks onto the head (CLOUD_SINK) shares the room
-    -- the head already uses, so the band reserved here is the cloud's height
-    -- minus its sink.  A sheet short enough to fit either way is not resized at
-    -- all; the band only bites on a sprite tall enough to have used that up.
-    local cloudH = 0
-    local cloudSinkH = 0
-    if b.cloud then
-      cloudH = math.max(CLOUD_MIN_H, round(box.h * CLOUD_BAND))
-      if cloudH > box.h - 4 then cloudH = math.max(0, box.h - 4) end
-      if cloudH > 0 then
-        cloudSinkH = cloudSink(cloudH)
-        fitH = math.max(4, fitH - (cloudH - cloudSinkH))
-      end
-    end
     local mode = spriteSizeMode()
     local scale
     if b.scale and b.scale > 0 then
@@ -1982,8 +2056,6 @@ return function(mod)
     if ox < 0 then ox = 0 elseif ox > box.w - dw then ox = box.w - dw end
     if oy < 0 then oy = 0 elseif oy > box.h - dh then oy = box.h - dh end
     b.ox, b.oy = ox, oy
-    b.cloudH = cloudH
-    b.cloudSink = cloudSinkH
     b.phase = "frames"
     b.frame = 0
     return true
@@ -2517,12 +2589,6 @@ return function(mod)
     -- the stride.
     local stepX = cw / dw
     local stepY = ch / dh
-    -- The destination row the sprite's own content actually starts on.  The
-    -- cloud is anchored to THIS, not to oy, because the pack's metrics
-    -- alignment (or a sheet whose trim box keeps a transparent rim) can shift
-    -- the visible content down inside oy -- anchoring to oy then leaves the
-    -- cloud hovering in the gap it opened up.
-    local contentTop
     for ty = 0, dh - 1 do
       local syn = b.y0 + math.min(ch - 1, math.floor((ty + 0.5) * stepY))
       local sy0 = b.y0 + math.floor(ty * stepY)
@@ -2570,7 +2636,6 @@ return function(mod)
               end
             end
           end
-          if not contentTop then contentTop = oy + ty end
           out:setPixel(ox + tx, oy + ty, cr, cg, cb, ca)
         end
       end
@@ -2632,8 +2697,9 @@ return function(mod)
       local big = dw + dh + 8
       for ty = 0, dh - 1 do
         for tx = 0, dw - 1 do
-          local ca = select(4, out:getPixel(ox + tx, oy + ty)) or 0
-          dist[ty * dw + tx] = (ca > 0) and big or 0
+          -- Only the SPRITE's own pixels seed the distance field.
+          local opaque = (select(4, out:getPixel(ox + tx, oy + ty)) or 0) > 0
+          dist[ty * dw + tx] = opaque and big or 0
         end
       end
       for ty = 0, dh - 1 do
@@ -2749,63 +2815,12 @@ return function(mod)
       end
     end
     -- BATTLE SHADOWS: the ground contact shadow, composited behind the sprite
-    -- (see stampShadow).  Drawn before the cloud so both are part of this
-    -- frame's own canvas.
+    -- (see stampShadow), and part of this frame's own canvas.
     if b.shadowArt then SHADOW.stamp(b, out) end
-    -- DYNAMAX CLOUD: composited OVER the baked sprite, so it is part of every
-    -- frame of the animation rather than a second draw pass -- it cannot flicker
-    -- with the frame clock and it rides the same resample.  Its bottom edge
-    -- sinks CLOUD_SINK pixels past the sprite's own content top, so it caps the
-    -- head (the crown reading) rather than hovering a clear pixel above it; in a
-    -- fixed box the part that rides above the head has already been given its
-    -- band (setupFrames), and in a short-headed box frame the cloud is simply
-    -- clamped into the canvas.  The cloud is blitted from the AREA-filtered copy
-    -- (cloudScaled), not sampled nearest, because it is minified many-fold; and
-    -- the composite is ordinary source-over, so its soft lower edge blends into
-    -- the head it rests on.
-    if b.cloud and b.cloudH and b.cloudH > 0 then
-      local c = b.cloud
-      local cH = b.cloudH
-      local cW = round(cH * c.cw / c.ch)
-      if cW > box.w then cW = box.w end
-      if cW < 1 then cW = 1 end
-      local cX = ox + math.floor((dw - cW) / 2)
-      local cY = (contentTop or oy) + (b.cloudSink or 0) - cH
-      if cY < 0 then cY = 0 end
-      local small = cloudScaled(c, cW, cH).px
-      for ty = 0, cH - 1 do
-        local py = cY + ty
-        if py >= 0 and py < box.h then
-          for tx = 0, cW - 1 do
-            local px = cX + tx
-            if px >= 0 and px < box.w then
-              local o = (ty * cW + tx) * 4
-              local ca = small[o + 4]
-              if ca and ca > 0 then
-                local cr, cg, cb = small[o + 1], small[o + 2], small[o + 3]
-                local er, eg, eb, ea = out:getPixel(px, py)
-                ea = ea or 0
-                local oa = ca + ea * (1 - ca)
-                if oa > 0 then
-                  local nr = (cr * ca + (er or 0) * ea * (1 - ca)) / oa
-                  local ng = (cg * ca + (eg or 0) * ea * (1 - ca)) / oa
-                  local nb = (cb * ca + (eb or 0) * ea * (1 - ca)) / oa
-                  if nr > 1 then nr = 1 elseif nr < 0 then nr = 0 end
-                  if ng > 1 then ng = 1 elseif ng < 0 then ng = 0 end
-                  if nb > 1 then nb = 1 elseif nb < 0 then nb = 0 end
-                  if oa > 1 then oa = 1 end
-                  out:setPixel(px, py, nr, ng, nb, oa)
-                end
-              end
-            end
-          end
-        end
-      end
-    end
     -- 3DB FLIP (option): mirror the finished frame across its vertical axis, so
     -- a front-on PLAYER sprite (3DB FRONTAL) aims at the foe to the right
     -- instead of facing left the way the pack's front art is drawn.  Done on
-    -- the WHOLE canvas, after the crystal, cloud and shadow are composited, so
+    -- the WHOLE canvas, after the crystal and shadow are composited, so
     -- the sprite and everything riding it turn together and stay registered --
     -- a mirror of the sprite alone would leave the shadow and the decoration
     -- pointing the old way.  Only player-side sheets ever set b.flip
@@ -2853,7 +2868,31 @@ return function(mod)
 
   local function stepBuilds()
     if next(sheets) == nil then return end
-    local deadline = now() + BUILD_BUDGET
+    -- Is any building sheet HOT -- one a caller is waiting on right now?  If
+    -- so it runs at the larger budget, and HOT sheets are stepped FIRST so the
+    -- budget cannot be spent on a background bake the player is not waiting
+    -- for (see HOT_BUILD_BUDGET).
+    local hot = false
+    for _, sheet in pairs(sheets) do
+      if sheet.status == "building" and sheet.hotUntil
+          and frameCounter <= sheet.hotUntil then
+        hot = true
+        break
+      end
+    end
+    local budget = hot and HOT_BUILD_BUDGET or BUILD_BUDGET
+    local deadline = now() + budget
+    if hot then
+      for _, sheet in pairs(sheets) do
+        if sheet.status == "building" and sheet.hotUntil
+            and frameCounter <= sheet.hotUntil then
+          while true do
+            if advanceBuild(sheet) then break end
+            if now() >= deadline then return end
+          end
+        end
+      end
+    end
     for _, sheet in pairs(sheets) do
       if sheet.status == "building" then
         while true do
@@ -2949,6 +2988,15 @@ return function(mod)
       end
     end
 
+    -- Re-attempt anything sitting on "new": a sheet backed there by a transient
+    -- finishFailed (mid-download file) is re-read here, on the very next poll,
+    -- instead of waiting for the next draw to ask for it again.  sheetStart
+    -- still honours a missing file's retryAt, so this cannot spin on a species
+    -- the pack genuinely has no art for.
+    for _, sheet in pairs(sheets) do
+      if sheet.status == "new" then sheetStart(sheet) end
+    end
+
     for _, sheet in pairs(sheets) do
       if sheet.status == "local" then
         local id, why = decodeSheet(sheet)
@@ -2984,16 +3032,15 @@ return function(mod)
   -- expression `stem and getFrames(...)` truncates the call to ONE value and
   -- `pending` is silently lost (which reads as "not pending" and lets the
   -- vanilla pic through). Every call site below guards the stem separately.
-  local function getFrames(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, cloud, shadow, front, flip, portrait)
+  local function getFrames(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip, portrait)
     if not stem then return nil, false end
-    local key = sheetKey(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, cloud, shadow, front, flip, portrait)
+    local key = sheetKey(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip, portrait)
     local sheet = sheets[key]
     if not sheet then
       sheet = { key = key, back = back, shiny = shiny, stem = stem,
                 box = boxOverride, divisor = divisor, zoom = zoom,
                 maxH = maxH, fill = fill, scale = scale,
                 natural = natural and true or false, tera = tera,
-                cloud = cloud and true or false,
                 shadow = shadow and true or false,
                 front = front and true or false,
                 flip = flip and true or false,
@@ -3006,7 +3053,24 @@ return function(mod)
       sheet.lastUsed = frameCounter
       return sheet.frames, false
     end
-    return nil, sheet.status == "local" or sheet.status == "building"
+    if sheet.status == "local" or sheet.status == "building" then
+      -- A caller is waiting on this sheet, so mark it HOT: stepBuilds() will
+      -- spend the larger HOT_BUILD_BUDGET on it, and only on it, until the asks
+      -- stop (see HOT_BUILD_BUDGET).  The window is in frames and every ask
+      -- re-arms it, so a sheet stays hot exactly while someone is watching it.
+      sheet.hotUntil = frameCounter + HOT_WINDOW
+      sheet.lastUsed = frameCounter
+      -- Progressive frames: the instant frame 1 is baked, hand the (still
+      -- growing) array to the caller so a send-out animates in from the first
+      -- landing frame instead of holding a blank/vanilla pic until the whole
+      -- sheet is done.  buildOneFrame appends straight onto sheet.frames, so
+      -- the partial array is a valid -- if shorter -- animation.
+      if sheet.status == "building" and sheet.frames and sheet.frames[1] then
+        return sheet.frames, false
+      end
+      return nil, true
+    end
+    return nil, false
   end
 
   -- The draw-path entry point: the Tera film is a WANT, never a requirement.
@@ -3019,17 +3083,17 @@ return function(mod)
   -- told `pending`, and its existing draw-nothing-rather-than-vanilla rule
   -- applies.  (getFrames has two return values, so its calls sit in their own
   -- statements here, as everywhere else.)
-  local function getFramesFor(back, shiny, stem, tera, cloud, box, divisor, zoom, maxH, fill, scale, natural, shadow, front, flip)
+  local function getFramesFor(back, shiny, stem, tera, box, divisor, zoom, maxH, fill, scale, natural, shadow, front, flip)
     if not stem then return nil, false end
-    -- The filmed/clouded sheet (both, when a Pokemon somehow carries both) is
-    -- the wanted one; the plain sheet is the fallback while it bakes.
+    -- The filmed sheet is the wanted one; the plain sheet is the fallback while
+    -- it bakes.
     local pending = false
-    if tera or cloud then
-      local wf, wp = getFrames(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, tera, cloud, shadow, front, flip)
+    if tera then
+      local wf, wp = getFrames(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip)
       if wf then return wf, false end
       pending = wp
     end
-    local base, bpending = getFrames(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, false, false, shadow, front, flip)
+    local base, bpending = getFrames(back, shiny, stem, box, divisor, zoom, maxH, fill, scale, natural, false, shadow, front, flip)
     if base then return base, false end
     return nil, pending or bpending
   end
@@ -3038,8 +3102,8 @@ return function(mod)
   -- battle request through here is what keeps BATTLE SHADOWS out of the dex and
   -- the summary: they call getFrames directly, without the shadow flag, so the
   -- very same front box is a distinct, shadow-free sheet for them.
-  local function getBattleFrames(back, shiny, stem, tera, cloud, box, divisor, zoom, maxH, fill, scale, natural, front, flip)
-    return getFramesFor(back, shiny, stem, tera, cloud, box, divisor, zoom, maxH, fill, scale, natural, true, front, flip)
+  local function getBattleFrames(back, shiny, stem, tera, box, divisor, zoom, maxH, fill, scale, natural, front, flip)
+    return getFramesFor(back, shiny, stem, tera, box, divisor, zoom, maxH, fill, scale, natural, true, front, flip)
   end
 
   -- ---------------------------------------------------------------------------
@@ -3067,8 +3131,12 @@ return function(mod)
     -- which is the case for a Pokemon that has not Terastallized, for an
     -- unmapped type, and for a missing battle_forms.
     local tera = teraTypeOf(battler.mon, battler)
-    -- The Dynamax cloud is looked up live the same way (see dynamaxOf).
-    local cloud = dynamaxOf(battler.mon, battler)
+    -- The Dynamax size ladder: the live state starts/stops it, and the factor
+    -- it currently holds is stamped on the battler for the draw wrap below (the
+    -- wrap reads the stamp rather than re-deriving the phase per draw).
+    local dyn = dynamaxActive(battler.mon, battler)
+    GROW.note(battler.mon, dyn)
+    battler.__g9DynamaxGrow = GROW.factorFor(battler.mon)
     -- 3DB FRONTAL / 3DB FLIP (options): the PLAYER side is the back slot, so
     -- this is where a front-sourced, optionally mirrored sheet is asked for.
     -- The foe (back == false) already shows front art and is never flipped.
@@ -3078,7 +3146,7 @@ return function(mod)
     -- collapse it to a single value and drop the `pending` flag.
     local frames, pending = nil, false
     if stem then
-      frames, pending = getBattleFrames(back, shiny, stem, tera, cloud,
+      frames, pending = getBattleFrames(back, shiny, stem, tera,
         nil, nil, nil, nil, nil, nil, nil, front, flip)
     end
     -- Remember the vanilla pic BEFORE anything can blank it, so a later frame
@@ -3157,18 +3225,51 @@ return function(mod)
     if type(vanillaBattlerPic) == "function" then
       local PFX = nil
       local PFXok = false
+      local function markTrue(x, y, w, h)
+        if not PFXok then
+          PFXok = true
+          local okP, m = pcall(require, "src.render.PaletteFX")
+          PFX = okP and m or nil
+        end
+        if PFX and PFX.markTrueColor then pcall(PFX.markTrueColor, x, y, w, h) end
+      end
       function BattleState:drawBattlerPic(battler, x, y, scale, shakeX, shakeY)
         local img = type(battler) == "table" and battler.__g9bsFrame
+        -- DYNAMAX GROW.  Gen 1 has no scaling seam of its own -- battle_forms
+        -- only grows a mon on Gold, by wrapping picScale -- so the whole ladder
+        -- rides here, on the one normal draw call the engine makes for a battle
+        -- pic.  The scale is about the pic's own bottom-centre, so the mon's
+        -- feet stay on its box's floor while it grows (growing upward instead
+        -- would read as sliding up the screen).  The true-colour mark below is
+        -- widened to the GROWN rect, or the SGB/GBC zone post-pass would shade
+        -- the belt the extra size added.
+        local grow = type(battler) == "table" and tonumber(battler.__g9DynamaxGrow)
+        if grow and grow > 1.001 then
+          local gw, gh
+          if img and ourFrames[img] then
+            gw, gh = img:getWidth() * (scale or 1), img:getHeight() * (scale or 1)
+          elseif self.picImage and type(battler.sprite) == "string" then
+            local okI, pic = pcall(self.picImage, self, battler.sprite)
+            if okI and pic and type(pic.getWidth) == "function" then
+              gw, gh = pic:getWidth() * (scale or 1), pic:getHeight() * (scale or 1)
+            end
+          end
+          if gw and gh then
+            if img and ourFrames[img] then
+              markTrue(x - gw * (grow - 1) / 2, y - gh * (grow - 1),
+                gw * grow, gh * grow)
+            end
+            love.graphics.push()
+            love.graphics.translate(x + gw / 2, y + gh)
+            love.graphics.scale(grow, grow)
+            love.graphics.translate(-(x + gw / 2), -(y + gh))
+            local r = vanillaBattlerPic(self, battler, x, y, scale, shakeX, shakeY)
+            love.graphics.pop()
+            return r
+          end
+        end
         if img and ourFrames[img] then
-          if not PFXok then
-            PFXok = true
-            local okP, m = pcall(require, "src.render.PaletteFX")
-            PFX = okP and m or nil
-          end
-          if PFX and PFX.markTrueColor then
-            pcall(PFX.markTrueColor, x, y,
-              img:getWidth() * (scale or 1), img:getHeight() * (scale or 1))
-          end
+          markTrue(x, y, img:getWidth() * (scale or 1), img:getHeight() * (scale or 1))
         end
         return vanillaBattlerPic(self, battler, x, y, scale, shakeX, shakeY)
       end
@@ -3195,7 +3296,6 @@ return function(mod)
         diag.stats.pics = diag.stats.pics + 1
         local stem, shiny = monStem(mon)
         local tera = teraTypeOf(mon, mon)
-        local cloud = dynamaxOf(mon, mon)
         local frames, pending = nil, false
         if stem then
           -- 3DB FRONTAL / 3DB FLIP (options): `back` is the player's slot, so a
@@ -3204,7 +3304,7 @@ return function(mod)
           local isBack = back and true or false
           local front = isBack and opt("battle_frontal", false) ~= false
           local flip = front and opt("battle_front_flip", false) ~= false
-          frames, pending = getBattleFrames(isBack, shiny, stem, tera, cloud,
+          frames, pending = getBattleFrames(isBack, shiny, stem, tera,
             nil, nil, nil, nil, nil, nil, nil, front, flip)
         end
         if frames then
@@ -3236,7 +3336,13 @@ return function(mod)
       function BattleState:picScale(path, mon, back)
         if wantEnabled() and type(mon) == "table"
           and managedSpecies[mon.species] then
-          return 1
+          -- DYNAMAX GROW.  picScale is read on EVERY draw of a pic (unlike
+          -- picSize, which exists only while a resize script is running), and
+          -- the engine asks for it BEFORE :pic, so this is both the right seam
+          -- and the earliest one -- the transition is noticed here.
+          GROW.note(mon, dynamaxActive(mon, mon))
+          mon.__g9DynamaxGrow = GROW.factorFor(mon)
+          return mon.__g9DynamaxGrow
         end
         return vanillaPicScale(self, path, mon, back)
       end
@@ -3401,7 +3507,7 @@ return function(mod)
   -- the FRONT pic there, so the same lookup the battle seams use picks the
   -- sheet: the species id (plus female and shiny) resolves to a DBK stem, and
   -- the sheet is the FRONT one, or the *_shiny FRONT one when the mon is shiny.
-  -- No Tera film and no Dynamax cloud: those are battle states, and a mon on
+  -- No Tera film: that is a battle state, and a mon on
   -- the summary screen is not in a battle.
   --
   --   gen1  src.ui.SummaryMenu.new loads the vanilla front pic once into
@@ -4174,6 +4280,83 @@ return function(mod)
     return box
   end
 
+  -- ---------------------------------------------------------------------------
+  -- The egg
+  -- ---------------------------------------------------------------------------
+  -- An egg has no species sheet and no pack icon of its own, so it gets one
+  -- still image shipped with the mod -- assets/egg.png, the La Base de Sky egg
+  -- (LA BASE DE SKY/Graphics/Pokemon/Eggs/000.png, trimmed to its own 56x60
+  -- art) -- and that ONE picture is the egg everywhere it is shown: the party
+  -- icon on either generation (fitted into the 16x16 slot), the g9 party
+  -- screen's 64px cell, and every FRONT-art caller (g9-gui's party portrait
+  -- cards and its PC pages, the summary's own picture).  It is a still, so it
+  -- is never sliced into animation frames and never goes through the sheet
+  -- baker; it IS, deliberately, handed out through the same always-on exports
+  -- the pack's sheets use (frontArt / iconArtHD / iconArt16), so a caller can
+  -- treat an egg like any other Pokemon.
+  --
+  -- To change the egg art: drop a new assets/egg.png in (any size; the slot
+  -- callers fit it by its longer side) and nothing else has to move.
+  local EGG_REL = "assets/egg.png"
+  local eggImage, eggFailed, eggQuad = nil, false, nil
+  local function ensureEgg()
+    if eggImage or eggFailed then return eggImage end
+    local id, why = decodeFromPath(EGG_REL)
+    if not id then
+      local okr, bytes = pcall(mod.read, mod, EGG_REL)
+      if okr and type(bytes) == "string" and #bytes > 0 then
+        local idb, whyb = decodeFromBytes(bytes, "egg")
+        if idb then id = idb else why = whyb end
+      end
+    end
+    if not id then
+      local idc, whyc = decodeFromImage(EGG_REL)
+      if idc then id = idc else why = whyc end
+    end
+    if not (id and type(id.getDimensions) == "function") then
+      eggFailed = true
+      mod.log:warn("g9-battle-sprites: " .. EGG_REL .. " could not be read "
+        .. "(%s) -- the egg keeps the pack's atlas icon", tostring(why))
+      return nil
+    end
+    local ok, img = pcall(love.graphics.newImage, id)
+    if not (ok and img) then
+      eggFailed = true
+      mod.log:warn("g9-battle-sprites: " .. EGG_REL .. " could not be turned "
+        .. "into an Image (%s)", tostring(ok and "nil" or img))
+      return nil
+    end
+    eggImage = img
+    return eggImage
+  end
+
+  -- (quad, image, w, h) for the egg, or nil while it cannot be read.  Cached
+  -- quad, so repeated draws are free.
+  local function eggArt()
+    local img = ensureEgg()
+    if not img then return nil end
+    local w, h = img:getDimensions()
+    if not w or not h or w <= 0 or h <= 0 then return nil end
+    if not eggQuad then eggQuad = love.graphics.newQuad(0, 0, w, h, w, h) end
+    return eggQuad, img, w, h
+  end
+
+  -- A quad table in the icon arms' own shape ({ full, tl, tr, br }), with the
+  -- three 8x8 quadrants reproduced proportionally.  An egg can never carry a
+  -- held item (the only consumer of tl/tr/br), so this is completeness, not
+  -- a path that runs.
+  local function eggQuads()
+    local q, img, w, h = eggArt()
+    if not q then return nil end
+    local hw, hh = math.floor(w / 2), math.floor(h / 2)
+    return {
+      full = q,
+      tl = love.graphics.newQuad(0, 0, hw, hh, w, h),
+      tr = love.graphics.newQuad(hw, 0, w - hw, hh, w, h),
+      br = love.graphics.newQuad(hw, hh, w - hw, h - hh, w, h),
+    }, img, w, h
+  end
+
   -- Which icon art to draw for a mon, and at what DESIGN scale: the 64x64
   -- atlas at 16 design units while the g9 screen is on (1:1 inside its 4x
   -- surface), the 16x16 atlas 1:1 otherwise.  `k` is atlas pixels -> design
@@ -4181,6 +4364,14 @@ return function(mod)
   -- falls back to the game's own icon.
   iconArt = function(mon)
     if type(mon) ~= "table" then return nil end
+    if mon.isEgg == true then
+      -- Fitted into the one 16-design-unit slot the party row has (on the g9
+      -- page that slot is 64 screen pixels, so the egg is drawn near its own
+      -- size there and shrunk to a 16x16 icon on the native party list).
+      local q, img, w, h = eggQuads()
+      if not q then return nil end
+      return q, img, 16 / math.max(w, h)
+    end
     local cell = iconCell(mon)
     if not cell then return nil end
     local f = frameIndex(ICON_FRAMES) - 1
@@ -4204,7 +4395,13 @@ return function(mod)
   -- decoded -- the atlas is decoded lazily, so the first call can answer nil
   -- and the caller's next frame gets the art.
   mod.exports.iconArtHD = function(mon)
-    if type(mon) ~= "table" or not ICONS then return nil end
+    if type(mon) ~= "table" then return nil end
+    if mon.isEgg == true then
+      local q, img, w, h = eggArt()
+      if not q then return nil end
+      return q, img, G9_HD_CELL, { x = 0, y = 0, w = w, h = h }
+    end
+    if not ICONS then return nil end
     local cell = iconCell(mon)
     if not cell then return nil end
     if not ensureG9Atlas() then return nil end
@@ -4234,6 +4431,14 @@ return function(mod)
   -- engine's own front pic.
   mod.exports.frontArt = function(mon)
     if type(mon) ~= "table" then return nil end
+    if mon.isEgg == true then
+      -- The egg's own picture IS its front art: no species sheet, no bake, and
+      -- a caller (a party portrait card, a PC mon panel) crops it exactly as it
+      -- would a sheet's frame 1.
+      local _, img, w, h = eggArt()
+      if not img then return nil end
+      return img, w, h, { x = 0, y = 0, w = w, h = h }
+    end
     local stem, shiny = monStem(mon)
     if not stem then return nil end
     -- getFrames has TWO return values: keep the call in its own statement so
@@ -4241,7 +4446,7 @@ return function(mod)
     -- bakes frame 1 alone, trimmed to itself.
     local frames, pending = nil, false
     frames, pending = getFrames(false, shiny, stem, nil, nil, nil, nil, nil, 1, true,
-      nil, nil, nil, nil, nil, true)
+      nil, nil, nil, nil, true)
     if not frames or not frames[1] then return nil, pending end
     local img = frames[1]
     local w, h = img:getDimensions()
@@ -4269,6 +4474,17 @@ return function(mod)
   -- see summaryStem) or while the sheet is still baking -- so the caller can
   -- simply draw nothing.
   mod.exports.drawSummaryFrame = function(mon, box)
+    if type(mon) == "table" and mon.isEgg == true then
+      -- The egg's picture is a still, but it lands in the same slot as any
+      -- other summary frame -- the party screen's own summary page, and
+      -- g9-gui's Adv.Stats panel, both draw an egg when the mon is one.
+      if not summaryOn() then return false end
+      local _, img = eggArt()
+      if not img then return false end
+      diag.stats.summary = diag.stats.summary + 1
+      drawCustomSummaryFrame(img, box or NATIVE_SUMMARY_BOX)
+      return true
+    end
     if not (wantEnabled() and summaryOn()) then return false end
     local stem, shiny = summaryStem(mon)
     if not stem then return false end
@@ -4288,7 +4504,13 @@ return function(mod)
   -- (the cell's 16x16 frame) so the caller can take it -- or nil when the pack
   -- has no icon for this Pokemon or the atlas could not be decoded.
   mod.exports.iconArt16 = function(mon)
-    if type(mon) ~= "table" or not ICONS then return nil end
+    if type(mon) ~= "table" then return nil end
+    if mon.isEgg == true then
+      local q, img = eggQuads()
+      if not q then return nil end
+      return q, img, ICON_CELL
+    end
+    if not ICONS then return nil end
     local cell = iconCell(mon)
     if not cell then return nil end
     if not ensureAtlas() then return nil end
@@ -4783,25 +5005,41 @@ return function(mod)
     local back = ctx.side == "back"
     local stem, shiny = monStem(mon)
     -- Tera film (see teraTypeOf): the battler is passed too, because on gen1 the
-    -- live Tera state is claimed through it.  The Dynamax cloud (dynamaxOf) is
-    -- read the same way.
-    local tera = teraTypeOf(mon, ctx.battler)
-    local cloud = dynamaxOf(mon, ctx.battler)
+    -- live Tera state is claimed through it.
+    local tera = teraTypeOf(mon, ctx.battler, ctx)
     -- A raid boss's gimmick, declared by the layout screen rather than live on
     -- the mon (see declaredGimmickOf).  Fill only what the live read left
     -- empty, so this can never override a real transformation.
     local declared = declaredGimmickOf(ctx)
+    -- The staging hold (see `dynamaxActive` above) is honoured by the DECLARED
+    -- read too.  The scene raises `__g9DynHold` on a battler while its own
+    -- Dynamax grow sequence is playing and drops it on the reveal beat, and a
+    -- DECLARED raid boss is exactly such a sequence now: without this the boss
+    -- would have crept up to full size under the whole transformation it is
+    -- being shown.  A hold is only ever up mid-sequence, so a boss drawn
+    -- outside one is unaffected.
+    local dynHeld = type(ctx.battler) == "table" and ctx.battler.__g9DynHold == true
+    local declaredDyn = (declared and (declared.kind == "dynamax"
+      or declared.kind == "gigantamax") and not dynHeld) or false
     if declared then
-      -- Same option gates as the live reads: TERA ART / DYNAMAX CLOUD off must
-      -- suppress a declared film/cloud too.
-      if not tera and teraArtOn() and declared.kind == "tera" then
+      -- The same option gate as the live read: TERA ART off must suppress a
+      -- declared film too.
+      if not tera and teraArtOn() and declared.kind == "tera"
+          and not teraHoldActive(ctx.battler) then
         tera = teraKeyFor(declared.detail)
       end
-      if not cloud and dynamaxOn()
-          and (declared.kind == "dynamax" or declared.kind == "gigantamax") then
-        cloud = true
-      end
     end
+    -- DYNAMAX GROW: a live Dynamax and a DECLARED Dynamax/Gigantamax raid boss
+    -- both start the ladder -- the declaration is all a wild raid boss has (see
+    -- declaredGimmickOf), and the scene announces it without battle_forms ever
+    -- activating it, so gating the grow on the live read alone would leave every
+    -- declared boss at its ordinary size.  The factor is stamped on the mon AND
+    -- on the battler so the screen drawing this frame can fold it into its own
+    -- blit (see Screen:drawSprite's __g9DynamaxGrow read).
+    GROW.note(mon, dynamaxActive(mon, ctx.battler) or declaredDyn)
+    local grow = GROW.factorFor(mon)
+    mon.__g9DynamaxGrow = grow
+    if type(ctx.battler) == "table" then ctx.battler.__g9DynamaxGrow = grow end
     -- A layout battle screen names the exact pixel box it will draw the pic
     -- into (g9-Battle-Scene passes its own slot rect as ctx.box = {w,h}), plus
     -- the ONE scale the whole field is baked at (ctx.scale, sent by
@@ -4866,7 +5104,7 @@ return function(mod)
       -- native battle seams do, so a layout battle shows front-on sprites too.
       local front = back and opt("battle_frontal", false) ~= false
       local flip = front and opt("battle_front_flip", false) ~= false
-      frames, pending = getBattleFrames(back, shiny, stem, tera, cloud,
+      frames, pending = getBattleFrames(back, shiny, stem, tera,
         boxOverride, divisor, zoom, maxH, fill, scale, natural, front, flip)
     end
     if frames then

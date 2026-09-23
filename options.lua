@@ -162,11 +162,11 @@ return {
     description = "How see-through the TERA ART crystal is. The percentage is how much of the Pokemon's own colours show THROUGH the crystal, and the crystal keeps the rest -- so 30% is the 70/30 crystal-over-sprite blend the effect shipped with. 5% is an almost solid gem; 60% is a sheer, glassy film. Only the opacity of the crystal layer changes: its facet pattern, colours, bevels, rim, glints and sparkles are all untouched. This row only does anything when TERA ART is on.",
   },
   {
-    key = "dynamax_cloud",
-    label = "DYNAMAX CLOUD",
+    key = "dynamax_grow",
+    label = "DYNAMAX GROW",
     type = "toggle",
     default = true,
-    description = "ON (default): a Pokemon that is Dynamaxed or Gigantamaxed right now wears the red Dynamax cloud above its head, like a crown. It is baked into EVERY frame of the animation (never a second draw pass, so it cannot flicker with the frame clock) and it is anchored to the sprite's own head -- sinking far enough that the puffs rest on the head instead of hovering over it -- while a fixed picture box gives the cloud its own band and fits the sheet into the rest, shrinking a sprite only as much as it must; a custom battle screen's natural-size frame simply grows upward instead. The state comes from battle_forms when a Pokemon is really Dynamaxed, or from the declaration a custom battle screen stamps on a wild RAID boss (a Dynamax/Gigantamax raid boss is announced but never mechanically activated, so the screen hands this mod the declared kind); without either (or with no gimmick active) nothing changes. OFF: Dynamaxed and declared-raid Pokemon keep their ordinary art.",
+    description = "ON (default): a Pokemon that starts a Dynamax or Gigantamax grows to x1.5 its own size in four staged steps -- x1.05 over 0.30s, x1.10 over 0.40s, x1.20 over 0.50s, then x1.50 over 0.80s (2.0s in all, then held) -- each step eased on a parabola so the growth leaves the step slowly and lands the next one with the most speed it has. The scale is about the sprite's own feet, so the mon grows in place on its ground line instead of sliding up the screen. When the Dynamax ends, the same ladder plays back DOWN at the very rates it climbed -- same phase durations, same curve, from the size it reached back to x1 -- so a mon that made it to x1.5 takes the same 2.0s to shrink back and never snaps to its ordinary size. Every battle screen is covered: Gen 1's own draw call is scaled, Gen 2's picScale is multiplied, and a custom battle screen folds the factor this mod stamps on the battler into its own blit. A wild raid boss announced but never activated by battle_forms grows too. The persistent Dynamax visuals -- the darkened field and the red aura -- belong to the battle scene (see g9-Battle-Scene's DYNAMAX DARKEN / DYNAMAX AURA rows), which reads this mod's live Dynamax state. OFF: Dynamaxed Pokemon keep their ordinary size.",
   },
   {
     key = "battle_shadows",
