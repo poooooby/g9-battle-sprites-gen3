@@ -17,9 +17,15 @@
 --   resampled once to the exact battle-pic box and cached as an Image.
 --
 -- LOOKUP (per battle pic)
---   1. national_dex species id (+ gender + shiny) -> a DBK sheet stem
+--   1. the running game's species id (+ gender + shiny) -> a DBK sheet stem
 --      (data/dbk_data.lua maps every species id to its stem; unknown forms fall
---      back to their base species).
+--      back to their base species).  The dex this resolves against is whatever
+--      the RUNNING game has: national_dex is OPTIONAL (an ordering-only
+--      optional_dependencies entry, never required), so a species only
+--      national_dex knows simply never reaches a lookup, and a species the
+--      base cart has resolves exactly the same way.  Every lookup is keyed off
+--      a live mon -- or a dex entry the game is showing -- so sprites are only
+--      ever applied to species present in the available dex.
 --   2. <mod>/assets/<front|front_shiny|back|back_shiny>/<STEM>.png -- the mod's
 --      own assets/ folder, and the ONLY source.  A sheet that is not installed
 --      there simply leaves the vanilla pic untouched: there is no network
@@ -127,7 +133,10 @@
 --         draw path -- faint slides, send-out grow, squish/blink all keep
 --         working), forces resolveBattleScale -> 1 for managed species, and
 --         marks the drawn rect true-colour (PaletteFX.markTrueColor) so the
---         SGB/GBC zone pass leaves it alone.
+--         SGB/GBC zone pass leaves it alone.  The Pokemon Tower ghost is the
+--         one enemy left out: while the engine's ghost disguise is up
+--         (battle.ghost / scopeReveal / ghostReveal) the pack paints nothing
+--         over it and hands it the engine's own scale (see ghostEncounter).
 --   gen2: wraps src.ui.gen2.BattleState:pic to return the current frame Image
 --         with trueColor = true (Gold draws a trueColor pic raw), picScale -> 1
 --         for managed species, and frontAnimFrame -> nil so Crystal's own
@@ -1854,6 +1863,9 @@ return function(mod)
       -- PORTRAIT: scan only frame 1's columns and skip the floater padding, so
       -- the bake covers exactly that frame's own content (see beginBuild).
       portrait = sheet.portrait and true or false,
+      -- PORTRAIT: each source row's own opaque WIDTH, accumulated by the scan
+      -- for the head rule (see headSkip).  Only a portrait bake pays for it.
+      wrow = sheet.portrait and {} or nil,
       back = sheet.back, stem = sheet.stem,
       -- 3DB FLIP (option): mirror every baked frame across its vertical axis
       -- (see buildOneFrame).  Read once per sheet here, like every other bake
@@ -1869,6 +1881,7 @@ return function(mod)
       fdx = 0, fdy = 0,
     }
     sheet.frames = nil
+    if sheet.portrait then sheet.headTop = nil end
     sheet.status = "building"
     return true
   end
@@ -1882,6 +1895,10 @@ return function(mod)
     -- box rather than every frame's (see beginBuild).
     local xLast = b.portrait and (fw - 1) or (W - 1)
     for y = b.row, last do
+      -- PORTRAIT: this row's own horizontal extent, for the head rule (see
+      -- headSkip) -- a decoration is a leading run of rows TALLER than it is
+      -- wide, so the rule needs each row's width, not just the union box.
+      local rmn, rmx
       for x = 0, xLast do
         local a = select(4, id:getPixel(x, y))
         if a and a > 0 then
@@ -1890,6 +1907,10 @@ return function(mod)
           if lx > x1 then x1 = lx end
           if y < y0 then y0 = y end
           if y > y1 then y1 = y end
+          if b.wrow then
+            if rmn == nil or lx < rmn then rmn = lx end
+            if rmx == nil or lx > rmx then rmx = lx end
+          end
           -- ANIMATION RIDE: this pixel's own frame (the sheet is a horizontal
           -- strip) and its contribution to that frame's content centroid.  The
           -- bake turns the per-frame centroid drift into a rigid offset for the
@@ -1900,9 +1921,67 @@ return function(mod)
           b.fn[fi] = (b.fn[fi] or 0) + 1
         end
       end
+      if b.wrow and rmx then b.wrow[y] = rmx - rmn + 1 end
     end
     b.row = last + 1
     b.x0, b.y0, b.x1, b.y1 = x0, y0, x1, y1
+  end
+
+  -- The leading HEAD DECORATION of a portrait frame, in source rows from the
+  -- creature's own top -- 0 when the frame's top IS its head (see frontArt's
+  -- 5th value; g9-gui offsets its portrait window by it).
+  --
+  -- The pack trims each frame to the creature, but a big head DECORATION -- a
+  -- blade, a leek, a hilt, a shield's spike -- is part of the silhouette, so it
+  -- sits at the TOP of that trim and a portrait window anchored to the top
+  -- fills with the decoration while the FACE is cut off below it.  Which
+  -- frames have one is read from the ART, never a species list: the scan has
+  -- every row's own width (`wrow`), so a leading run of rows is a decoration
+  -- when the first row that reaches a QUARTER of the creature's own widest row
+  -- lies BELOW a run that is TALLER than it is wide -- a vertical spike.
+  --
+  -- A HEAD is not a spike: it reaches a real share of the creature's width
+  -- within a few rows, so its leading run is WIDER than it is tall and nothing
+  -- moves.  That is exactly what keeps a genuinely TALL creature -- Eternatus,
+  -- Lapras, Wailord, whose head sits at the very top of the sheet -- from
+  -- being mistaken for a decorated one: Eternatus' head is 33 of its 89 px by
+  -- row 12, Lapras' 26 of 62 by row 2, Wailord's 52 of 86 by row 16, so all
+  -- three answer 0.  Lugia (13 rows above a 20-wide crown), Kyurem (12/14),
+  -- Samurott (12/12) and Zacian (11/18) are wider than tall the same way.
+  --
+  -- The spike must also be a real part of the creature -- at least a FIFTH of
+  -- the frame's own height (cap * 5 >= n, kept in integers) -- because the pack
+  -- also has short narrow TIPS that are not decorations at all: Pikachu's 6-row
+  -- 5px ear tips on a 46-row frame, Onix's 7-row 4px rock tip on a 73-row one.
+  -- Both are taller than they are wide, but neither is a "large head
+  -- decoration", and sliding the window down for them would crop the ears of a
+  -- Pokemon whose top IS its head.  Measured against the real pack, the rule
+  -- fires on exactly the decorated frames -- Sirfetchd's 37-row leek (42% of
+  -- the frame), Kingambit's 29-row blade (32%), Aegislash's hilt (17 rows,
+  -- 21%, on both its forms) -- and on nothing else of any size: Eternatus,
+  -- Lapras, Wailord, Dragonite, Milotic, Lugia, Giratina and Alakazam answer 0,
+  -- and so do the small tips above.
+  local function headSkip(wrow, y0, y1)
+    local n = y1 - y0 + 1
+    if n < 6 then return 0 end
+    local maxS = 0
+    for y = y0, y1 do
+      local v = wrow[y] or 0
+      if v > maxS then maxS = v end
+    end
+    if maxS <= 0 then return 0 end
+    -- the first row that is at least a quarter of the widest row (span * 4 >=
+    -- maxS keeps it in integers), and the widest row above it
+    local cap, capW = n, 0
+    for i = 0, n - 1 do
+      local v = wrow[y0 + i] or 0
+      if v * 4 >= maxS then cap = i break end
+      if v > capW then capW = v end
+    end
+    -- a spike, not a head: taller than it is wide, no one/two-row jag, and big
+    -- enough to be a decoration rather than an ear or a rock tip (see above)
+    if cap >= 3 and cap > capW and cap * 5 >= n then return cap end
+    return 0
   end
 
   local function setupFrames(b)
@@ -2852,10 +2931,15 @@ return function(mod)
     if b.phase == "scan" then
       scanChunk(b, SCAN_ROWS)
       if b.row < b.H then return false end
+      if b.wrow then b.headTop = headSkip(b.wrow, b.y0, b.y1) end
       if not setupFrames(b) then
         finishFailed(sheet, "sheet has no opaque pixels")
         return true
       end
+      -- PORTRAIT: publish the head decoration's height for frontArt's callers
+      -- (see headSkip).  Stored on the SHEET, so it survives the frame bake and
+      -- is answered by every later frontArt call for the cached sheet.
+      if b.headTop and b.headTop > 0 then sheet.headTop = b.headTop end
       return false
     end
     if buildOneFrame(sheet) then
@@ -3028,10 +3112,11 @@ return function(mod)
   -- flash a trainer's send-out used to show for the mon's first frames --
   -- without ever hiding a mon the pack does not manage.
   --
-  -- NB: getFrames has TWO return values, so call it in its own statement: the
+  -- NB: getFrames has THREE return values, so call it in its own statement: the
   -- expression `stem and getFrames(...)` truncates the call to ONE value and
   -- `pending` is silently lost (which reads as "not pending" and lets the
-  -- vanilla pic through). Every call site below guards the stem separately.
+  -- vanilla pic through) and the SHEET -- the only carrier of headTop, see
+  -- headSkip -- goes with it. Every call site below guards the stem separately.
   local function getFrames(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip, portrait)
     if not stem then return nil, false end
     local key = sheetKey(back, shiny, stem, boxOverride, divisor, zoom, maxH, fill, scale, natural, tera, shadow, front, flip, portrait)
@@ -3051,7 +3136,7 @@ return function(mod)
     if sheet.status == "new" then sheetStart(sheet) end
     if sheet.status == "ready" then
       sheet.lastUsed = frameCounter
-      return sheet.frames, false
+      return sheet.frames, false, sheet
     end
     if sheet.status == "local" or sheet.status == "building" then
       -- A caller is waiting on this sheet, so mark it HOT: stepBuilds() will
@@ -3066,9 +3151,9 @@ return function(mod)
       -- sheet is done.  buildOneFrame appends straight onto sheet.frames, so
       -- the partial array is a valid -- if shorter -- animation.
       if sheet.status == "building" and sheet.frames and sheet.frames[1] then
-        return sheet.frames, false
+        return sheet.frames, false, sheet
       end
-      return nil, true
+      return nil, true, sheet
     end
     return nil, false
   end
@@ -3186,6 +3271,43 @@ return function(mod)
     end
   end
 
+  -- ---------------------------------------------------------------------------
+  -- The Pokemon Tower ghost (gen 1)
+  -- ---------------------------------------------------------------------------
+  -- Until the Silph Scope is in the bag, every wild battle in the tower -- and
+  -- the scripted ghost MAROWAK -- is fought against a "GHOST": the engine swaps
+  -- the enemy's name and pic for its own assets/generated/battle/front/ghost.png
+  -- and keeps the mon underneath hidden behind that picture (BattleState's
+  -- private disguiseAsGhost, reached through :makeGhost without the scope and
+  -- :makeUnveiledGhost with it).  Painting the pack's sheet over that disguise
+  -- would defeat the encounter -- being unable to tell what is underneath is
+  -- the whole point of it, and in the vanilla game the real sprite stays masked
+  -- until the Scope is held -- so every seam that would substitute a sheet asks
+  -- this first and hands the engine's own ghost pic straight through.
+  --
+  -- The read is deliberately SPECIES-BLIND.  A randomizer is free to replace
+  -- whatever the disguise hides (the shipped g9-battle-sample randomizes the
+  -- tower's wilds too, and any other randomizer may do the same), so keying on
+  -- a Marowak -- or on any species -- would both miss a randomized ghost and,
+  -- worse, paint over an ordinary Marowak fought somewhere else.  These are the
+  -- engine's OWN disguise bookkeeping fields, set by nothing else:
+  --   battle.ghost        :makeGhost -- no Scope; the mon only flees, never
+  --                       attacks, and balls fail (IsGhostBattle).
+  --   battle.scopeReveal  :makeUnveiledGhost -- the Scope is held; the reveal
+  --                       (queueScopeReveal -> ghostReveal) plays, and the
+  --                       engine clears scopeReveal the instant the reveal
+  --                       ends, so the real mon gets the pack's art again after.
+  --   battle.ghostReveal  the flash/fade itself; kept alongside scopeReveal for
+  --                       a build that parks one without the other.
+  -- `ghostReal` is deliberately NOT read: disguiseAsGhost sets it and nothing
+  -- clears it, so it stays truthy for the rest of the battle -- including after
+  -- a Scope reveal, when the real mon SHOULD be shown in the pack's art.
+  local function ghostEncounter(battle)
+    if type(battle) ~= "table" then return false end
+    return (battle.ghost == true or battle.scopeReveal == true
+      or battle.ghostReveal ~= nil) and true or false
+  end
+
   local function installGen1()
     local ok, BattleState = pcall(require, "src.battle.BattleState")
     if not (ok and type(BattleState) == "table"
@@ -3196,13 +3318,33 @@ return function(mod)
     BattleState.__g9BattleSprites = true
     GEN = 1
 
+    -- Up while a drawPicsLayer call is drawing the tower's ghost disguise on the
+    -- enemy side, so the scale wrap below hands the ghost pic the ENGINE's own
+    -- scale instead of the mod's 1 (our frames are pre-baked; the engine's ghost
+    -- pic is not). Set for one call only and cleared in a pcall, so a vanilla
+    -- error can never leave it stuck on.  See ghostEncounter.
+    local ghostFront = false
     local vanillaLayer = BattleState.drawPicsLayer
     function BattleState:drawPicsLayer(...)
       if wantEnabled() then
-        ensureBattler(self.enemy, false)
+        local ghost = ghostEncounter(self)
+        ghostFront = ghost
+        if ghost then
+          -- The enemy pic is the engine's own ghost image -- leave it exactly
+          -- as it is, and clear the frame stamp so the drawBattlerPic wrap
+          -- below stays out of it too (nothing to true-colour mark).
+          if type(self.enemy) == "table" then self.enemy.__g9bsFrame = nil end
+        else
+          ensureBattler(self.enemy, false)
+        end
         ensureBattler(self.player, true)
+      else
+        ghostFront = false
       end
-      return vanillaLayer(self, ...)
+      local ok, r1, r2, r3 = pcall(vanillaLayer, self, ...)
+      ghostFront = false
+      if not ok then error(r1, 0) end
+      return r1, r2, r3
     end
 
     -- Our frames are pre-baked to the on-screen box, so the pic scale is 1
@@ -3210,7 +3352,8 @@ return function(mod)
     local vanillaScale = BattleState.resolveBattleScale
     if type(vanillaScale) == "function" then
       BattleState.resolveBattleScale = function(data, side, path, species, ...)
-        if wantEnabled() and species and managedSpecies[species] then
+        if wantEnabled() and not (ghostFront and side == "front")
+          and species and managedSpecies[species] then
           return 1
         end
         return vanillaScale(data, side, path, species, ...)
@@ -4382,6 +4525,22 @@ return function(mod)
     return quadsFor(cell + f), atlas, 1
   end
 
+  -- The atlas frame offset for an icon cell: the LIVE frame (this mod's own
+  -- animation clock, see frameIndex) when no frame is asked for, else the
+  -- requested 0-based one wrapped into the pack's frame count.  g9-gui's
+  -- PARTY PORTRAITS animation asks for an explicit frame so it can run its own
+  -- one-second-per-frame cadence -- independent of this mod's own FPS and of
+  -- whether this mod animates its battle sprites at all -- and get that exact
+  -- frame's box back with it.
+  local function iconFrameOf(frame)
+    if type(frame) == "number" then
+      local f = math.floor(frame) % ICON_FRAMES
+      if f < 0 then f = f + ICON_FRAMES end
+      return f
+    end
+    return frameIndex(ICON_FRAMES) - 1
+  end
+
   -- The SAME high-resolution frames, but always -- not gated on G9 PARTY
   -- SCREEN.  ANOTHER screen wants the pack's art for a portrait card without
   -- turning that option on: g9-gui's party roster calls this through
@@ -4394,7 +4553,11 @@ return function(mod)
   -- nil when the pack has no icon for this Pokemon or the atlas could not be
   -- decoded -- the atlas is decoded lazily, so the first call can answer nil
   -- and the caller's next frame gets the art.
-  mod.exports.iconArtHD = function(mon)
+  -- `frame` (optional, 0-based) selects ONE of the pack's two frames per icon
+  -- instead of the live one, and the box answered is that frame's own box; a
+  -- caller that wants a still portrait or its own animation clock (g9-gui's
+  -- PARTY PORTRAITS / PORTRAIT ANIMATION rows) passes it.
+  mod.exports.iconArtHD = function(mon, frame)
     if type(mon) ~= "table" then return nil end
     if mon.isEgg == true then
       local q, img, w, h = eggArt()
@@ -4405,7 +4568,7 @@ return function(mod)
     local cell = iconCell(mon)
     if not cell then return nil end
     if not ensureG9Atlas() then return nil end
-    local index = cell + frameIndex(ICON_FRAMES) - 1
+    local index = cell + iconFrameOf(frame)
     return g9QuadsFor(index), g9Atlas, G9_HD_CELL, g9ContentBox(index)
   end
 
@@ -4416,10 +4579,10 @@ return function(mod)
   -- the same core.update budget as every battle sheet, so the FIRST call
   -- usually answers `nil, pending` (the bake has not finished) and a later
   -- frame gets the Image -- exactly like iconArtHD's lazy atlas decode.
-  -- Answers (image, width, height, box): the image is the sheet's FIRST FRAME
-  -- trimmed to ITS OWN content box at 1:1 (see getFrames' portrait flag), so a
-  -- caller cropping the head can treat the image's top edge as the creature's
-  -- top edge.  `box` is that content box inside the image -- always
+  -- Answers (image, width, height, box, head): the image is the sheet's FIRST
+  -- FRAME trimmed to ITS OWN content box at 1:1 (see getFrames' portrait flag),
+  -- so a caller cropping the head can treat the image's top edge as the
+  -- creature's top edge.  `box` is that content box inside the image -- always
   -- {0, 0, width, height}, the whole Image, because the trim IS the content --
   -- and it is answered so a caller can tell this portrait bake (trimmed to the
   -- frame) apart from an older copy's whole-animation union bake, which answers
@@ -4429,6 +4592,14 @@ return function(mod)
   -- and a card cropping from the top landed on blank rows.  A species the pack
   -- has no sheet for keeps answering nil, so the caller falls back to the
   -- engine's own front pic.
+  --
+  -- `head` (5th value) is the height, in source rows from the image's own top,
+  -- of a leading head DECORATION -- a blade, a leek, a hilt -- or 0 when the
+  -- frame's top IS the creature's head.  It is measured from the art itself
+  -- (see headSkip), never a species list, so a caller can start its portrait
+  -- window BELOW the decoration and show the face: a caller that ignores the
+  -- extra value keeps the old top-anchored crop, and an OLDER copy of this mod
+  -- answers four values and leaves `head` nil.
   mod.exports.frontArt = function(mon)
     if type(mon) ~= "table" then return nil end
     if mon.isEgg == true then
@@ -4441,17 +4612,18 @@ return function(mod)
     end
     local stem, shiny = monStem(mon)
     if not stem then return nil end
-    -- getFrames has TWO return values: keep the call in its own statement so
-    -- `pending` is not silently truncated away.  `portrait` (the trailing true)
-    -- bakes frame 1 alone, trimmed to itself.
-    local frames, pending = nil, false
-    frames, pending = getFrames(false, shiny, stem, nil, nil, nil, nil, nil, 1, true,
+    -- getFrames has THREE return values: keep the call in its own statement so
+    -- `pending` and the sheet are not silently truncated away.  `portrait` (the
+    -- trailing true) bakes frame 1 alone, trimmed to itself.
+    local frames, pending, sheet = nil, false, nil
+    frames, pending, sheet = getFrames(false, shiny, stem, nil, nil, nil, nil, nil, 1, true,
       nil, nil, nil, nil, true)
     if not frames or not frames[1] then return nil, pending end
     local img = frames[1]
     local w, h = img:getDimensions()
     if not w or not h or w <= 0 or h <= 0 then return nil end
-    return img, w, h, { x = 0, y = 0, w = w, h = h }
+    return img, w, h, { x = 0, y = 0, w = w, h = h },
+      (sheet and sheet.headTop) or 0
   end
 
   -- The pack's FRONT battle art for one Pokemon, ALWAYS ON, as the LIVE
@@ -4498,12 +4670,18 @@ return function(mod)
   end
 
   -- The pack's SMALL 16x16 party-icon cell, ALWAYS ON (the same always-on
-  -- reasoning as frontArt).  g9-gui's "icons" portrait mode wants the pack's
-  -- own assets/icons/party_icons.png, not the HD party cell the g9 screen uses.
+  -- reasoning as frontArt) -- the pack's frames point-sampled 4:1.  g9-gui's
+  -- "icons" portrait mode draws the HD cell above at its own real size and
+  -- falls back to this atlas only when no HD cell is available; the small art
+  -- is still the right source for a caller that wants a 16x16 icon, so it
+  -- stays published.
   -- Answers (quadTable, image, cellPixels) -- the quad table carries `full`
   -- (the cell's 16x16 frame) so the caller can take it -- or nil when the pack
   -- has no icon for this Pokemon or the atlas could not be decoded.
-  mod.exports.iconArt16 = function(mon)
+  -- `frame` (optional, 0-based) selects a specific frame instead of the live
+  -- one, the same contract as iconArtHD's; g9-gui passes it so a small-atlas
+  -- fallback portrait can hold a still frame or run its own one-second clock.
+  mod.exports.iconArt16 = function(mon, frame)
     if type(mon) ~= "table" then return nil end
     if mon.isEgg == true then
       local q, img = eggQuads()
@@ -4514,7 +4692,7 @@ return function(mod)
     local cell = iconCell(mon)
     if not cell then return nil end
     if not ensureAtlas() then return nil end
-    local index = cell + frameIndex(ICON_FRAMES) - 1
+    local index = cell + iconFrameOf(frame)
     return quadsFor(index), atlas, ICON_CELL
   end
   -- A classic state's SGB zone list is in ITS own 160x144 pixels, so a state
@@ -5136,30 +5314,36 @@ return function(mod)
   -- that answers "did the mod even see my sheets?" -- a zero here means the
   -- sheets are not where the mod reads, and no amount of species resolution
   -- will find anything.
-  local function assetCount(folder)
-    if type(mod.list) ~= "function" then return nil end
-    local ok, names = pcall(mod.list, mod, "assets/" .. folder)
-    if not ok or type(names) ~= "table" then return nil end
-    local n = 0
-    for _, name in ipairs(names) do
-      if type(name) == "string" and name:sub(-4):lower() == ".png" then
-        n = n + 1
+  -- NB: the whole census lives in its own block, so its six locals die with it.
+  -- This factory runs against LuaJIT's HARD limit of 200 local variables per
+  -- function and sits just under it, so every factory-level local is budgeted:
+  -- a new one has to be paid for by scoping an existing group down like this.
+  do
+    local function assetCount(folder)
+      if type(mod.list) ~= "function" then return nil end
+      local ok, names = pcall(mod.list, mod, "assets/" .. folder)
+      if not ok or type(names) ~= "table" then return nil end
+      local n = 0
+      for _, name in ipairs(names) do
+        if type(name) == "string" and name:sub(-4):lower() == ".png" then
+          n = n + 1
+        end
       end
+      return n
     end
-    return n
-  end
-  local cFront, cFrontS = assetCount("front"), assetCount("front_shiny")
-  local cBack, cBackS = assetCount("back"), assetCount("back_shiny")
-  local cShadow = assetCount("shadow")
-  diag.census.front = cFront or 0
-  diag.census.front_shiny = cFrontS or 0
-  diag.census.back = cBack or 0
-  diag.census.back_shiny = cBackS or 0
-  diag.census.shadow = cShadow or 0
-  if cFront ~= nil then
-    mod.log:info("g9-battle-sprites: local assets -- front %d, front_shiny %d, "
-      .. "back %d, back_shiny %d, shadow %d",
-      cFront, cFrontS or 0, cBack or 0, cBackS or 0, cShadow or 0)
+    local cFront, cFrontS = assetCount("front"), assetCount("front_shiny")
+    local cBack, cBackS = assetCount("back"), assetCount("back_shiny")
+    local cShadow = assetCount("shadow")
+    diag.census.front = cFront or 0
+    diag.census.front_shiny = cFrontS or 0
+    diag.census.back = cBack or 0
+    diag.census.back_shiny = cBackS or 0
+    diag.census.shadow = cShadow or 0
+    if cFront ~= nil then
+      mod.log:info("g9-battle-sprites: local assets -- front %d, front_shiny %d, "
+        .. "back %d, back_shiny %d, shadow %d",
+        cFront, cFrontS or 0, cBack or 0, cBackS or 0, cShadow or 0)
+    end
   end
 
   local function count(t)
@@ -5194,7 +5378,7 @@ return function(mod)
     add("g9-battle-sprites DIAG")
     if total == 0 then
       add("!! NO PNG IN assets/ !!")
-      add("run download_assets.py")
+      add("reinstall -- sheets missing")
     elseif diag.stats.ready == 0 then
       add("PNG found, 0 sheets ready")
     end
@@ -5281,5 +5465,6 @@ return function(mod)
     .. "%d female variants; %d local sheets",
     tag,
     count(DATA.species), count(DATA.stems), count(DATA.female),
-    (cFront or 0) + (cFrontS or 0) + (cBack or 0) + (cBackS or 0))
+    diag.census.front + diag.census.front_shiny
+      + diag.census.back + diag.census.back_shiny)
 end

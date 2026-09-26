@@ -1,7 +1,7 @@
 {
   "id": "g9-battle-sprites",
   "name": "G9 Battle Sprites",
-  "version": "3.3.2",
+  "version": "3.6.2",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
@@ -15,10 +15,9 @@
   "permissions": [
     "engine_internals"
   ],
-  "dependencies": [
-    "national_dex"
-  ],
+  "dependencies": [],
   "optional_dependencies": [
+    "national_dex",
     "g9-battle-engine",
     "g9-Battle-Scene"
   ],
