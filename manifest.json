@@ -1,14 +1,12 @@
 {
-  "id": "g9-battle-sprites",
-  "name": "G9 Battle Sprites",
-  "version": "3.6.2",
+  "id": "g9-battle-sprites-gen3",
+  "name": "G9 Battle Sprites (Gen 3)",
+  "version": "1.0.0",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
-  "game_version": ">=0.1.45",
   "games": [
-    "gen1",
-    "gen2"
+    "gen3"
   ],
   "category": "OTHER",
   "priority": 250,
@@ -17,19 +15,14 @@
   ],
   "dependencies": [],
   "optional_dependencies": [
-    "national_dex",
-    "g9-battle-engine",
-    "g9-Battle-Scene"
+    "national_dex_gen3"
   ],
-  "dependency_sources": {
-    "g9-battle-engine": "https://github.com/tectorifter/Gen9Dex",
-    "national_dex": "https://github.com/sanjinpepic/gen1recomp-national-dex",
-    "g9-Battle-Scene": "https://github.com/tectorifter/g9-battle-scenes"
-  },
-  "description": "True-colour animated battle sprites for the whole national dex.",
-  "options_schema": "options.lua",
-  "experimental": false,
-  "github": "https://github.com/tectorifter/g9-battle-sprites",
   "conflicts": [],
-  "incompatible": []
+  "incompatible": [],
+  "description": "Animated, true-colour battle, Pokedex and summary pics and party icons for National Dex species #387-1025 on FireRed, LeafGreen, Ruby, Sapphire and Emerald. Gen 4-9 only: species #1-386 keep the game's own sprites. Drawn from packed atlases.",
+  "experimental": true,
+  "github": "poooooby/g9-battle-sprites-gen3",
+  "dependency_sources": {
+    "national_dex_gen3": "https://github.com/poooooby/national_dex_gen3"
+  }
 }
