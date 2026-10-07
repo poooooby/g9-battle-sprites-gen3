@@ -91,16 +91,36 @@ function Atlas.new(mod, load)
     return math.floor(love.timer.getTime() * PIC_FPS) % n
   end
 
+  -- Canvas creation can fail on a platform/GPU this was never tried on (an
+  -- unsupported size or the dpiscale option, say). Logged once; after that,
+  -- every pic for #387-1025 quietly falls back to the game's own sprite
+  -- instead of erroring out of the draw loop.
+  local canvasFailed = false
+  local function warnCanvas(where, err)
+    if canvasFailed then return end
+    canvasFailed = true
+    if mod.log then
+      mod.log:warn("could not create a canvas for atlas pics (%s): %s -- species "
+        .. "#387-1025 will show the game's own sprites instead", where, tostring(err))
+    end
+  end
+
   -- Halves the source until it is within 2x of the detailed box, one 2x2
   -- average per halving, so every pixel of the source contributes. A single
   -- bilinear step from a much larger frame samples only 2x2 of each block and
-  -- reads as nearest-neighbour. Returns the (image, quad, w, h) to draw from.
+  -- reads as nearest-neighbour. Returns the (image, quad, w, h) to draw from,
+  -- or nil when canvas creation fails.
   local function reduce(img, quad, w, h)
     local tmp = {}
     local box = PIC_BOX * PIC_SCALE
     while w / 2 >= box and h / 2 >= box do
       local nw, nh = math.floor(w / 2), math.floor(h / 2)
-      local c = love.graphics.newCanvas(nw, nh)
+      local ok, c = pcall(love.graphics.newCanvas, nw, nh)
+      if not ok then
+        warnCanvas("reduce", c)
+        for _, t in ipairs(tmp) do t:release() end
+        return nil
+      end
       c:setFilter("linear", "linear")
       local prev = love.graphics.getCanvas()
       love.graphics.setCanvas(c)
@@ -136,13 +156,19 @@ function Atlas.new(mod, load)
       fs, fs, img:getDimensions())
     local fw, fh = fs, fs
     local src, sq, w, h, temps = reduce(img, quad, fw, fh)
+    if not src then return nil end
     -- the canvas is PIC_SCALE times the box in pixels, but drawing on a dpiscale
     -- canvas uses the logical box, so layout below is in PIC_BOX units
     -- 1:1 with the game's pixel grid (the atlas already holds game pixels), so a
     -- small species stays small; only a sprite larger than the box is reduced
     local s = math.min(1, PIC_BOX / w, PIC_BOX / h)
-    local canvas = love.graphics.newCanvas(PIC_BOX * PIC_SCALE, PIC_BOX * PIC_SCALE,
+    local okC, canvas = pcall(love.graphics.newCanvas, PIC_BOX * PIC_SCALE, PIC_BOX * PIC_SCALE,
       { dpiscale = PIC_SCALE })
+    if not okC then
+      warnCanvas("picFrame", canvas)
+      for _, t in ipairs(temps) do t:release() end
+      return nil
+    end
     -- nearest, as the game draws its own pics: linear here blurs the sprite
     canvas:setFilter("nearest", "nearest")
     local prev = love.graphics.getCanvas()
