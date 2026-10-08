@@ -3,3 +3,4 @@
 # every FILE is listed). Add a line here for each file added under tools/ or tests/.
 tests/hooks_test.lua
 tools/build_atlas.py
+tests/atlas_layout_test.lua

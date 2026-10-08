@@ -22,6 +22,21 @@ species #387–1025 to draw).
 | Party summary front pic | animated sheet | the game's own |
 | Party list icon | two-frame 32×32 icon | the game's own |
 
+Back (player-side) pics are a close-up, like the built-in ones: the Pokémon is
+shown at full size, never shrunk to fit, centred on the pic box, with whatever
+overflows cut off at the bottom (the battle screen's text box covers it). Small
+Pokémon are shown whole with their feet on the bottom edge. The engine's pic box
+is 64×64, but a wide Pokémon (wings, a long tail) is not cropped to it: its pic is
+rendered into a canvas big enough for its whole animation (up to 96 px past the box
+in any direction, `BACK_WIDE_MAX` in `src/atlas.lua`), so a head that swings above
+its usual pose or a wing tip is never cut by the canvas; only the battle screen's own
+text box covers what falls below, and the engine's draw call is pointed at that
+canvas's centre by a small wrap on `love.graphics.draw` that only touches these
+canvases. If the wrap can't be installed (`BACK_WIDE = false` does the same), a
+giant is instead reduced just far enough to keep 70% of its width in view. The
+build records where each Pokémon sits inside its frame (`cx0, cy0, cx1, cy1` in
+`data/atlas_index.lua`) so empty margins around it don't leave it floating.
+
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
 
@@ -41,7 +56,7 @@ and the engine shows a red missing-pic box.
   records the block's corner (`ox`, `oy`).
 - `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species, one page.
   Forms and variants are not packed; the Pokédex and summary use the front pic.
-- `data/atlas_index.lua`: maps each species to its cells.
+- `data/atlas_index.lua`: maps each species to its cells (and, for back pics, where the Pokémon sits in its frame).
 
 The atlases are built from the third-party DBK sprite pack and the "icones
 animados" icon pack. The source packs are not in this repo. Artist credits are

@@ -18,6 +18,98 @@ local PIC_SCALE = 4         -- detail: canvases are PIC_BOX * PIC_SCALE pixels, 
 local PIC_FPS = 8           -- animation rate of the sheets, frames per second
 local CANVAS_CAP = 128      -- most rendered pic frames kept at once
 
+-- Back (player-side) pics are a close-up: the creature at full size, not shrunk to
+-- fit, with whatever overflows the box cut off at the bottom (the battle GUI
+-- covers it).
+--
+-- WIDE: the engine draws a battle pic with its centre (32, 32) at the battler's spot
+-- and nothing limits how far the image extends to the right or down, but it cannot
+-- extend left of x = 0 or above y = 0, so a wide or tall creature (wings, a head that
+-- swings up) would be cropped at the box edges. So the pic is rendered into a canvas
+-- big enough for the creature's whole animation, and the engine's draw call is told
+-- where that canvas's centre is (see installDrawWrap): nothing is cut off by the
+-- canvas, and what falls below the box is covered by the battle GUI as it is for the
+-- built-in pics. Without the wrap (it could not be installed) a giant is reduced just
+-- enough to keep BACK_MIN_W of its width in view and cropped to the box instead.
+local BACK_WIDE = true
+local BACK_WIDE_MAX = 96     -- most px the canvas grows past the box in any direction
+local BACK_MIN_W = 0.7       -- (no WIDE) at least this share of the creature's width stays visible
+local BACK_MIN_H = 0.5       -- ... and this share of its height
+local BACK_RAISE = 4         -- px every back pic is lifted, to sit on the platform as the built-in ones do
+
+--- Where a back pic's frame goes in the PIC_BOX x PIC_BOX box: scale `s` and the
+--- frame's top-left (`ox`, `oy`), in box px, plus the canvas's extent `xmin`, `xmax`,
+--- `ymin`, `ymax` in box px (0 .. PIC_BOX unless `wide`). `cell` carries the
+--- creature's typical box in its frame (cx0, cy0, cx1, cy1, source px; what it is
+--- anchored on) and its box over the whole animation (ux0, uy0, ux1, uy1; how much
+--- room it needs), both written by tools/build_atlas.py; an older index without them
+--- falls back to the whole frame. Pure.
+function Atlas.backLayout(cell, wide)
+  local fs = cell.fs or PIC_BOX
+  local x0, y0 = cell.cx0 or 0, cell.cy0 or 0
+  local x1, y1 = cell.cx1 or fs, cell.cy1 or fs
+  local cw, ch = math.max(1, x1 - x0), math.max(1, y1 - y0)
+  local s
+  if wide then
+    s = 1
+  else
+    s = math.min(1, PIC_BOX / (BACK_MIN_W * cw), PIC_BOX / (BACK_MIN_H * ch))
+  end
+  -- centred on the creature
+  local ox = PIC_BOX / 2 - s * (x0 + x1) / 2
+  local oy
+  if ch * s >= PIC_BOX then
+    oy = -s * y0                 -- top at the box top: the overflow is cut at the bottom
+  else
+    oy = PIC_BOX - s * y1        -- fits whole: feet on the box bottom
+  end
+  oy = oy - BACK_RAISE
+  local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
+  if wide then
+    local u0, v0 = cell.ux0 or x0, cell.uy0 or y0
+    local u1, v1 = cell.ux1 or x1, cell.uy1 or y1
+    local m = BACK_WIDE_MAX
+    xmin = math.max(-m, math.min(0, math.floor(ox + s * u0)))
+    xmax = math.min(PIC_BOX + m, math.max(PIC_BOX, math.ceil(ox + s * u1)))
+    ymin = math.max(-m, math.min(0, math.floor(oy + s * v0)))
+    ymax = math.min(PIC_BOX + m, math.max(PIC_BOX, math.ceil(oy + s * v1)))
+  end
+  return s, ox, oy, xmin, xmax, ymin, ymax
+end
+
+-- canvases that are wider than the box -> where the engine's pivot (32, 32) is in them
+local pivots = setmetatable({}, { __mode = "k" })
+local wrapState = nil        -- nil = not tried, true = installed, false = unavailable
+
+--- The engine draws a battle pic with `love.graphics.draw(image, x, y, r, sx, sy,
+--- 32, 32)`. For one of our wide canvases the pivot is somewhere else, so that
+--- call's origin is swapped for the canvas's own; every other draw passes through.
+--- Installed once, only when a wide canvas is first needed. Returns whether it is
+--- in place.
+local function installDrawWrap()
+  if wrapState ~= nil then return wrapState end
+  local g = love and love.graphics
+  local real = g and g.draw
+  if type(real) ~= "function" then
+    wrapState = false
+    return false
+  end
+  local half = PIC_BOX / 2
+  local ok = pcall(function()
+    g.draw = function(img, a, b, c, d, e, f, h, i, ...)
+      local pivot = pivots[img]
+      if pivot and type(a) == "number" and f == half and h == half then
+        return real(img, a, b, c, d, e, pivot[1], pivot[2], i, ...)
+      end
+      return real(img, a, b, c, d, e, f, h, i, ...)
+    end
+  end)
+  wrapState = ok
+  return ok
+end
+
+Atlas._pivots, Atlas._installDrawWrap = pivots, installDrawWrap -- for the tests
+
 local function loadIndex(load)
   local index = load("data/atlas_index.lua")
   if type(index) ~= "table" or type(index.species) ~= "table" then return nil end
@@ -143,8 +235,9 @@ function Atlas.new(mod, load)
     return img, quad, w, h, tmp
   end
 
-  -- A canvas holding frame `f` of the cell, bottom-centred, at 1:1 with the game's
-  -- pixels (shrunk only when it would overflow the box). It is stored at
+  -- A canvas holding frame `f` of the cell. Front pics are bottom-centred at 1:1 with
+  -- the game's pixels (shrunk only when they would overflow the box); back pics are
+  -- a full-size close-up cut off at the bottom (Atlas.backLayout). It is stored at
   -- PIC_SCALE times the pic box and declared with dpiscale, so it reports
   -- 64x64 to the engine (whose draw origin is 32,32) and draws at full detail.
   function self.picFrame(dex, variant, cell, f)
@@ -168,9 +261,22 @@ function Atlas.new(mod, load)
     -- canvas uses the logical box, so layout below is in PIC_BOX units
     -- 1:1 with the game's pixel grid (the atlas already holds game pixels), so a
     -- small species stays small; only a sprite larger than the box is reduced
-    local s = math.min(1, PIC_BOX / w, PIC_BOX / h)
-    local okC, canvas = pcall(love.graphics.newCanvas, PIC_BOX * PIC_SCALE, PIC_BOX * PIC_SCALE,
-      { dpiscale = PIC_SCALE })
+    local s, ox, oy, wide
+    local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
+    if variant == "back" or variant == "back_shiny" then
+      -- a close-up at full size, cropped at the bottom (Atlas.backLayout); the layout
+      -- is in source px, and `src` may be a reduced copy of the frame
+      local ls
+      wide = BACK_WIDE and installDrawWrap()
+      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(cell, wide)
+      s = ls / (w / fw)
+    else
+      s = math.min(1, PIC_BOX / w, PIC_BOX / h)
+      ox, oy = (PIC_BOX - w * s) / 2, PIC_BOX - h * s
+    end
+    -- px; bigger than the box only for a back pic whose animation needs the room
+    local okC, canvas = pcall(love.graphics.newCanvas, (xmax - xmin) * PIC_SCALE,
+      (ymax - ymin) * PIC_SCALE, { dpiscale = PIC_SCALE })
     if not okC then
       warnCanvas("picFrame", canvas)
       for _, t in ipairs(temps) do t:release() end
@@ -182,14 +288,16 @@ function Atlas.new(mod, load)
     love.graphics.setCanvas(canvas)
     love.graphics.clear(0, 0, 0, 0)
     love.graphics.setColor(1, 1, 1, 1)
-    local ox, oy = (PIC_BOX - w * s) / 2, PIC_BOX - h * s
     if sq then
-      love.graphics.draw(src, sq, ox, oy, 0, s, s)
+      love.graphics.draw(src, sq, ox - xmin, oy - ymin, 0, s, s)
     else
-      love.graphics.draw(src, ox, oy, 0, s, s)
+      love.graphics.draw(src, ox - xmin, oy - ymin, 0, s, s)
     end
     love.graphics.setCanvas(prev)
     for _, t in ipairs(temps) do t:release() end
+    if xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
+      pivots[canvas] = { PIC_BOX / 2 - xmin, PIC_BOX / 2 - ymin }
+    end
     remember(key, canvas)
     return canvas
   end
