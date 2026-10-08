@@ -89,6 +89,22 @@ do
   check(nmin == 0 and nmax == 64, "not wide: the canvas stays the box")
 end
 
+-- ------- front pics in battle: the whole frame at 1:1, bottom-centred, nothing shrunk or cut
+do
+  -- a 100px frame: same anchor as the fit layout (bottom on the box bottom, centred), no scaling
+  local s, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout({ fs = 100 })
+  check(s == 1, "front: not shrunk")
+  check(near(ox, -18) and near(oy, -36), "front: bottom-centred on the box (ox = " .. ox .. ", oy = " .. oy .. ")")
+  check(xmin == -18 and xmax == 82, "front: the canvas holds the frame's full width (" .. xmin .. " .. " .. xmax .. ")")
+  check(ymin == -36 and ymax == 64, "front: ...and full height, ending at the box bottom (" .. ymin .. " .. " .. ymax .. ")")
+  -- a frame that fits the box keeps the plain box
+  local _, ox2, oy2, x0, x1, y0, y1 = Atlas.frontLayout({ fs = 48 })
+  check(near(ox2, 8) and near(oy2, 16) and x0 == 0 and x1 == 64 and y0 == 0 and y1 == 64, "front: a small frame stays in the 64px box")
+  -- capped, not unbounded
+  local _, _, _, cx0, cx1, cy0 = Atlas.frontLayout({ fs = 600 })
+  check(cx0 >= -96 and cx1 <= 160 and cy0 >= -96, "front: capped at 96px past the box")
+end
+
 -- ------- the draw wrap swaps the engine's (32, 32) origin for a wide canvas's own pivot
 do
   local calls = {}

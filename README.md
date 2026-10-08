@@ -37,6 +37,12 @@ giant is instead reduced just far enough to keep 70% of its width in view. The
 build records where each Pokémon sits inside its frame (`cx0, cy0, cx1, cy1` in
 `data/atlas_index.lua`) so empty margins around it don't leave it floating.
 
+Front pics in battle (the enemy) are also shown at full size now, not shrunk to
+fit: the whole frame, bottom-centred as before, in a canvas that extends past the
+pic box. That only happens when the battle screen asks for the pic (the code
+checks who is calling), because the Pokédex, party summary, PC and other screens
+draw a pic as a plain 64×64 image and still get the fit-to-box one.
+
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
 

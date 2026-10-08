@@ -15,6 +15,7 @@ local Atlas = {}
 
 local PIC_BOX = 64          -- the engine's battle / summary pic box, in its own units
 local PIC_SCALE = 4         -- detail: canvases are PIC_BOX * PIC_SCALE pixels, dpiscale = PIC_SCALE
+local PIC_SCALE_BIG = 2     -- ... for a canvas bigger than the box (a whole frame): bounds its memory
 local PIC_FPS = 8           -- animation rate of the sheets, frames per second
 local CANVAS_CAP = 128      -- most rendered pic frames kept at once
 
@@ -109,6 +110,20 @@ local function installDrawWrap()
 end
 
 Atlas._pivots, Atlas._installDrawWrap = pivots, installDrawWrap -- for the tests
+
+--- Where a FRONT pic goes when it is drawn in battle at full size: the whole frame at
+--- 1:1, bottom-centred on the pic box exactly as the fit-to-box layout anchors it, in
+--- a canvas that extends past the box (no shrinking, nothing cut off). Returns the same
+--- as backLayout: `s, ox, oy, xmin, xmax, ymin, ymax`. Pure.
+function Atlas.frontLayout(cell)
+  local fs = cell.fs or PIC_BOX
+  local ox, oy = (PIC_BOX - fs) / 2, PIC_BOX - fs
+  local m = BACK_WIDE_MAX
+  local xmin = math.max(-m, math.min(0, math.floor(ox)))
+  local xmax = math.min(PIC_BOX + m, math.max(PIC_BOX, math.ceil(ox + fs)))
+  local ymin = math.max(-m, math.min(0, math.floor(oy)))
+  return 1, ox, oy, xmin, xmax, ymin, PIC_BOX
+end
 
 local function loadIndex(load)
   local index = load("data/atlas_index.lua")
@@ -240,8 +255,14 @@ function Atlas.new(mod, load)
   -- a full-size close-up cut off at the bottom (Atlas.backLayout). It is stored at
   -- PIC_SCALE times the pic box and declared with dpiscale, so it reports
   -- 64x64 to the engine (whose draw origin is 32,32) and draws at full detail.
-  function self.picFrame(dex, variant, cell, f)
-    local key = tostring(dex) .. ":" .. variant .. ":" .. f
+  -- `battle` (front pics only): the caller is the battle screen, which draws a pic with
+  -- its centre on the battler's spot, so the pic may be full size in a canvas bigger
+  -- than the box. Every other screen (Pokedex, summary, PC ...) draws the pic as a
+  -- plain 64x64 image, so it gets the fit-to-box one.
+  function self.picFrame(dex, variant, cell, f, battle)
+    local isBack = variant == "back" or variant == "back_shiny"
+    local big = isBack or battle == true
+    local key = tostring(dex) .. ":" .. variant .. ":" .. f .. (big and ":w" or "")
     local hit = self.frames[key]
     if hit then return hit end
     local img = page(string.format("battle_%s_%s", variant, cell.sheet))
@@ -263,7 +284,11 @@ function Atlas.new(mod, load)
     -- small species stays small; only a sprite larger than the box is reduced
     local s, ox, oy, wide
     local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
-    if variant == "back" or variant == "back_shiny" then
+    if not isBack and battle and BACK_WIDE and installDrawWrap() then
+      local ls
+      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout(cell)
+      s = ls / (w / fw)
+    elseif isBack then
       -- a close-up at full size, cropped at the bottom (Atlas.backLayout); the layout
       -- is in source px, and `src` may be a reduced copy of the frame
       local ls
@@ -275,8 +300,9 @@ function Atlas.new(mod, load)
       ox, oy = (PIC_BOX - w * s) / 2, PIC_BOX - h * s
     end
     -- px; bigger than the box only for a back pic whose animation needs the room
-    local okC, canvas = pcall(love.graphics.newCanvas, (xmax - xmin) * PIC_SCALE,
-      (ymax - ymin) * PIC_SCALE, { dpiscale = PIC_SCALE })
+    local dpi = (xmax - xmin > PIC_BOX or ymax - ymin > PIC_BOX) and PIC_SCALE_BIG or PIC_SCALE
+    local okC, canvas = pcall(love.graphics.newCanvas, (xmax - xmin) * dpi,
+      (ymax - ymin) * dpi, { dpiscale = dpi })
     if not okC then
       warnCanvas("picFrame", canvas)
       for _, t in ipairs(temps) do t:release() end

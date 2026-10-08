@@ -17,7 +17,7 @@ local atlas = {
     return nil
   end,
   frameIndex = function() return 0 end,
-  picFrame = function(dex, variant) calls[#calls + 1] = dex .. ":" .. variant; return { fake = variant } end,
+  picFrame = function(dex, variant, _cell, _f, battle) calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; return { fake = variant } end,
   icon = function(dex) return dex >= 387 and { fake_icon = dex } or nil end,
 }
 
@@ -43,6 +43,45 @@ check(Pokemon.frontPic(1090, 0, false).orig == "front", "slot 1090 (past the ran
 -- shiny asks for the shiny variant
 Pokemon.frontPic(500, 0, true)
 check(calls[#calls] == "436:front_shiny", "shiny asks for front_shiny, got " .. tostring(calls[#calls]))
+
+-- the battle scene gets the full-size front pic, every other screen the plain one:
+-- the engine's Battle.draw is wrapped, and a pic asked for inside it is a battle pic
+do
+  local drawn = 0
+  local Battle = { draw = function(...)
+    drawn = drawn + 1
+    calls.battle = nil
+    Pokemon.frontPic(451, 0, false)
+    calls.inside = calls.battle
+    return "drew"
+  end }
+  local P2 = { frontPic = origFront, backPic = origBack, icon = origIcon }
+  Hooks.install(P2, atlas, Battle)
+  Pokemon = P2 -- the wrappers on P2 are the ones under test
+  calls.battle = nil
+  P2.frontPic(451, 0, false)
+  check(calls.battle == false, "outside the battle scene: the plain pic")
+  check(Battle.draw(1, 2, 3) == "drew", "Battle.draw still returns what the engine's does")
+  check(calls.inside == true, "inside Battle.draw: the battle pic")
+  calls.battle = nil
+  P2.frontPic(451, 0, false)
+  check(calls.battle == false, "after it: the plain pic again")
+  -- an error in the scene's draw still leaves the flag cleared and propagates
+  local Broken = { draw = function() Pokemon.frontPic(451, 0, false); error("boom", 0) end }
+  local P3 = { frontPic = origFront, backPic = origBack, icon = origIcon }
+  Hooks.install(P3, atlas, Broken)
+  Pokemon = P3
+  local ok, err = pcall(Broken.draw)
+  check(not ok and err == "boom", "an error in Battle.draw propagates")
+  calls.battle = nil
+  P3.frontPic(451, 0, false)
+  check(calls.battle == false, "...and does not leave the scene flagged as drawing")
+  -- installing twice does not wrap Battle.draw twice
+  local before = Battle.draw
+  Hooks.install(P2, atlas, Battle)
+  check(Battle.draw == before, "a second install leaves Battle.draw alone")
+  Pokemon = P2
+end
 
 -- a second install (a reload) must not wrap the wrappers
 local before = Pokemon.frontPic
