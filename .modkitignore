@@ -1,0 +1,5 @@
+# Exact relative paths excluded from the distributed package.
+# modkit matches literally (no globs, and a directory name excludes nothing:
+# every FILE is listed). Add a line here for each file added under tools/ or tests/.
+tests/hooks_test.lua
+tools/build_atlas.py
