@@ -20,7 +20,7 @@ species #387–1025 to draw).
 | Battle, player back | animated sheet (back, or back shiny) | the game's own |
 | Pokédex front pic | animated sheet | the game's own |
 | Party summary front pic | animated sheet | the game's own |
-| Party list icon | two-frame 16×16 icon | the game's own |
+| Party list icon | two-frame 32×32 icon | the game's own |
 
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
@@ -30,14 +30,17 @@ female and alternate-form sheets, and the 4× party page from the gen1/gen2 mod.
 
 ## Assets
 
-Everything ships in `assets/atlas/`: 362 PNGs, 77 MB. The gen1/gen2 mod shipped
-2,556 loose sheets for all species. The 639 species here take 61.7 MB as loose
-source sheets.
+Everything ships in `assets/atlas/`: 74 PNGs, 77 MB. The gen1/gen2 mod shipped
+2,556 loose sheets for all species. No page is larger than 4096×4096, which is
+the texture size limit on many Android GPUs; a larger image fails to load there
+and the engine shows a red missing-pic box.
 
-- `battle_<variant>_<fs>.png`: four variants (`front`, `front_shiny`, `back`,
-  `back_shiny`), one uniform sheet per frame size `fs`. A species' frames sit
-  in consecutive cells.
-- `party_icons_<page>.png`: two-frame 16×16 icons for the same species.
+- `battle_<variant>_<n>.png`: four variants (`front`, `front_shiny`, `back`,
+  `back_shiny`), several pages each. A page holds blocks of uniform `fs × fs`
+  cells; a species' frames sit in consecutive cells of one block, and the index
+  records the block's corner (`ox`, `oy`).
+- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species, one page.
+  Forms and variants are not packed; the Pokédex and summary use the front pic.
 - `data/atlas_index.lua`: maps each species to its cells.
 
 The atlases are built from the third-party DBK sprite pack and the "icones
@@ -73,8 +76,8 @@ wrapped twice.
 ## Status
 
 **Not yet tested in-game.** The headless checks pass: the gate test
-(`luajit tests/hooks_test.lua`, 12 checks), the atlas index bounds (all 3,195
-entries inside their pages), and the engine module exposes the three functions
+(`luajit tests/hooks_test.lua`, 12 checks), the atlas index bounds (all 2,556
+battle cells inside their pages), and the engine module exposes the three functions
 the hooks wrap. The manifest is marked experimental until it has run in a
 real FireRed or Emerald session.
 

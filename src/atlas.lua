@@ -146,13 +146,15 @@ function Atlas.new(mod, load)
     local key = tostring(dex) .. ":" .. variant .. ":" .. f
     local hit = self.frames[key]
     if hit then return hit end
-    local img = page(string.format("battle_%s_%d", variant, cell.sheet))
+    local img = page(string.format("battle_%s_%s", variant, cell.sheet))
     if not img then return nil end
     local fs = cell.fs
-    -- frame n of a species is cell start + n; cells are fs x fs, cols per row
+    -- frame n of a species is cell start + n; cells are fs x fs, cols per row,
+    -- in a block whose corner is (ox, oy) on the page
     local idx = (cell.start or 0) + f
     local cols = cell.cols or 1
-    local quad = love.graphics.newQuad((idx % cols) * fs, math.floor(idx / cols) * fs,
+    local quad = love.graphics.newQuad((cell.ox or 0) + (idx % cols) * fs,
+      (cell.oy or 0) + math.floor(idx / cols) * fs,
       fs, fs, img:getDimensions())
     local fw, fh = fs, fs
     local src, sq, w, h, temps = reduce(img, quad, fw, fh)
@@ -187,23 +189,28 @@ function Atlas.new(mod, load)
     return canvas
   end
 
-  -- The engine's icon entry for a dex number: two frames side by side in the
-  -- icon page, each a 16x16 quad. Cached per dex.
-  function self.icon(dex)
-    dex = tonumber(dex)
-    if self.icons[dex] ~= nil then return self.icons[dex] or nil end
-    local cell = self.cell(dex, "icon")
-    if not cell then self.icons[dex] = false return nil end
+  -- The engine's icon entry for an atlas icon cell: two frames side by side in
+  -- the icon page, each a cell x cell quad.
+  local function iconEntry(cell)
     local img = page(string.format("party_icons_%d", cell.page))
-    if not img then self.icons[dex] = false return nil end
+    if not img then return nil end
     local w, h = img:getDimensions()
-    local size = cell.cell or 16
+    local size = cell.cell or 32
     local quads = {}
     for f = 0, (cell.frames or 2) - 1 do
       quads[f] = love.graphics.newQuad(cell.x + f * size, cell.y, size, size, w, h)
     end
-    local entry = { image = img, w = size, h = size, sheetH = h,
-                    frames = cell.frames or 2, quads = quads }
+    return { image = img, w = size, h = size, sheetH = h,
+             frames = cell.frames or 2, quads = quads }
+  end
+
+  -- The icon entry for a dex number, cached per dex.
+  function self.icon(dex)
+    dex = tonumber(dex)
+    if self.icons[dex] ~= nil then return self.icons[dex] or nil end
+    local cell = self.cell(dex, "icon")
+    local entry = cell and iconEntry(cell)
+    if not entry then self.icons[dex] = false return nil end
     self.icons[dex] = entry
     return entry
   end

@@ -9,13 +9,13 @@ Inputs (defaults are the layouts of the two local checkouts):
                  per sheet, frame height == sheet height
   --payload DIR  national_dex_gen3's data/species (id + dex per species)
   --dbk FILE     data/dbk_data.lua  (species id -> sheet stem)
-  --icons FILE   data/icon_data.lua (species id -> icon name, icon name -> cell)
-  --icon-atlas   assets/icons/party_icons.png (16x16 cells, 60 columns)
+  --icons-dir DIR  the pack's Icons folder: one PNG per icon, two frames side by side
 
 Outputs (under the mod root, --out):
-  assets/atlas/battle_<variant>_<fs>.png     one uniform sheet per frame size; variant: front, front_shiny,
+  assets/atlas/battle_<variant>_<n>.png      pages of at most 4096x4096 holding blocks of
+                                             uniform cells; variant: front, front_shiny,
                                              back, back_shiny
-  assets/atlas/party_icons_<page>.png        16x16 cells, two frames per icon
+  assets/atlas/party_icons_<page>.png        32x32 cells, two frames per icon
   data/atlas_index.lua                       species id -> atlas cells
 
 Battle frames are brought down to the game's pixel grid (see art_pixel):
@@ -44,8 +44,8 @@ ROOT = Path(__file__).resolve().parent.parent
 FIRST_DEX, LAST_DEX = 387, 1025
 PAGE_SIZE = 4096          # max atlas edge; a page fills shelf by shelf, then a new page
 VARIANTS = ["front", "front_shiny", "back", "back_shiny"]
-ICON_CELL = 16
-ICON_COLS = 60            # the source icon atlas's column count
+BLOCK_MAX = 2048          # tallest block, so blocks pack tightly into pages
+ICON_CELL = 32            # the engine's own menu icon size
 ICON_FRAMES = 2
 
 
@@ -72,12 +72,6 @@ def read_map(path: Path, name: str) -> dict[str, str]:
     section = re.search(rf"{name}\s*=\s*\{{(.*?)\n  \}}", text, re.S)
     body = section.group(1) if section else text
     return dict(re.findall(r'\["([^"]+)"\]\s*=\s*"([^"]+)"', body))
-
-
-def read_icon_base(path: Path) -> dict[str, int]:
-    text = path.read_text(encoding="utf-8")
-    section = re.search(r"base\s*=\s*\{(.*?)\n  \}", text, re.S)
-    return {k: int(v) for k, v in re.findall(r'\["([^"]+)"\]\s*=\s*(\d+)', section.group(1))}
 
 
 class Shelf:
@@ -147,13 +141,15 @@ def art_pixel(img: Image.Image) -> int:
 
 def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str]],
                  out_dir: Path, index: dict[str, dict]) -> None:
-    """Battle frames are grouped by their game-pixel frame size. Each group is
-    one uniform sheet per variant: every cell is fs x fs, and a species' frames
-    sit in consecutive cells. Frame n of a species is cell start + n, at
-    ((start + n) % cols * fs, (start + n) // cols * fs)."""
+    """Battle frames are grouped by their game-pixel frame size. A group is cut
+    into blocks of uniform fs x fs cells (a species' frames stay together in
+    one block), and the blocks of every size are shelf-packed onto shared pages
+    of at most PAGE_SIZE x PAGE_SIZE, per variant. A cell records its block's
+    origin: frame n of a species is cell start + n, at
+    (ox + (start + n) % cols * fs, oy + (start + n) // cols * fs) on page `sheet`."""
     for variant in VARIANTS:
         folder = sheets / variant
-        groups: dict[int, list[tuple[int, str, Image.Image, int, int]]] = {}
+        groups: dict[int, list[tuple[int, str, Image.Image, int]]] = {}
         for _dex, sid in species:
             stem = dbk.get(sid)
             if stem is None:
@@ -163,73 +159,112 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                 continue
             with Image.open(path) as im:
                 img = im.convert("RGBA")
-            w, h = img.size
-            # true size: every frame keeps its source pixels (no art-pixel
-            # reduction); the runtime shrinks only what does not fit the box
-            g = 1
-            fs = h
-            frames = max(1, round(w / h))
-            groups.setdefault(fs, []).append((_dex, sid, img, frames, g))
+            # true size: every frame keeps its source pixels; the runtime
+            # shrinks only what does not fit the box
+            fs = img.height
+            groups.setdefault(fs, []).append((_dex, sid, img, max(1, round(img.width / fs))))
 
-        written = 0
+        # cut each size group into blocks
+        blocks = []   # (fs, cols, rows, members)
         for fs in sorted(groups):
-            members = groups[fs]
+            cols = max(1, PAGE_SIZE // fs)
+            capacity = cols * max(1, BLOCK_MAX // fs)
+            cur: list[tuple] = []
+            used = 0
+            for m in groups[fs]:
+                if m[3] > capacity:
+                    raise SystemExit(f"{m[1]} has {m[3]} frames, more than one {fs}px block holds")
+                if used + m[3] > capacity:
+                    blocks.append((fs, cols, cur))
+                    cur, used = [], 0
+                cur.append(m)
+                used += m[3]
+            if cur:
+                blocks.append((fs, cols, cur))
+
+        def dims(blk):
+            fs, cols, members = blk
             total = sum(m[3] for m in members)
-            cols = max(1, min(total, PAGE_SIZE // fs))
-            rows = -(-total // cols)
-            sheet = Image.new("RGBA", (cols * fs, rows * fs), (0, 0, 0, 0))
+            c = min(cols, total)
+            return fs, c, -(-total // c)
+
+        # tallest first keeps the shelves tight; ties break on fs so it is stable
+        blocks.sort(key=lambda blk: (-dims(blk)[0] * dims(blk)[2], dims(blk)[0], dims(blk)[1]))
+        shelf = Shelf()
+        used_w: dict[int, int] = {}
+        used_h: dict[int, int] = {}
+        for blk in blocks:
+            fs, pcols, rows = dims(blk)
+            w, h = pcols * fs, rows * fs
+            page, ox, oy = shelf.place(w, h)
+            used_w[page] = max(used_w.get(page, 0), ox + w)
+            used_h[page] = max(used_h.get(page, 0), oy + h)
+            canvas = shelf.pages[page]["img"]
             start = 0
-            for _dex, sid, img, frames, g in members:
-                h = img.height
+            for _dex, sid, img, frames in blk[2]:
                 for n in range(frames):
-                    cell = img.crop((n * h, 0, min((n + 1) * h, img.width), h))
-                    frame = cell
-
+                    frame = img.crop((n * fs, 0, min((n + 1) * fs, img.width), fs))
                     k = start + n
-                    sheet.paste(frame, ((k % cols) * fs, (k // cols) * fs))
-                index.setdefault(sid, {})[variant] = {"sheet": fs, "start": start,
-                                                      "fs": fs, "cols": cols, "frames": frames}
+                    canvas.paste(frame, (ox + (k % pcols) * fs, oy + (k // pcols) * fs))
+                index.setdefault(sid, {})[variant] = {"sheet": page, "start": start, "fs": fs,
+                                                      "cols": pcols, "frames": frames,
+                                                      "ox": ox, "oy": oy}
                 start += frames
-            name = f"battle_{variant}_{fs}.png"
-            sheet.save(out_dir / name, optimize=True, compress_level=9)
-            written += 1
-        print(f"  {variant}: {len(groups)} size groups, {written} sheets")
+        names = save(shelf.pages, f"battle_{variant}", out_dir, used_w, used_h)
+        print(f"  {variant}: {len(groups)} size groups, {len(blocks)} blocks, {len(names)} pages")
 
 
-def build_icons(icon_atlas: Image.Image, icon_base: dict[str, int], icons: dict[str, str],
-                species: list[tuple[int, str]], out_dir: Path, index: dict[str, dict]) -> None:
+def norm(name: str) -> str:
+    """Icon file stems drop the underscores of species ids (MIME_JR -> MIMEJR);
+    form suffixes keep theirs (ABSOL_1), so only a species id is normalised by
+    its callers, never a stem."""
+    return name.replace("_", "")
+
+
+def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
+                index: dict[str, dict]) -> None:
+    """Packs the base icon of each species (two animation frames side by side in
+    the source, each as wide as it is tall) as ICON_CELL x ICON_CELL frames. Forms
+    and variants are not packed. Pages stay within PAGE_SIZE."""
+    stems = {path.stem: path for path in icon_dir.glob("*.png")}
+    by_norm = {norm(k): v for k, v in stems.items() if not re.search(r"_(\d+|female)$", k)}
     shelf = Shelf()
     used_w: dict[int, int] = {}
     used_h: dict[int, int] = {}
     cell_w = ICON_CELL * ICON_FRAMES
-    picked = []
+    missing = []
     for _dex, sid in species:
-        name = icons.get(sid)
-        if name is None or name not in icon_base:
+        path = stems.get(sid) or by_norm.get(norm(sid))
+        if path is None:
+            missing.append(sid)
             continue
-        picked.append((sid, icon_base[name]))
-    # ordering by source cell keeps the output stable across rebuilds
-    for sid, cell in sorted(picked, key=lambda p: (p[1], p[0])):
-        col, row = cell % ICON_COLS, cell // ICON_COLS
-        x0, y0 = col * ICON_CELL, row * ICON_CELL
-        strip = icon_atlas.crop((x0, y0, x0 + cell_w, y0 + ICON_CELL))
+        with Image.open(path) as im:
+            img = im.convert("RGBA")
+        fw = img.width // ICON_FRAMES
+        strip = Image.new("RGBA", (cell_w, ICON_CELL), (0, 0, 0, 0))
+        for f in range(ICON_FRAMES):
+            frame = img.crop((f * fw, 0, (f + 1) * fw, img.height))
+            strip.paste(frame.resize((ICON_CELL, ICON_CELL), Image.BOX), (f * ICON_CELL, 0))
         page, x, y = shelf.place(cell_w, ICON_CELL)
         shelf.pages[page]["img"].paste(strip, (x, y))
         used_w[page] = max(used_w.get(page, 0), x + cell_w)
         used_h[page] = max(used_h.get(page, 0), y + ICON_CELL)
-        index.setdefault(sid, {})["icon"] = {"page": page, "x": x, "y": y,
-                                             "cell": ICON_CELL, "frames": ICON_FRAMES}
+        index.setdefault(sid, {})["icon"] = {"page": page, "x": x, "y": y, "cell": ICON_CELL,
+                                             "frames": ICON_FRAMES}
     names = save(shelf.pages, "party_icons", out_dir, used_w, used_h)
-    print(f"  party icons: {len(picked)} icons on {len(names)} page(s)")
+    print(f"  party icons: {len(species) - len(missing)}/{len(species)} species on "
+          f"{len(names)} page(s)")
+    if missing:
+        print("  no icon for:", ", ".join(missing))
 
 
 def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str]]) -> None:
     lines = [
         "-- Generated by tools/build_atlas.py. Do not edit by hand; rerun the tool instead.",
         "-- species id -> where each of its sprites sits in assets/atlas/.",
-        "-- battle_<variant>_<fs>.png: uniform fs x fs cells, `cols` per row; frame n",
-        "-- of a species is cell start + n.",
-        "-- party_icons_<page>.png: `frames` 16x16 cells side by side from x, y.",
+        "-- battle_<variant>_<n>.png: blocks of uniform fs x fs cells at (ox, oy), `cols` per",
+        "-- row; frame n of a species is cell start + n.",
+        "-- party_icons_<page>.png: `frames` 32x32 cells side by side from x, y.",
         "return {",
         "  species = {",
     ]
@@ -242,7 +277,8 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
             if key in entry:
                 c = entry[key]
                 parts.append(f'{key} = {{ sheet = {c["sheet"]}, start = {c["start"]}, '
-                             f'fs = {c["fs"]}, cols = {c["cols"]}, frames = {c["frames"]} }}')
+                             f'fs = {c["fs"]}, cols = {c["cols"]}, frames = {c["frames"]}, '
+                             f'ox = {c["ox"]}, oy = {c["oy"]} }}')
         if "icon" in entry:
             c = entry["icon"]
             parts.append(f'icon = {{ page = {c["page"]}, x = {c["x"]}, y = {c["y"]}, '
@@ -257,16 +293,13 @@ def main() -> None:
     ap.add_argument("--sheets", type=Path, default=ROOT.parent / "g9-battle-sprites" / "assets")
     ap.add_argument("--payload", type=Path, default=ROOT.parent / "national_dex_gen3" / "data" / "species")
     ap.add_argument("--dbk", type=Path, default=ROOT.parent / "g9-battle-sprites" / "data" / "dbk_data.lua")
-    ap.add_argument("--icons", type=Path, default=ROOT.parent / "g9-battle-sprites" / "data" / "icon_data.lua")
-    ap.add_argument("--icon-atlas", type=Path,
-                    default=ROOT.parent / "g9-battle-sprites" / "assets" / "icons" / "party_icons.png")
+    ap.add_argument("--icons-dir", type=Path, default=ROOT.parent / "ReferenceGen1-3" / "Gen 9 Pack"
+                    / "Graphics" / "Pokemon" / "Icons")
     ap.add_argument("--out", type=Path, default=ROOT)
     args = ap.parse_args()
 
     species = read_species_ids(args.payload)
     dbk = read_map(args.dbk, "species")
-    icons = read_map(args.icons, "species")
-    icon_base = read_icon_base(args.icons)
     out_atlas = args.out / "assets" / "atlas"
     out_atlas.mkdir(parents=True, exist_ok=True)
     for old in out_atlas.glob("*.png"):          # a rebuild replaces the whole set
@@ -276,8 +309,7 @@ def main() -> None:
     index: dict[str, dict] = {}
     print(f"species #{FIRST_DEX}-{LAST_DEX}: {len(species)}")
     build_battle(args.sheets, dbk, species, out_atlas, index)
-    with Image.open(args.icon_atlas) as icon_atlas:
-        build_icons(icon_atlas.convert("RGBA"), icon_base, icons, species, out_atlas, index)
+    build_icons(args.icons_dir, species, out_atlas, index)
     write_index(index, args.out / "data" / "atlas_index.lua", species)
     print("wrote", args.out / "data" / "atlas_index.lua")
 
