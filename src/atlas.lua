@@ -182,9 +182,10 @@ function Atlas.new(mod, load)
     self.order[#self.order + 1] = key
     if #self.order > CANVAS_CAP then
       local old = table.remove(self.order, 1)
-      local c = self.frames[old]
+      -- dropped, not released: whoever else still holds this picture (the save
+      -- editor keeps the ones it has drawn) keeps a valid image, and the garbage
+      -- collector frees it once nothing does
       self.frames[old] = nil
-      if c and c.release then c:release() end
     end
   end
 
