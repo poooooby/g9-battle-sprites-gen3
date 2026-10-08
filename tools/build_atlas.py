@@ -221,6 +221,41 @@ def norm(name: str) -> str:
     return name.replace("_", "")
 
 
+def icon_phase(px: object, size: int, axis: int) -> int:
+    """Which of the two grid alignments (0 or 1) the 2x pixel art of one icon frame
+    sits on, along `axis`: the offset at which the fewest neighbouring pixel pairs
+    differ across what should be one art pixel. Most of the pack starts its art
+    pixels at an even offset; some frames are drawn one pixel over."""
+    best, best_bad = 0, None
+    for phase in (0, 1):
+        bad = 0
+        for a in range(phase, size - 1, 2):
+            for b in range(size):
+                p, q = ((a, b), (a + 1, b)) if axis == 0 else ((b, a), (b, a + 1))
+                if px[p] != px[q]:
+                    bad += 1
+        if best_bad is None or bad < best_bad:
+            best, best_bad = phase, bad
+    return best
+
+
+def reduce_icon(frame: Image.Image) -> Image.Image:
+    """One icon frame down to ICON_CELL x ICON_CELL, without blending. The art is
+    2x pixel art, so each art pixel is read once from the grid it was drawn on:
+    averaging 2x2 blocks across an off-grid frame smears every edge into new
+    colours. A frame that is not twice the cell (a few 80px ones) is point-sampled."""
+    if frame.size != (ICON_CELL * 2, ICON_CELL * 2):
+        return frame.resize((ICON_CELL, ICON_CELL), Image.NEAREST)
+    px = frame.load()
+    ox, oy = icon_phase(px, frame.width, 0), icon_phase(px, frame.height, 1)
+    out = Image.new("RGBA", (ICON_CELL, ICON_CELL))
+    dst = out.load()
+    for y in range(ICON_CELL):
+        for x in range(ICON_CELL):
+            dst[x, y] = px[2 * x + ox, 2 * y + oy]
+    return out
+
+
 def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
                 index: dict[str, dict]) -> None:
     """Packs the base icon of each species (two animation frames side by side in
@@ -244,7 +279,7 @@ def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
         strip = Image.new("RGBA", (cell_w, ICON_CELL), (0, 0, 0, 0))
         for f in range(ICON_FRAMES):
             frame = img.crop((f * fw, 0, (f + 1) * fw, img.height))
-            strip.paste(frame.resize((ICON_CELL, ICON_CELL), Image.BOX), (f * ICON_CELL, 0))
+            strip.paste(reduce_icon(frame), (f * ICON_CELL, 0))
         page, x, y = shelf.place(cell_w, ICON_CELL)
         shelf.pages[page]["img"].paste(strip, (x, y))
         used_w[page] = max(used_w.get(page, 0), x + cell_w)

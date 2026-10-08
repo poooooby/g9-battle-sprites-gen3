@@ -49,6 +49,11 @@ function Atlas.new(mod, load)
     local path = mod.path .. "/assets/atlas/" .. name .. ".png"
     local ok, img = pcall(love.graphics.newImage, path)
     if ok and img then
+      -- icons are drawn straight to the screen by the engine; an Image defaults to
+      -- linear filtering, which smears pixel art whenever it lands off the pixel
+      -- grid (the engine sets nearest on its own icons for this reason). Battle
+      -- pages are sampled into canvases by picFrame, which sets its own filters.
+      if name:find("^party_icons") and img.setFilter then img:setFilter("nearest", "nearest") end
       self.pages[name] = img
       return img
     end
