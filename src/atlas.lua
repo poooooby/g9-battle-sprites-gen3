@@ -128,19 +128,22 @@ end
 local function loadIndex(load)
   local index = load("data/atlas_index.lua")
   if type(index) ~= "table" or type(index.species) ~= "table" then return nil end
-  local byDex = {}
+  -- keyed by the engine's species SLOT: a base species (dex + 64) and an
+  -- alternate form (a slot of its own, with its base's dex number) are both
+  -- one entry, so a form never replaces its base. An index without `slot`
+  -- (an older build) is read as dex + 64.
+  local bySlot = {}
   for id, rec in pairs(index.species) do
-    if type(rec) == "table" and tonumber(rec.dex) then
-      byDex[tonumber(rec.dex)] = { id = id, cells = rec }
-    end
+    local slot = type(rec) == "table" and (tonumber(rec.slot) or (tonumber(rec.dex) and tonumber(rec.dex) + 64))
+    if slot then bySlot[slot] = { id = id, cells = rec } end
   end
-  return byDex
+  return bySlot
 end
 
 -- mod: the mod table (for mod.path and mod.log); load: loadSibling-style reader
 function Atlas.new(mod, load)
-  local byDex = loadIndex(load)
-  if not byDex then return nil end
+  local bySlot = loadIndex(load)
+  if not bySlot then return nil end
 
   local self = { pages = {}, icons = {}, frames = {}, order = {} }
 
@@ -185,15 +188,16 @@ function Atlas.new(mod, load)
     end
   end
 
-  -- The cell for one dex number and variant ("front", "front_shiny", "back",
-  -- "back_shiny"), or nil when the atlas has none.
-  function self.cell(dex, variant)
-    local rec = byDex[tonumber(dex)]
+  -- The cell for one species slot and variant ("front", "front_shiny", "back",
+  -- "back_shiny"), or nil when the atlas has none. (The first argument is just
+  -- a key: picFrame and icon cache by it.)
+  function self.cell(slot, variant)
+    local rec = bySlot[tonumber(slot)]
     return rec and rec.cells[variant] or nil
   end
 
-  function self.hasDex(dex)
-    return byDex[tonumber(dex)] ~= nil
+  function self.hasSlot(slot)
+    return bySlot[tonumber(slot)] ~= nil
   end
 
   -- Which frame plays now. Each cell has `frames`; the clock is shared, so
@@ -343,7 +347,7 @@ function Atlas.new(mod, load)
              frames = cell.frames or 2, quads = quads }
   end
 
-  -- The icon entry for a dex number, cached per dex.
+  -- The icon entry for a species slot, cached per slot.
   function self.icon(dex)
     dex = tonumber(dex)
     if self.icons[dex] ~= nil then return self.icons[dex] or nil end

@@ -46,8 +46,13 @@ draw a pic as a plain 64×64 image and still get the fit-to-box one.
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
 
-Not in this version: tera crystal, dynamax cloud and battle shadow overlays,
-female and alternate-form sheets, and the 4× party page from the gen1/gen2 mod.
+**Alternate forms** (national_dex_gen3's 56 forms: Galarian and Hisuian forms, Wormadam's cloaks,
+the Rotom appliances, the Therian and Origin forms and more) have a sheet and an icon of their
+own, found by the form's own engine slot. A form the pack has no icon for (Pumpkaboo and
+Gourgeist sizes) shows its base Pokémon's icon.
+
+Not in this version: tera crystal, dynamax cloud and battle shadow overlays, female-variant
+sheets, and the 4× party page from the gen1/gen2 mod.
 
 ## Assets
 
@@ -60,9 +65,9 @@ and the engine shows a red missing-pic box.
   `back_shiny`), several pages each. A page holds blocks of uniform `fs × fs`
   cells; a species' frames sit in consecutive cells of one block, and the index
   records the block's corner (`ox`, `oy`).
-- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species, one page.
-  Forms and variants are not packed; the Pokédex and summary use the front pic.
-- `data/atlas_index.lua`: maps each species to its cells (and, for back pics, where the Pokémon sits in its frame).
+- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 56 forms, one page.
+  Gender variants are not packed; the Pokédex and summary use the front pic.
+- `data/atlas_index.lua`: maps each species (and form) to its engine `slot` and its cells (and, for back pics, where the Pokémon sits in its frame).
 
 The atlases are built from the third-party DBK sprite pack and the "icones
 animados" icon pack. The source packs are not in this repo. Artist credits are

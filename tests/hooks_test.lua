@@ -9,16 +9,19 @@ local function check(cond, msg)
   if cond then passed = passed + 1 else failed = failed + 1; print("FAIL: " .. msg) end
 end
 
--- a fake atlas: answers every dex in 387-1025 with one cell per variant
+-- a fake atlas: answers every slot it has art for -- the base species (451-1089,
+-- dex + 64) and the alternate forms (1090-1145) -- with one cell per variant
+local function has(slot) return slot >= 451 and slot <= 1145 end
 local calls = {}
 local atlas = {
-  cell = function(dex, variant)
-    if dex >= 387 and dex <= 1025 then return { page = 0, x = 0, y = 0, fw = 64, fh = 64, cols = 1, frames = 1 } end
+  hasSlot = has,
+  cell = function(slot, variant)
+    if has(slot) then return { page = 0, x = 0, y = 0, fw = 64, fh = 64, cols = 1, frames = 1 } end
     return nil
   end,
   frameIndex = function() return 0 end,
   picFrame = function(dex, variant, _cell, _f, battle) calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; return { fake = variant } end,
-  icon = function(dex) return dex >= 387 and { fake_icon = dex } or nil end,
+  icon = function(slot) return has(slot) and { fake_icon = slot } or nil end,
 }
 
 local function origFront(species) return { orig = "front", species = species } end
@@ -36,13 +39,17 @@ check(Pokemon.icon(25).orig == "icon", "dex 25 icon stays vanilla")
 -- slot 451 is dex 387, the first new species
 check(Pokemon.frontPic(451, 0, false).image.fake == "front", "dex 387 front comes from the atlas")
 check(Pokemon.backPic(451, 0, false).image.fake == "back", "dex 387 back comes from the atlas")
-check(Pokemon.icon(451).fake_icon == 387, "dex 387 icon comes from the atlas")
+check(Pokemon.icon(451).fake_icon == 451, "dex 387 icon comes from the atlas")
 -- the top of the range, and one past it
 check(Pokemon.frontPic(1089, 0, false).image.fake == "front", "dex 1025 (slot 1089) from the atlas")
-check(Pokemon.frontPic(1090, 0, false).orig == "front", "slot 1090 (past the range) stays vanilla")
+check(Pokemon.frontPic(1146, 0, false).orig == "front", "slot 1146 (past the last form) stays vanilla")
+-- an alternate form has a slot of its own and is answered like any other
+check(Pokemon.frontPic(1105, 0, false).image.fake == "front", "a form slot (ROTOM_HEAT, 1105) comes from the atlas")
+check(Pokemon.backPic(1105, 0, false).image.fake == "back", "and its back")
+check(Pokemon.icon(1105).fake_icon == 1105, "and its icon")
 -- shiny asks for the shiny variant
 Pokemon.frontPic(500, 0, true)
-check(calls[#calls] == "436:front_shiny", "shiny asks for front_shiny, got " .. tostring(calls[#calls]))
+check(calls[#calls] == "500:front_shiny", "shiny asks for front_shiny, got " .. tostring(calls[#calls]))
 
 -- the battle scene gets the full-size front pic, every other screen the plain one:
 -- the engine's Battle.draw is wrapped, and a pic asked for inside it is a battle pic

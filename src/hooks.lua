@@ -1,9 +1,10 @@
 -- Puts the atlas art in front of the gen 3 engine's own picture functions.
 --
--- Only species #387-1025 are answered (slot = dex + 64, the numbering
--- national_dex_gen3 registers under). Every other slot falls through to the
--- engine's own functions, so the game's gen 1-3 sprites stay exactly as they
--- are.
+-- Only the species national_dex_gen3 registers are answered: #387-1025 at slot
+-- dex + 64, and its alternate forms (WORMADAM_SANDY, ...) at slots of their own
+-- above that. The atlas index says which slots it has (data/atlas_index.lua).
+-- Every other slot falls through to the engine's own functions, so the game's
+-- gen 1-3 sprites stay exactly as they are.
 --
 --   Pokemon.frontPic  battle (enemy), Pokedex front, party summary
 --   Pokemon.backPic   battle (player)
@@ -11,27 +12,25 @@
 
 local Hooks = {}
 
-local FIRST_DEX, LAST_DEX = 387, 1025
-local SLOT_OFFSET = 64
-
-local function dexOf(slot)
-  local dex = (tonumber(slot) or 0) - SLOT_OFFSET
-  if dex < FIRST_DEX or dex > LAST_DEX then return nil end
-  return dex
+-- the slot, when the atlas has art for it
+local function slotOf(atlas, slot)
+  slot = tonumber(slot)
+  if slot and atlas.hasSlot(slot) then return slot end
+  return nil
 end
 
 -- Pokemon.frontPic(species, form, shiny, personality) / backPic(species, form, shiny)
 local function picFor(atlas, side, slot, shiny, battle)
-  local dex = dexOf(slot)
-  if not dex then return nil end
+  local key = slotOf(atlas, slot)
+  if not key then return nil end
   -- a shiny asks for the shiny sheet, and falls back to the normal one when
   -- the atlas has no shiny for the species
   local variant = side
-  if shiny and atlas.cell(dex, side .. "_shiny") then variant = side .. "_shiny" end
-  local cell = atlas.cell(dex, variant)
+  if shiny and atlas.cell(key, side .. "_shiny") then variant = side .. "_shiny" end
+  local cell = atlas.cell(key, variant)
   if not cell then return nil end
   local f = atlas.frameIndex(cell)
-  local canvas = atlas.picFrame(dex, variant, cell, f, battle)
+  local canvas = atlas.picFrame(key, variant, cell, f, battle)
   if not canvas then return nil end
   return { image = canvas, w = 64, h = 64 }
 end
@@ -107,8 +106,8 @@ function Hooks.install(Pokemon, atlas, Battle)
   local origIcon = Pokemon.icon
   if type(origIcon) == "function" and not ours[origIcon] then
     Pokemon.icon = function(species)
-      local dex = dexOf(species)
-      local entry = dex and atlas.icon(dex)
+      local key = slotOf(atlas, species)
+      local entry = key and atlas.icon(key)
       if entry then return entry end
       return origIcon(species)
     end
@@ -119,6 +118,6 @@ function Hooks.install(Pokemon, atlas, Battle)
   return wrapped
 end
 
-Hooks._dexOf = dexOf
+Hooks._slotOf = slotOf
 
 return Hooks
