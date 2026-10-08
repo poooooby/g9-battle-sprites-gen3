@@ -73,6 +73,11 @@ return function(mod)
   mod.events:on("game.ready", function(ev)
     install(ev and ev.game or mod.game)
   end, 0)
+  -- Also at load: tools that load mods without starting a game (the save
+  -- editor) never fire game.ready, and draw species pics through the same
+  -- Pokemon.frontPic. install() is idempotent, so the game.ready call above
+  -- is then a no-op.
+  pcall(install, mod.game)
 
   Api(mod, { active = true, atlas = function() return atlas end })
 end

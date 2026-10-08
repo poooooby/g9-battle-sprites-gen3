@@ -20,7 +20,6 @@
   "conflicts": [],
   "incompatible": [],
   "description": "Animated, true-colour battle, Pokedex and summary pics and party icons for National Dex species #387-1025 on FireRed, LeafGreen, Ruby, Sapphire and Emerald. Gen 4-9 only: species #1-386 keep the game's own sprites. Drawn from packed atlases.",
-  "experimental": true,
   "github": "poooooby/g9-battle-sprites-gen3",
   "dependency_sources": {
     "national_dex_gen3": "https://github.com/poooooby/national_dex_gen3"
