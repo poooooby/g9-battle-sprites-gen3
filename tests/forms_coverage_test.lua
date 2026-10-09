@@ -30,7 +30,7 @@ local NO_ART = { SINISTEA_ANTIQUE = true, POLTEAGEIST_ANTIQUE = true,
 local SHARED_ICON = { PUMPKABOO_SMALL = true, PUMPKABOO_LARGE = true, PUMPKABOO_SUPER = true,
                       GOURGEIST_SMALL = true, GOURGEIST_LARGE = true, GOURGEIST_SUPER = true }
 
-check(#forms >= 84, "forms.lua lists the forms (" .. #forms .. ")")
+check(#forms >= 85, "forms.lua lists the forms (" .. #forms .. ")")
 for _, form in ipairs(forms) do
   local entry, base = index[form.id], index[form.baseSpecies]
   check(entry ~= nil, form.id .. " has an atlas entry")

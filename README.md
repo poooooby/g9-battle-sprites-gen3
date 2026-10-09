@@ -46,14 +46,14 @@ draw a pic as a plain 64×64 image and still get the fit-to-box one.
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
 
-**Alternate forms** (national_dex_gen3's 84 forms: Galarian and Hisuian forms, Wormadam's cloaks,
+**Alternate forms** (national_dex_gen3's 85 forms: Galarian and Hisuian forms, Wormadam's cloaks,
 the Rotom appliances, the Therian and Origin forms and more) have a sheet and an icon of their
 own, found by the form's own engine slot. Coverage:
 
-- 72 of the 84 forms have their own battle sheets, and 64 their own icon (Galarian Darmanitan,
+- 81 of the 85 forms have their own battle sheets, and 75 their own icon (Galarian Darmanitan,
   Alcremie's nine creams, Flabébé, Floette and Florges in five colours, Shellos and Gastrodon's
   east-sea looks, the white-striped Basculin and female Basculegion included).
-- The Gen 9 Pack has one party icon for Pumpkaboo and one for Gourgeist, so their sizes share it.
+- The Gen 9 Pack has one party icon for Pumpkaboo and one for Gourgeist, so their sizes (six forms) share it.
 - The tea set's Antique, Artisan and Masterpiece looks (Sinistea, Polteageist, Poltchageist and
   Sinistcha) have no art in any of the packs, so they show the normal look.
 - Alcremie's creams use the Strawberry Sweet sheet of their cream; the pack draws one per sweet
@@ -67,7 +67,7 @@ sheets, and the 4× party page from the gen1/gen2 mod.
 
 ## Assets
 
-Everything ships in `assets/atlas/`: 74 PNGs, 77 MB. The gen1/gen2 mod shipped
+Everything ships in `assets/atlas/`: 86 PNGs, 94 MB. The gen1/gen2 mod shipped
 2,556 loose sheets for all species. No page is larger than 4096×4096, which is
 the texture size limit on many Android GPUs; a larger image fails to load there
 and the engine shows a red missing-pic box.
@@ -76,7 +76,7 @@ and the engine shows a red missing-pic box.
   `back_shiny`), several pages each. A page holds blocks of uniform `fs × fs`
   cells; a species' frames sit in consecutive cells of one block, and the index
   records the block's corner (`ox`, `oy`).
-- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 84 forms, one page.
+- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 85 forms, one page.
   Gender variants are not packed; the Pokédex and summary use the front pic.
 - `data/atlas_index.lua`: maps each species (and form) to its engine `slot` and its cells (and, for back pics, where the Pokémon sits in its frame).
 
@@ -113,8 +113,8 @@ wrapped twice.
 ## Status
 
 **Not yet tested in-game.** The headless checks pass: the gate test
-(`luajit tests/hooks_test.lua`, 12 checks), the atlas index bounds (all 2,556
-battle cells inside their pages), and the engine module exposes the three functions
+(`luajit tests/hooks_test.lua`, 27 checks), the atlas index bounds (all 2,900
+battle sheets inside their pages), the forms coverage test (899 checks), and the engine module exposes the three functions
 the hooks wrap. The manifest is marked experimental until it has run in a
 real FireRed or Emerald session.
 
