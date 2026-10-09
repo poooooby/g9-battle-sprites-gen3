@@ -5,3 +5,4 @@ tests/hooks_test.lua
 tools/build_atlas.py
 tests/atlas_layout_test.lua
 tests/forms_coverage_test.lua
+tests/clean_state_test.lua

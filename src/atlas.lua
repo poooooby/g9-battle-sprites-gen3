@@ -229,6 +229,27 @@ function Atlas.new(mod, load)
     end
   end
 
+  -- Runs fn(), which draws into a canvas, with the graphics state cleaned and then restored.
+  -- A pic is rendered the first time it is asked for, which can be in the middle of another
+  -- screen's draw: that screen's scissor, transform, shader and colour would otherwise apply
+  -- to the canvas too (the save editor draws its party rows inside a scissor, and the sprite
+  -- came out as a small clipped piece). push("all") also puts the previous canvas back.
+  local function drawClean(fn)
+    local G = love.graphics
+    if not (G.push and G.pop) then return fn() end
+    G.push("all")
+    local ok, err = pcall(function()
+      G.origin()
+      if G.setScissor then G.setScissor() end
+      if G.setShader then G.setShader() end
+      if G.setBlendMode then G.setBlendMode("alpha") end
+      G.setColor(1, 1, 1, 1)
+      fn()
+    end)
+    G.pop()
+    if not ok then error(err, 0) end
+  end
+
   -- Halves the source until it is within 2x of the detailed box, one 2x2
   -- average per halving, so every pixel of the source contributes. A single
   -- bilinear step from a much larger frame samples only 2x2 of each block and
@@ -246,16 +267,16 @@ function Atlas.new(mod, load)
         return nil
       end
       c:setFilter("linear", "linear")
-      local prev = love.graphics.getCanvas()
-      love.graphics.setCanvas(c)
-      love.graphics.clear(0, 0, 0, 0)
-      love.graphics.setColor(1, 1, 1, 1)
-      if quad then
-        love.graphics.draw(img, quad, 0, 0, 0, nw / w, nh / h)
-      else
-        love.graphics.draw(img, 0, 0, 0, nw / w, nh / h)
-      end
-      love.graphics.setCanvas(prev)
+      local from, fromQuad, fromW, fromH = img, quad, w, h
+      drawClean(function()
+        love.graphics.setCanvas(c)
+        love.graphics.clear(0, 0, 0, 0)
+        if fromQuad then
+          love.graphics.draw(from, fromQuad, 0, 0, 0, nw / fromW, nh / fromH)
+        else
+          love.graphics.draw(from, 0, 0, 0, nw / fromW, nh / fromH)
+        end
+      end)
       tmp[#tmp + 1] = c
       img, quad, w, h = c, nil, nw, nh
     end
@@ -322,16 +343,15 @@ function Atlas.new(mod, load)
     end
     -- nearest, as the game draws its own pics: linear here blurs the sprite
     canvas:setFilter("nearest", "nearest")
-    local prev = love.graphics.getCanvas()
-    love.graphics.setCanvas(canvas)
-    love.graphics.clear(0, 0, 0, 0)
-    love.graphics.setColor(1, 1, 1, 1)
-    if sq then
-      love.graphics.draw(src, sq, ox - xmin, oy - ymin, 0, s, s)
-    else
-      love.graphics.draw(src, ox - xmin, oy - ymin, 0, s, s)
-    end
-    love.graphics.setCanvas(prev)
+    drawClean(function()
+      love.graphics.setCanvas(canvas)
+      love.graphics.clear(0, 0, 0, 0)
+      if sq then
+        love.graphics.draw(src, sq, ox - xmin, oy - ymin, 0, s, s)
+      else
+        love.graphics.draw(src, ox - xmin, oy - ymin, 0, s, s)
+      end
+    end)
     for _, t in ipairs(temps) do t:release() end
     if xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
       pivots[canvas] = { PIC_BOX / 2 - xmin, PIC_BOX / 2 - ymin }
