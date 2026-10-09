@@ -42,14 +42,6 @@ return function(mod)
   if not dex then
     mod.log:info("national_dex_gen3 is not installed -- no species #387-1025 to draw")
   end
-  -- 1025Dex registers the same slots with its own art; two sprite sets would fight.
-  local okP, provider = pcall(function() return dex and dex.exports.provider() end)
-  if okP and provider and provider ~= "national_dex_gen3" then
-    mod.log:info("%s provides the species -- g9-battle-sprites-gen3 draws nothing", provider)
-    Api(mod, { active = false, provider = provider })
-    return
-  end
-
   local atlas = nil
   local function install(game)
     if atlas then return end
