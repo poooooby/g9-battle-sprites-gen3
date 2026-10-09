@@ -1,31 +1,43 @@
 # G9 Battle Sprites (Gen 3)
 
-Animated, true-colour battle sprites, Pokédex and summary front pics, and party
-icons for National Dex species **#387–1025** (Generations 4–9) on the gen3
-games in gen1recomp: **FireRed, LeafGreen, Ruby, Sapphire and Emerald**.
+Animated, true-colour battle sprites and Pokédex and summary front pics for
+**every National Dex species, #1–1025** (Generations 1–9), plus party icons for
+#387–1025, on the gen3 games in gen1recomp: **FireRed, LeafGreen, Ruby, Sapphire
+and Emerald**.
 
-Species #1–386 are never touched. They keep the game's own sprites.
+Generations 1–3 (#1–386) are covered too, so a Pokémon of any generation gets the
+same animated art. Their party icons stay the game's own, and so do Unown's letters
+(the pack has one Unown sheet, not 28) and a Castform in its sun / rain / hail looks.
 
 This is a gen3-only rewrite of [g9-battle-sprites](https://github.com/tectorifter/g9-battle-sprites),
 which targets gen1 and gen2. It works best with
 [national_dex_gen3](https://github.com/poooooby/national_dex_gen3), which
-registers the species (an optional dependency; without it there are no
-species #387–1025 to draw).
+registers the species #387–1025 (an optional dependency; without it only
+Generations 1–3 are drawn).
 
 ## What it draws
 
 | Where | Species #387–1025 | Species #1–386 |
 |---|---|---|
-| Battle, enemy front | animated sheet (front, or front shiny) | the game's own |
-| Battle, player back | animated sheet (back, or back shiny) | the game's own |
-| Pokédex front pic | animated sheet | the game's own |
-| Party summary front pic | animated sheet | the game's own |
+| Battle, enemy front | animated sheet (front, or front shiny) | animated sheet |
+| Battle, player back | animated sheet (back, or back shiny) | animated sheet |
+| Pokédex front pic | animated sheet | animated sheet |
+| Party summary front pic | animated sheet | animated sheet |
 | Party list icon | two-frame 32×32 icon | the game's own |
 
-Back (player-side) pics are a close-up, like the built-in ones: the Pokémon is
-shown at full size, never shrunk to fit, centred on the pic box, with whatever
-overflows cut off at the bottom (the battle screen's text box covers it). Small
-Pokémon are shown whole with their feet on the bottom edge. The engine's pic box
+Long animations are trimmed to the median length of their kind (58 frames for fronts, 52 for
+backs), cut where the loop closes on a matching frame so it does not jump
+(`tools/trim_loops.py`, which writes `tools/loop_trims.json`; a sheet with no clean loop keeps all
+its frames). That takes about a quarter of the frames, and the package from 113 MB to 85 MB.
+
+Back (player-side) pics are a close-up, framed like the cart's own: each Pokémon is placed with
+the top of its body on the row the cart sprite's body starts on, at the clean scale (1×, 1.5× or
+2×, never below 1×) that brings it nearest the cart sprite's on-screen height, and whatever runs
+past the 64 px box is what the battle screen's text box covers. The references are the 64×64
+back sprites of a pokeemerald-expansion checkout (`tools/back_framing.py`, which writes
+`tools/back_framing.json`); the body is measured on the animation's first frame, so a head flung
+up later (Blacephalon) does not set the size. A Pokémon with no reference is shown at full size with its feet on the bottom edge
+instead, and a back pic is never shrunk to fit. The engine's pic box
 is 64×64, but a wide Pokémon (wings, a long tail) is not cropped to it: its pic is
 rendered into a canvas big enough for its whole animation (up to 96 px past the box
 in any direction, `BACK_WIDE_MAX` in `src/atlas.lua`), so a head that swings above
@@ -42,6 +54,10 @@ fit: the whole frame, bottom-centred as before, in a canvas that extends past th
 pic box. That only happens when the battle screen asks for the pic (the code
 checks who is calling), because the Pokédex, party summary, PC and other screens
 draw a pic as a plain 64×64 image and still get the fit-to-box one.
+
+With the Gen 3 HD Sprites mod installed, each Pokémon's battle size can be tuned by hand in
+`data/sprite_scale.lua` (percentages for the front and the back pic, plus pixel nudges; edit and
+restart, no rebuild). Without that mod, sizes are fixed.
 
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
@@ -67,7 +83,7 @@ sheets, and the 4× party page from the gen1/gen2 mod.
 
 ## Assets
 
-Everything ships in `assets/atlas/`: 86 PNGs, 94 MB. The gen1/gen2 mod shipped
+Everything ships in `assets/atlas/`: 81 PNGs, 93 MB. The gen1/gen2 mod shipped
 2,556 loose sheets for all species. No page is larger than 4096×4096, which is
 the texture size limit on many Android GPUs; a larger image fails to load there
 and the engine shows a red missing-pic box.
@@ -78,7 +94,7 @@ and the engine shows a red missing-pic box.
   records the block's corner (`ox`, `oy`).
 - `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 85 forms, one page.
   Gender variants are not packed; the Pokédex and summary use the front pic.
-- `data/atlas_index.lua`: maps each species (and form) to its engine `slot` and its cells (and, for back pics, where the Pokémon sits in its frame).
+- `data/atlas_index.lua`: maps each species (and form) to its engine `slot` (for Generations 1–3 the game's own internal species id; the build reads those and the names from the engine's extracted data, `--gen3-data`) and its cells (and, for back pics, where the Pokémon sits in its frame).
 
 The atlases are built from the third-party DBK sprite pack and the "icones
 animados" icon pack. The source packs are not in this repo. Artist credits are
@@ -100,7 +116,8 @@ Output is deterministic: rebuilding the same inputs gives identical bytes.
 
 The hooks are in `src/hooks.lua`. They wrap three functions on the gen3 engine's
 `Pokemon` module: `frontPic`, `backPic` and `icon`. Each wrapper answers for
-species #387–1025 and calls the original function for everything else.
+the species the atlas has art for and calls the original function for everything
+else.
 
 Battle and Pokédex pics are rendered from the current frame into a 64×64
 canvas, which matches the engine's pic box. The canvas cache is bounded at 128

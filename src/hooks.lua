@@ -1,10 +1,10 @@
 -- Puts the atlas art in front of the gen 3 engine's own picture functions.
 --
--- Only the species national_dex_gen3 registers are answered: #387-1025 at slot
--- dex + 64, and its alternate forms (WORMADAM_SANDY, ...) at slots of their own
--- above that. The atlas index says which slots it has (data/atlas_index.lua).
--- Every other slot falls through to the engine's own functions, so the game's
--- gen 1-3 sprites stay exactly as they are.
+-- The atlas index (data/atlas_index.lua) says which slots have art: Gen 1-3 (#1-386) at
+-- their own internal slots, the species national_dex_gen3 registers (#387-1025 at slot
+-- dex + 64) and its alternate forms (WORMADAM_SANDY, ...) at slots of their own above
+-- that. Every other slot (Unown's letters, the Egg ...) falls through to the engine's own
+-- functions, as does a Castform in one of its weather forms (the pic call carries `form`).
 --
 --   Pokemon.frontPic  battle (enemy), Pokedex front, party summary
 --   Pokemon.backPic   battle (player)
@@ -28,6 +28,13 @@ local function keyFor(atlas, Pokemon, slot, personality)
     return -key
   end
   return key
+end
+
+-- A pic asked for in an alternate form (Castform's sun / rain / hail look) is not ours:
+-- the atlas has one sheet per species, so it would show the normal Castform in every
+-- weather.
+local function inForm(form)
+  return (tonumber(form) or 0) ~= 0
 end
 
 -- Pokemon.frontPic(species, form, shiny, personality) / backPic(species, form, shiny)
@@ -93,7 +100,8 @@ function Hooks.install(Pokemon, atlas, Battle)
   local origFront = Pokemon.frontPic
   if type(origFront) == "function" and not ours[origFront] then
     Pokemon.frontPic = function(species, form, shiny, personality)
-      local entry = picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, inBattle())
+      local entry = not inForm(form)
+        and picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, inBattle())
       if entry then return entry end
       return origFront(species, form, shiny, personality)
     end
@@ -106,7 +114,7 @@ function Hooks.install(Pokemon, atlas, Battle)
   local origBack = Pokemon.backPic
   if type(origBack) == "function" and not ours[origBack] then
     Pokemon.backPic = function(species, form, shiny)
-      local entry = picFor(atlas, "back", slotOf(atlas, species), shiny)
+      local entry = not inForm(form) and picFor(atlas, "back", slotOf(atlas, species), shiny)
       if entry then return entry end
       return origBack(species, form, shiny)
     end

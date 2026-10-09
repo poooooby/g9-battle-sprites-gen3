@@ -1,6 +1,7 @@
--- Headless check of the dex gate in src/hooks.lua: species #1-386 must reach
--- the engine's own functions untouched, #387-1025 must reach the atlas, and a
--- second install must not stack wrappers. Run from the mod root:
+-- Headless check of the slot gate in src/hooks.lua: the slots the atlas has art for (Gen 1-3
+-- at their internal ids, #387-1025 and the forms above them) reach the atlas, everything else
+-- (Unown's letters, the Egg) reaches the engine's own functions untouched, and a second install
+-- must not stack wrappers. Run from the mod root:
 --   luajit tests/hooks_test.lua
 local Hooks = dofile("src/hooks.lua")
 
@@ -11,7 +12,11 @@ end
 
 -- a fake atlas: answers every slot it has art for -- the base species (451-1089,
 -- dex + 64) and the alternate forms (1090-1174), plus the female Meowstic sheet kept under -742 -- with one cell per variant
-local function has(slot) return (slot >= 451 and slot <= 1174) or slot == -742 end
+-- the Gen 1-3 slots: 1-251, then Treecko .. Deoxys (277-411), minus Unown (201)
+local function has(slot)
+  return (slot >= 451 and slot <= 1174) or slot == -742
+    or (slot >= 1 and slot <= 251 and slot ~= 201) or (slot >= 277 and slot <= 411)
+end
 local calls = {}
 local atlas = {
   hasSlot = has,
@@ -21,7 +26,8 @@ local atlas = {
   end,
   frameIndex = function() return 0 end,
   picFrame = function(dex, variant, _cell, _f, battle) calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; return { fake = variant } end,
-  icon = function(slot) return has(slot) and { fake_icon = slot } or nil end,
+  -- Gen 1-3 keep the game's own party icons: the atlas has none for them
+  icon = function(slot) return (slot >= 451 and has(slot)) and { fake_icon = slot } or nil end,
 }
 
 local function origFront(species) return { orig = "front", species = species } end
@@ -32,10 +38,21 @@ local Pokemon = { frontPic = origFront, backPic = origBack, icon = origIcon }
 local n = Hooks.install(Pokemon, atlas)
 check(n == 3, "three functions wrapped, got " .. tostring(n))
 
--- gen 3 species below the new range keep the engine's own pic
-check(Pokemon.frontPic(25, 0, false).orig == "front", "dex 25 front stays vanilla")
-check(Pokemon.backPic(25, 0, false).orig == "back", "dex 25 back stays vanilla")
-check(Pokemon.icon(25).orig == "icon", "dex 25 icon stays vanilla")
+-- Gen 1-3 come from the atlas, at their internal slots, except for the party icon
+check(Pokemon.frontPic(25, 0, false).image.fake == "front", "slot 25 (Pikachu) front comes from the atlas")
+check(Pokemon.backPic(25, 0, false).image.fake == "back", "slot 25 back comes from the atlas")
+check(Pokemon.frontPic(277, 0, false).image.fake == "front", "slot 277 (Treecko, dex 252) front comes from the atlas")
+check(Pokemon.icon(25).orig == "icon", "slot 25 icon stays the game's own")
+check(Pokemon.icon(277).orig == "icon", "slot 277 icon stays the game's own")
+-- what has no sheet stays the engine's: Unown, the Egg and Unown's letters, the unused slots
+check(Pokemon.frontPic(201, 0, false).orig == "front", "Unown (201) front stays vanilla")
+check(Pokemon.frontPic(412, 0, false).orig == "front", "the Egg (412) stays vanilla")
+check(Pokemon.frontPic(413, 0, false).orig == "front", "Unown B (413) stays vanilla")
+check(Pokemon.backPic(260, 0, false).orig == "back", "an unused slot (260) stays vanilla")
+-- a pic asked for in an alternate form (Castform's weather looks) is the engine's
+check(Pokemon.frontPic(385, 2, false).orig == "front", "Castform in a weather form (form 2) front stays vanilla")
+check(Pokemon.backPic(385, 3, false).orig == "back", "...and back")
+check(Pokemon.frontPic(385, 0, false).image.fake == "front", "...but form 0 is the atlas's")
 -- slot 451 is dex 387, the first new species
 check(Pokemon.frontPic(451, 0, false).image.fake == "front", "dex 387 front comes from the atlas")
 check(Pokemon.backPic(451, 0, false).image.fake == "back", "dex 387 back comes from the atlas")
@@ -112,7 +129,7 @@ end
 local before = Pokemon.frontPic
 Hooks.install(Pokemon, atlas)
 check(Pokemon.frontPic == before, "second install leaves the wrapper in place")
-check(Pokemon.frontPic(25, 0, false).orig == "front", "still falls through after a second install")
+check(Pokemon.frontPic(413, 0, false).orig == "front", "still falls through after a second install")
 
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 hooks)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)

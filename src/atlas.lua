@@ -36,7 +36,9 @@ local BACK_WIDE = true
 local BACK_WIDE_MAX = 96     -- most px the canvas grows past the box in any direction
 local BACK_MIN_W = 0.7       -- (no WIDE) at least this share of the creature's width stays visible
 local BACK_MIN_H = 0.5       -- ... and this share of its height
-local BACK_RAISE = 4         -- px every back pic is lifted, to sit on the platform as the built-in ones do
+local BACK_ZOOM_MIN = 1      -- the exact zoom (gen3-hd-sprites) only zooms IN, never out: stays between these
+local BACK_ZOOM_MAX = 3
+local BACK_RAISE = 4         -- px a back pic WITHOUT a cart reference is lifted, to sit on the platform
 
 --- Where a back pic's frame goes in the PIC_BOX x PIC_BOX box: scale `s` and the
 --- frame's top-left (`ox`, `oy`), in box px, plus the canvas's extent `xmin`, `xmax`,
@@ -44,27 +46,42 @@ local BACK_RAISE = 4         -- px every back pic is lifted, to sit on the platf
 --- creature's typical box in its frame (cx0, cy0, cx1, cy1, source px; what it is
 --- anchored on) and its box over the whole animation (ux0, uy0, ux1, uy1; how much
 --- room it needs), both written by tools/build_atlas.py; an older index without them
---- falls back to the whole frame. Pure.
-function Atlas.backLayout(cell, wide)
+--- falls back to the whole frame. A cell framed from the cart's own sprite (tools/back_framing.py)
+--- also has `bt`, the box row its body's top sits on, and `bs`, the scale (1, 1.5 or 2) that
+--- brings its body to the cart's on-screen height: the body is then drawn at that scale with its
+--- top on row `bt`, and whatever runs below the box is what the battle GUI covers. Pure.
+function Atlas.backLayout(cell, wide, exact, force)
   local fs = cell.fs or PIC_BOX
   local x0, y0 = cell.cx0 or 0, cell.cy0 or 0
   local x1, y1 = cell.cx1 or fs, cell.cy1 or fs
   local cw, ch = math.max(1, x1 - x0), math.max(1, y1 - y0)
-  local s
-  if wide then
-    s = 1
+  local s, oy, anchorX
+  if cell.bt then
+    -- framed like the cart: the body's top on the reference's row, at the reference's size
+    s = cell.bs or 1
+    if exact and cell.bv then
+      -- gen3-hd-sprites draws at window resolution, so any zoom keeps every pixel: the body
+      -- is zoomed to exactly the cart sprite's on-screen height instead of a clean step
+      s = math.max(BACK_ZOOM_MIN, math.min(BACK_ZOOM_MAX, cell.bv / ch))
+      anchorX = cell.bx            -- ... and put where the cart sprite's body is, side to side too
+    end
+    if force then s = force end    -- a size set by hand (data/sprite_scale.lua)
+    oy = cell.bt - s * y0
   else
-    s = math.min(1, PIC_BOX / (BACK_MIN_W * cw), PIC_BOX / (BACK_MIN_H * ch))
+    if wide then
+      s = 1
+    else
+      s = math.min(1, PIC_BOX / (BACK_MIN_W * cw), PIC_BOX / (BACK_MIN_H * ch))
+    end
+    if ch * s >= PIC_BOX then
+      oy = -s * y0               -- top at the box top: the overflow is cut at the bottom
+    else
+      oy = PIC_BOX - s * y1      -- fits whole: feet on the box bottom
+    end
+    oy = oy - BACK_RAISE
   end
   -- centred on the creature
-  local ox = PIC_BOX / 2 - s * (x0 + x1) / 2
-  local oy
-  if ch * s >= PIC_BOX then
-    oy = -s * y0                 -- top at the box top: the overflow is cut at the bottom
-  else
-    oy = PIC_BOX - s * y1        -- fits whole: feet on the box bottom
-  end
-  oy = oy - BACK_RAISE
+  local ox = (anchorX or PIC_BOX / 2) - s * (x0 + x1) / 2
   local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
   if wide then
     local u0, v0 = cell.ux0 or x0, cell.uy0 or y0
@@ -117,12 +134,14 @@ Atlas._pivots, Atlas._installDrawWrap = pivots, installDrawWrap -- for the tests
 --- as backLayout: `s, ox, oy, xmin, xmax, ymin, ymax`. Pure.
 function Atlas.frontLayout(cell)
   local fs = cell.fs or PIC_BOX
-  local ox, oy = (PIC_BOX - fs) / 2, PIC_BOX - fs
+  local drop = cell.fy or 0       -- a species drawn lower than its frame's bottom edge puts it
+  local ox, oy = (PIC_BOX - fs) / 2, PIC_BOX - fs + drop
   local m = BACK_WIDE_MAX
   local xmin = math.max(-m, math.min(0, math.floor(ox)))
   local xmax = math.min(PIC_BOX + m, math.max(PIC_BOX, math.ceil(ox + fs)))
   local ymin = math.max(-m, math.min(0, math.floor(oy)))
-  return 1, ox, oy, xmin, xmax, ymin, PIC_BOX
+  local ymax = math.min(PIC_BOX + m, math.max(PIC_BOX, math.ceil(oy + fs)))
+  return 1, ox, oy, xmin, xmax, ymin, ymax
 end
 
 local function loadIndex(load)
@@ -153,6 +172,27 @@ function Atlas.new(mod, load)
   if not bySlot then return nil end
 
   local self = { pages = {}, icons = {}, frames = {}, order = {} }
+
+  -- Hand-tuned sizes (data/sprite_scale.lua), used with gen3-hd-sprites. A missing or broken
+  -- file just means the defaults.
+  local tuning = {}
+  do
+    local ok, t = pcall(load, "data/sprite_scale.lua")
+    if ok and type(t) == "table" then tuning = t end
+  end
+  -- how far each enemy front pic is raised so its feet are no lower than the platform's
+  -- centre (data/front_anchor.lua, tools/front_anchor.py); sprite_scale.lua's front_dy wins
+  local anchors = {}
+  do
+    local ok, t = pcall(load, "data/front_anchor.lua")
+    if ok and type(t) == "table" then anchors = t end
+  end
+  local function tuned(slot)
+    local rec = bySlot[tonumber(slot)]
+    local own = rec and tuning[rec.id]
+    local all = type(tuning.all) == "table" and tuning.all or {}
+    return type(own) == "table" and own or {}, all, rec and anchors[rec.id] or 0
+  end
 
   -- A page is loaded once and kept. A failed load is NOT kept: assets:path()
   -- answers nil until the mod service is ready, so the next draw retries. The
@@ -217,7 +257,7 @@ function Atlas.new(mod, load)
 
   -- Canvas creation can fail on a platform/GPU this was never tried on (an
   -- unsupported size or the dpiscale option, say). Logged once; after that,
-  -- every pic for #387-1025 quietly falls back to the game's own sprite
+  -- every pic the atlas draws quietly falls back to the game's own sprite
   -- instead of erroring out of the draw loop.
   local canvasFailed = false
   local function warnCanvas(where, err)
@@ -225,7 +265,7 @@ function Atlas.new(mod, load)
     canvasFailed = true
     if mod.log then
       mod.log:warn("could not create a canvas for atlas pics (%s): %s -- species "
-        .. "#387-1025 will show the game's own sprites instead", where, tostring(err))
+        .. "the species it draws will show the game's own sprites instead", where, tostring(err))
     end
   end
 
@@ -295,7 +335,10 @@ function Atlas.new(mod, load)
   function self.picFrame(dex, variant, cell, f, battle)
     local isBack = variant == "back" or variant == "back_shiny"
     local big = isBack or battle == true
-    local key = tostring(dex) .. ":" .. variant .. ":" .. f .. (big and ":w" or "")
+    -- gen3-hd-sprites (when installed and on): the pic is drawn from the atlas at the
+    -- window's resolution, so the canvas only has to be the low-res stand-in
+    local hd = big and self.hd and self.hd.enabled("battle") and self.hd or nil
+    local key = tostring(dex) .. ":" .. variant .. ":" .. f .. (hd and ":hd" or big and ":w" or "")
     local hit = self.frames[key]
     if hit then return hit end
     local img = page(string.format("battle_%s_%s", variant, cell.sheet))
@@ -315,9 +358,19 @@ function Atlas.new(mod, load)
     -- canvas uses the logical box, so layout below is in PIC_BOX units
     -- 1:1 with the game's pixel grid (the atlas already holds game pixels), so a
     -- small species stays small; only a sprite larger than the box is reduced
-    local s, ox, oy, wide
+    local s, ox, oy, wide, ls
+    local own, all, autoDy = tuned(dex)
     local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
-    if not isBack and battle and BACK_WIDE and installDrawWrap() then
+    if hd then
+      -- the same layout as the wide canvas, but the canvas stays the 64x64 box: the
+      -- full frame is drawn by gen3-hd-sprites, this is only what shows if it cannot
+      if isBack then
+        ls, ox, oy = Atlas.backLayout(cell, true, true, tonumber(own.back))
+      else
+        ls, ox, oy = Atlas.frontLayout(cell)
+      end
+      s = ls / (w / fw)
+    elseif not isBack and battle and BACK_WIDE and installDrawWrap() then
       local ls
       ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout(cell)
       s = ls / (w / fw)
@@ -353,7 +406,27 @@ function Atlas.new(mod, load)
       end
     end)
     for _, t in ipairs(temps) do t:release() end
-    if xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
+    if hd then
+      -- the point the HD frame is anchored on: the feet (bottom-centre of the frame) for a
+      -- front, so a size change keeps it standing on its spot; the box's centre for a back
+      local lx, ly
+      if isBack then
+        lx, ly = PIC_BOX / 2, PIC_BOX / 2
+      else
+        lx, ly = ox + ls * fs / 2, oy + ls * fs
+      end
+      -- hand-tuned size and nudge (data/sprite_scale.lua)
+      local mul = tonumber(isBack and all.back or all.front) or 1
+      local dx = tonumber(isBack and own.back_dx or own.front_dx) or 0
+      local dy = tonumber(isBack and own.back_dy or own.front_dy) or (isBack and 0 or autoDy)
+      local k = isBack and 1 or (tonumber(own.front) or 1)
+      hd.tag(canvas, {
+        texture = img, quad = quad,
+        lowPivot = { lx + dx, ly + dy },
+        pivot = { (lx - ox) / ls, (ly - oy) / ls },
+        scale = ls * k * mul,
+      })
+    elseif xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
       pivots[canvas] = { PIC_BOX / 2 - xmin, PIC_BOX / 2 - ymin }
     end
     remember(key, canvas)

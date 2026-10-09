@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import json
 import os
 import re
 from pathlib import Path
@@ -99,6 +100,38 @@ def read_species_ids(payload: Path) -> list[tuple[int, str]]:
         raise SystemExit(f"payload has {len(recs)} species in #{FIRST_DEX}-{LAST_DEX}, expected "
                          f"{LAST_DEX - FIRST_DEX + 1}")
     return recs
+
+
+# Gen 1-3 (#1-386) are not in national_dex_gen3's payload: they are the game's own species.
+# Their names and the National Dex number of each internal species id come from the engine's
+# extracted pokemon data (names.lua, national.lua), and their atlas slot is the internal id.
+# Unown (#201) is left out: the engine draws its 28 letter forms as separate species and the
+# pack has a single UNOWN sheet, so animating it would turn every letter into the same one.
+GEN3_LAST_DEX = 386
+GEN3_SKIP = {201}
+
+
+def gen3_id(name: str) -> str:
+    """The pack's id for an engine species name (NIDORAN♀ -> NIDORAN_F, MR. MIME -> MR_MIME)."""
+    n = name.upper().replace("♀", "_F").replace("♂", "_M")
+    n = re.sub(r"[.']", "", n)
+    return re.sub(r"[\s\-]+", "_", n)
+
+
+def read_gen3_species(data: Path) -> list[tuple[int, str, int]]:
+    """(dex, id, internal slot) for National Dex #1-386, sorted by dex."""
+    names = dict(re.findall(r'\[(\d+)\] = "([^"]*)"', (data / "names.lua").read_text(encoding="utf-8")))
+    national = dict(re.findall(r"toNational\[(\d+)\] = (\d+)", (data / "national.lua").read_text(encoding="utf-8")))
+    rows = []
+    for slot, dex in national.items():
+        slot, dex = int(slot), int(dex)
+        if 1 <= dex <= GEN3_LAST_DEX and dex not in GEN3_SKIP and names.get(str(slot)):
+            rows.append((dex, gen3_id(names[str(slot)]), slot))
+    rows.sort()
+    if len({d for d, _i, _s in rows}) != GEN3_LAST_DEX - len(GEN3_SKIP):
+        raise SystemExit(f"{data} lists {len(rows)} species in #1-{GEN3_LAST_DEX}, expected "
+                         f"{GEN3_LAST_DEX - len(GEN3_SKIP)}")
+    return rows
 
 
 def read_forms(payload: Path) -> list[tuple[int, str, int, str]]:
@@ -213,8 +246,39 @@ def creature_box(boxes: list[tuple[int, int, int, int]]) -> tuple[int, int, int,
     return (x0, y0, max(x1, x0 + 1), max(y1, y0 + 1))
 
 
+# Front pics drawn lower than the frame's bottom edge puts them, in px, by species id: a tall front
+# frame whose creature floats high (Noivern's) would otherwise stand above the top of the screen.
+# Written to the front cells as `fy`.
+FRONT_DROP = {"NOIVERN": 20}
+
+
+BACK_SCALES = (1.0, 1.5, 2.0)   # the clean steps a back sprite may be upscaled by (2 px art pixels -> 2/3/4 px)
+
+
+def back_scale(visible: int, height: int) -> float:
+    """The scale a back sprite is drawn at: the reference's visible height over our body's
+    first-frame height, snapped to the nearest clean step and never below 1 (no downsizing).
+    Pure; shared with tools/back_framing.py."""
+    if height <= 0 or visible <= 0:
+        return 1.0
+    exact = visible / height
+    return min(BACK_SCALES, key=lambda s: (abs(s - exact), s))
+
+
+def trim_window(trims: dict, sid: str, variant: str, frames: int) -> tuple[int, int] | None:
+    """(start, count) of the frames to keep for `sid`, from tools/trim_loops.py, or None.
+    A shiny sheet uses its normal sheet's window; one that no longer matches is ignored."""
+    side = "back" if variant in BACK_VARIANTS else "front"
+    win = trims.get(sid, {}).get(side)
+    if not win:
+        return None
+    start, count = int(win[0]), int(win[1])
+    return (start, count) if 0 <= start and count >= 1 and start + count <= frames else None
+
+
 def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str]],
-                 out_dir: Path, index: dict[str, dict]) -> None:
+                 out_dir: Path, index: dict[str, dict], trims: dict | None = None,
+                 framing: dict | None = None) -> None:
     """Battle frames are grouped by their game-pixel frame size. A group is cut
     into blocks of uniform fs x fs cells (a species' frames stay together in
     one block), and the blocks of every size are shelf-packed onto shared pages
@@ -236,7 +300,13 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
             # true size: every frame keeps its source pixels; the runtime
             # shrinks only what does not fit the box
             fs = img.height
-            groups.setdefault(fs, []).append((_dex, sid, img, max(1, round(img.width / fs))))
+            frames = max(1, round(img.width / fs))
+            win = trim_window(trims or {}, sid, variant, frames)
+            if win:
+                # a long animation trimmed to a window that loops (tools/trim_loops.py)
+                img = img.crop((win[0] * fs, 0, (win[0] + win[1]) * fs, fs))
+                frames = win[1]
+            groups.setdefault(fs, []).append((_dex, sid, img, frames))
 
         # cut each size group into blocks
         blocks = []   # (fs, cols, rows, members)
@@ -284,7 +354,10 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                     bb = frame.getbbox()
                     if bb:
                         boxes.append(bb)
-                box = creature_box(boxes)
+                # the body is the FIRST frame's box: a head or wing flung out later in the
+                # animation is not what the creature is anchored on (Blacephalon's head)
+                first = img.crop((0, 0, fs, fs)).getbbox()
+                box = first or creature_box(boxes)
                 extent = (min(b[0] for b in boxes), min(b[1] for b in boxes),
                           max(b[2] for b in boxes), max(b[3] for b in boxes)) if boxes else None
                 cell = {"sheet": page, "start": start, "fs": fs, "cols": pcols, "frames": frames,
@@ -294,6 +367,16 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                     # runtime can anchor on it rather than on the frame's empty margins
                     cell.update({"cx0": box[0], "cy0": box[1], "cx1": box[2], "cy1": box[3],
                                  "ux0": extent[0], "uy0": extent[1], "ux1": extent[2], "uy1": extent[3]})
+                    ref = (framing or {}).get(sid)
+                    if ref:
+                        # the cart's own framing of this species (tools/back_framing.py): the row its
+                        # body's top sits on and the scale that brings our body to its on-screen height
+                        cell["bt"] = int(ref["t"])
+                        cell["bx"] = float(ref.get("x", 32))      # the reference body's centre column
+                        cell["bv"] = int(ref["v"])      # the reference body's height: the exact zoom with gen3-hd-sprites
+                        cell["bs"] = back_scale(int(ref["v"]), box[3] - box[1])
+                if variant not in BACK_VARIANTS and sid in FRONT_DROP:
+                    cell["fy"] = FRONT_DROP[sid]
                 index.setdefault(sid, {})[variant] = cell
                 start += frames
         names = save(shelf.pages, f"battle_{variant}", out_dir, used_w, used_h)
@@ -416,6 +499,10 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
                 if "cx0" in c:
                     text += f', cx0 = {c["cx0"]}, cy0 = {c["cy0"]}, cx1 = {c["cx1"]}, cy1 = {c["cy1"]}'
                     text += f', ux0 = {c["ux0"]}, uy0 = {c["uy0"]}, ux1 = {c["ux1"]}, uy1 = {c["uy1"]}'
+                if "fy" in c:
+                    text += f', fy = {c["fy"]}'
+                if "bt" in c:
+                    text += f', bt = {c["bt"]}, bs = {c["bs"]:g}, bv = {c["bv"]}, bx = {c["bx"]:g}'
                 parts.append(text + " }")
         if "icon" in entry:
             c = entry["icon"]
@@ -431,25 +518,61 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+def add_source_args(ap: argparse.ArgumentParser) -> None:
+    """The input locations shared by the build and the tools that read the same sheets."""
     ap.add_argument("--sheets", type=Path, default=ROOT.parent / "g9-battle-sprites" / "assets")
     ap.add_argument("--payload", type=Path, default=ROOT.parent / "national_dex_gen3" / "data" / "species")
+    ap.add_argument("--gen3-data", type=Path, default=ROOT.parent / "gen1recomp" / "firered" / "data"
+                    / "generated" / "gba" / "pokemon", help="the engine's extracted pokemon data "
+                    "(names.lua, national.lua): where Gen 1-3's names and slots come from")
     ap.add_argument("--dbk", type=Path, default=ROOT.parent / "g9-battle-sprites" / "data" / "dbk_data.lua")
-    ap.add_argument("--icons-dir", type=Path, default=ROOT.parent / "ReferenceGen1-3" / "Gen 9 Pack"
+
+
+def battle_species(args) -> tuple[dict[str, str], list[tuple[int, str]]]:
+    """(id -> sheet stem, [(dex, id)]) for every species the build draws in battle: Gen 1-3,
+    #387-1025, the alternate forms and the female sheets. Shared with tools/trim_loops.py and
+    tools/back_framing.py so they see exactly the sheets the build packs."""
+    species = read_species_ids(args.payload)
+    forms = read_forms(args.payload)
+    gen3 = read_gen3_species(args.gen3_data)
+    dbk = read_map(args.dbk, "species")
+    dbk.update(STEM_OVERRIDES)
+    classic = [(dex, sid) for dex, sid, _slot in gen3]
+    species = species + [(dex, fid) for dex, fid, _slot, _base in forms]
+    dex_of = {sid: dex for dex, sid in species}
+    females = [(dex_of[base], fid) for fid, base in FEMALE_SHEETS.items() if base in dex_of]
+    return dbk, classic + species + females
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    add_source_args(ap)
+    ap.add_argument("--icons-dir", type=Path, default=ROOT.parent / "1SpriteReferences" / "Gen 9 Pack"
                     / "Graphics" / "Pokemon" / "Icons")
+    ap.add_argument("--trims", type=Path, default=ROOT / "tools" / "loop_trims.json",
+                    help="which frames of each long animation to keep (tools/trim_loops.py)")
+    ap.add_argument("--framing", type=Path, default=ROOT / "tools" / "back_framing.json",
+                    help="each back sprite's cart reference (tools/back_framing.py)")
     ap.add_argument("--out", type=Path, default=ROOT)
     args = ap.parse_args()
+    trims = json.loads(args.trims.read_text(encoding="utf-8")) if args.trims.exists() else {}
+    framing = json.loads(args.framing.read_text(encoding="utf-8")) if args.framing.exists() else {}
 
     species = read_species_ids(args.payload)
     forms = read_forms(args.payload)
+    gen3 = read_gen3_species(args.gen3_data)
     slots = {sid: dex + SLOT_OFFSET for dex, sid in species}
+    slots.update({sid: slot for _dex, sid, slot in gen3})
     slots.update({fid: slot for _dex, fid, slot, _base in forms})
     form_ids = {fid for _dex, fid, _slot, _base in forms}
     dbk = read_map(args.dbk, "species")
     dbk.update(STEM_OVERRIDES)
     base_species = list(species)
     species = species + [(dex, fid) for dex, fid, _slot, _base in forms]
+    classic = [(dex, sid) for dex, sid, _slot in gen3]
+    no_sheet = [sid for _dex, sid in classic if sid not in dbk]
+    if no_sheet:
+        print("  Gen 1-3 species with no sheet in the pack:", ", ".join(no_sheet))
     out_atlas = args.out / "assets" / "atlas"
     out_atlas.mkdir(parents=True, exist_ok=True)
     for old in out_atlas.glob("*.png"):          # a rebuild replaces the whole set
@@ -457,10 +580,11 @@ def main() -> None:
     (args.out / "data").mkdir(parents=True, exist_ok=True)
 
     index: dict[str, dict] = {}
-    print(f"species #{FIRST_DEX}-{LAST_DEX}: {len(base_species)} + {len(forms)} forms")
+    print(f"species #{FIRST_DEX}-{LAST_DEX}: {len(base_species)} + {len(forms)} forms; "
+          f"Gen 1-3: {len(classic)}")
     dex_of = {sid: dex for dex, sid in species}
     females = [(dex_of[base], fid) for fid, base in FEMALE_SHEETS.items() if base in dex_of]
-    build_battle(args.sheets, dbk, species + females, out_atlas, index)
+    build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, framing)
     build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
     # a form with no sheet or icon of its own in the pack reuses its base's
     reused = 0
@@ -471,7 +595,7 @@ def main() -> None:
                 reused += 1
     if reused:
         print(f"  {reused} form sprite(s) reuse their base species' art")
-    write_index(index, args.out / "data" / "atlas_index.lua", species + females, slots)
+    write_index(index, args.out / "data" / "atlas_index.lua", classic + species + females, slots)
     print("wrote", args.out / "data" / "atlas_index.lua")
 
 

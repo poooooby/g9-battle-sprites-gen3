@@ -6,3 +6,11 @@ tools/build_atlas.py
 tests/atlas_layout_test.lua
 tests/forms_coverage_test.lua
 tests/clean_state_test.lua
+tests/gen3_coverage_test.lua
+tests/loop_trim_test.py
+tools/trim_loops.py
+tools/back_framing.py
+tools/loop_trims.json
+tools/back_framing.json
+tests/back_framing_coverage_test.lua
+tools/front_anchor.py

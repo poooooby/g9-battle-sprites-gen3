@@ -1,0 +1,5656 @@
+{
+ "ABRA": {
+  "back": [
+   2,
+   51
+  ]
+ },
+ "ABSOL": {
+  "back": [
+   9,
+   51
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "ACCELGOR": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   15,
+   58
+  ]
+ },
+ "AGGRON": {
+  "back": [
+   0,
+   47
+  ]
+ },
+ "ALCREMIE": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_CARAMEL_SWIRL": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_LEMON_CREAM": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_MATCHA_CREAM": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_MINT_CREAM": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_RAINBOW_SWIRL": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_RUBY_CREAM": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_RUBY_SWIRL": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALCREMIE_SALTED_CREAM": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ALOMOMOLA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "ALTARIA": {
+  "back": [
+   15,
+   49
+  ],
+  "front": [
+   0,
+   41
+  ]
+ },
+ "AMAURA": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "AMBIPOM": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ANNIHILAPE": {
+  "front": [
+   28,
+   58
+  ]
+ },
+ "APPLIN": {
+  "back": [
+   27,
+   52
+  ],
+  "front": [
+   53,
+   57
+  ]
+ },
+ "ARAQUANID": {
+  "back": [
+   24,
+   45
+  ],
+  "front": [
+   12,
+   57
+  ]
+ },
+ "ARCEUS": {
+  "back": [
+   0,
+   48
+  ]
+ },
+ "ARCHEN": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ARCTIBAX": {
+  "front": [
+   30,
+   49
+  ]
+ },
+ "ARCTOVISH": {
+  "back": [
+   84,
+   50
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ARCTOZOLT": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "ARMALDO": {
+  "back": [
+   10,
+   47
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "ARROKUDA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   36,
+   53
+  ]
+ },
+ "AUDINO": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "AURORUS": {
+  "front": [
+   64,
+   56
+  ]
+ },
+ "AVALUGG": {
+  "back": [
+   3,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "AVALUGG_HISUI": {
+  "front": [
+   0,
+   57
+  ]
+ },
+ "AXEW": {
+  "back": [
+   10,
+   48
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "AZELF": {
+  "back": [
+   0,
+   44
+  ],
+  "front": [
+   0,
+   44
+  ]
+ },
+ "AZUMARILL": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   16,
+   57
+  ]
+ },
+ "BANETTE": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   49
+  ]
+ },
+ "BARBOACH": {
+  "back": [
+   15,
+   52
+  ],
+  "front": [
+   12,
+   58
+  ]
+ },
+ "BASCULEGION": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   45
+  ]
+ },
+ "BASCULEGION_FEMALE": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   45
+  ]
+ },
+ "BASCULIN": {
+  "back": [
+   44,
+   47
+  ],
+  "front": [
+   23,
+   58
+  ]
+ },
+ "BASCULIN_WHITE_STRIPED": {
+  "back": [
+   36,
+   52
+  ],
+  "front": [
+   1,
+   57
+  ]
+ },
+ "BASTIODON": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   2,
+   58
+  ]
+ },
+ "BAXCALIBUR": {
+  "front": [
+   19,
+   56
+  ]
+ },
+ "BAYLEEF": {
+  "back": [
+   10,
+   50
+  ],
+  "front": [
+   10,
+   49
+  ]
+ },
+ "BEARTIC": {
+  "back": [
+   32,
+   47
+  ],
+  "front": [
+   21,
+   58
+  ]
+ },
+ "BEAUTIFLY": {
+  "back": [
+   5,
+   52
+  ],
+  "front": [
+   20,
+   57
+  ]
+ },
+ "BELLOSSOM": {
+  "back": [
+   12,
+   41
+  ]
+ },
+ "BERGMITE": {
+  "back": [
+   90,
+   39
+  ],
+  "front": [
+   73,
+   58
+  ]
+ },
+ "BEWEAR": {
+  "back": [
+   4,
+   52
+  ]
+ },
+ "BIBAREL": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "BINACLE": {
+  "back": [
+   28,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "BISHARP": {
+  "back": [
+   1,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "BLACEPHALON": {
+  "back": [
+   72,
+   40
+  ],
+  "front": [
+   54,
+   58
+  ]
+ },
+ "BLASTOISE": {
+  "back": [
+   11,
+   51
+  ],
+  "front": [
+   2,
+   57
+  ]
+ },
+ "BLAZIKEN": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "BLITZLE": {
+  "back": [
+   7,
+   52
+  ],
+  "front": [
+   11,
+   58
+  ]
+ },
+ "BOLDORE": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "BONSLY": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   20,
+   58
+  ]
+ },
+ "BOUFFALANT": {
+  "back": [
+   27,
+   50
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "BOUNSWEET": {
+  "back": [
+   14,
+   52
+  ],
+  "front": [
+   12,
+   57
+  ]
+ },
+ "BRAIXEN": {
+  "back": [
+   24,
+   50
+  ],
+  "front": [
+   24,
+   52
+  ]
+ },
+ "BRIONNE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   24,
+   57
+  ]
+ },
+ "BRONZONG": {
+  "back": [
+   8,
+   47
+  ]
+ },
+ "BRONZOR": {
+  "back": [
+   12,
+   50
+  ],
+  "front": [
+   4,
+   58
+  ]
+ },
+ "BRUTE_BONNET": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "BRUXISH": {
+  "back": [
+   29,
+   49
+  ],
+  "front": [
+   15,
+   58
+  ]
+ },
+ "BUDEW": {
+  "back": [
+   4,
+   50
+  ]
+ },
+ "BUIZEL": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "BUNEARY": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "BURMY": {
+  "back": [
+   24,
+   50
+  ],
+  "front": [
+   24,
+   57
+  ]
+ },
+ "BUZZWOLE": {
+  "front": [
+   13,
+   58
+  ]
+ },
+ "CACTURNE": {
+  "back": [
+   0,
+   48
+  ]
+ },
+ "CALYREX": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   0,
+   49
+  ]
+ },
+ "CALYREX_ICE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "CAMERUPT": {
+  "back": [
+   0,
+   47
+  ]
+ },
+ "CARKOL": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   9,
+   58
+  ]
+ },
+ "CARNIVINE": {
+  "back": [
+   11,
+   46
+  ]
+ },
+ "CARRACOSTA": {
+  "back": [
+   40,
+   51
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "CARVANHA": {
+  "back": [
+   7,
+   46
+  ],
+  "front": [
+   7,
+   48
+  ]
+ },
+ "CELESTEELA": {
+  "back": [
+   32,
+   40
+  ],
+  "front": [
+   16,
+   56
+  ]
+ },
+ "CETITAN": {
+  "front": [
+   37,
+   58
+  ]
+ },
+ "CHANDELURE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "CHANSEY": {
+  "back": [
+   0,
+   51
+  ]
+ },
+ "CHARIZARD": {
+  "back": [
+   0,
+   36
+  ],
+  "front": [
+   17,
+   54
+  ]
+ },
+ "CHARJABUG": {
+  "back": [
+   3,
+   51
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "CHARMANDER": {
+  "back": [
+   9,
+   44
+  ]
+ },
+ "CHATOT": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   17,
+   55
+  ]
+ },
+ "CHERUBI": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "CHESNAUGHT": {
+  "front": [
+   4,
+   58
+  ]
+ },
+ "CHEWTLE": {
+  "back": [
+   8,
+   47
+  ]
+ },
+ "CHIEN_PAO": {
+  "front": [
+   20,
+   56
+  ]
+ },
+ "CHIMCHAR": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "CHIMECHO": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "CHINGLING": {
+  "back": [
+   29,
+   52
+  ],
+  "front": [
+   21,
+   58
+  ]
+ },
+ "CHI_YU": {
+  "front": [
+   0,
+   48
+  ]
+ },
+ "CLAUNCHER": {
+  "back": [
+   5,
+   52
+  ],
+  "front": [
+   3,
+   57
+  ]
+ },
+ "CLAWITZER": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   45,
+   54
+  ]
+ },
+ "CLEFAIRY": {
+  "back": [
+   12,
+   49
+  ],
+  "front": [
+   9,
+   58
+  ]
+ },
+ "CLODSIRE": {
+  "back": [
+   9,
+   46
+  ],
+  "front": [
+   38,
+   53
+  ]
+ },
+ "COALOSSAL": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "COBALION": {
+  "back": [
+   8,
+   51
+  ],
+  "front": [
+   6,
+   54
+  ]
+ },
+ "COFAGRIGUS": {
+  "back": [
+   4,
+   51
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "COMBUSKEN": {
+  "back": [
+   1,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "COMFEY": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   40,
+   56
+  ]
+ },
+ "CONKELDURR": {
+  "back": [
+   16,
+   52
+  ],
+  "front": [
+   16,
+   53
+  ]
+ },
+ "CORPHISH": {
+  "back": [
+   22,
+   52
+  ],
+  "front": [
+   23,
+   54
+  ]
+ },
+ "CORSOLA": {
+  "back": [
+   0,
+   44
+  ]
+ },
+ "CORVIKNIGHT": {
+  "back": [
+   9,
+   51
+  ],
+  "front": [
+   38,
+   58
+  ]
+ },
+ "COSMOEM": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   0,
+   40
+  ]
+ },
+ "COSMOG": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   37,
+   55
+  ]
+ },
+ "COTTONEE": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   1,
+   57
+  ]
+ },
+ "CRABOMINABLE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   36,
+   56
+  ]
+ },
+ "CRABRAWLER": {
+  "back": [
+   16,
+   49
+  ],
+  "front": [
+   8,
+   57
+  ]
+ },
+ "CRADILY": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   0,
+   53
+  ]
+ },
+ "CRANIDOS": {
+  "front": [
+   0,
+   55
+  ]
+ },
+ "CRESSELIA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "CROAGUNK": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   20,
+   57
+  ]
+ },
+ "CROCALOR": {
+  "front": [
+   26,
+   46
+  ]
+ },
+ "CROCONAW": {
+  "back": [
+   18,
+   52
+  ],
+  "front": [
+   20,
+   58
+  ]
+ },
+ "CRUSTLE": {
+  "back": [
+   10,
+   49
+  ],
+  "front": [
+   8,
+   50
+  ]
+ },
+ "CRYOGONAL": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "CUBCHOO": {
+  "back": [
+   27,
+   51
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "CUBONE": {
+  "back": [
+   26,
+   52
+  ],
+  "front": [
+   25,
+   54
+  ]
+ },
+ "CUFANT": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   24,
+   56
+  ]
+ },
+ "CURSOLA": {
+  "back": [
+   7,
+   52
+  ],
+  "front": [
+   4,
+   58
+  ]
+ },
+ "CYCLIZAR": {
+  "front": [
+   34,
+   58
+  ]
+ },
+ "CYNDAQUIL": {
+  "back": [
+   16,
+   52
+  ],
+  "front": [
+   45,
+   56
+  ]
+ },
+ "DACHSBUN": {
+  "front": [
+   14,
+   58
+  ]
+ },
+ "DARKRAI": {
+  "back": [
+   0,
+   36
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "DARMANITAN": {
+  "back": [
+   8,
+   46
+  ],
+  "front": [
+   17,
+   55
+  ]
+ },
+ "DARUMAKA": {
+  "back": [
+   12,
+   43
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "DECIDUEYE_HISUI": {
+  "back": [
+   24,
+   52
+  ],
+  "front": [
+   21,
+   58
+  ]
+ },
+ "DEERLING": {
+  "back": [
+   16,
+   50
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "DEINO": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   4,
+   54
+  ]
+ },
+ "DELCATTY": {
+  "back": [
+   13,
+   52
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "DELIBIRD": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   1,
+   52
+  ]
+ },
+ "DEWGONG": {
+  "back": [
+   9,
+   51
+  ],
+  "front": [
+   9,
+   52
+  ]
+ },
+ "DEWOTT": {
+  "back": [
+   1,
+   51
+  ]
+ },
+ "DEWPIDER": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "DHELMISE": {
+  "back": [
+   0,
+   46
+  ],
+  "front": [
+   0,
+   46
+  ]
+ },
+ "DIALGA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   12,
+   56
+  ]
+ },
+ "DIALGA_ORIGIN": {
+  "front": [
+   18,
+   58
+  ]
+ },
+ "DIANCIE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "DIGGERSBY": {
+  "front": [
+   6,
+   55
+  ]
+ },
+ "DIGLETT": {
+  "back": [
+   6,
+   47
+  ]
+ },
+ "DIPPLIN": {
+  "back": [
+   8,
+   47
+  ],
+  "front": [
+   11,
+   53
+  ]
+ },
+ "DODRIO": {
+  "back": [
+   12,
+   40
+  ],
+  "front": [
+   5,
+   52
+  ]
+ },
+ "DODUO": {
+  "back": [
+   45,
+   50
+  ],
+  "front": [
+   30,
+   56
+  ]
+ },
+ "DONPHAN": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "DRACOVISH": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "DRAGAPULT": {
+  "back": [
+   0,
+   38
+  ],
+  "front": [
+   19,
+   57
+  ]
+ },
+ "DRAGONAIR": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   8,
+   55
+  ]
+ },
+ "DRAKLOAK": {
+  "back": [
+   0,
+   42
+  ],
+  "front": [
+   0,
+   42
+  ]
+ },
+ "DRAMPA": {
+  "back": [
+   54,
+   43
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "DRAPION": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "DREEPY": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   32,
+   56
+  ]
+ },
+ "DRIFLOON": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "DRIZZILE": {
+  "back": [
+   45,
+   47
+  ],
+  "front": [
+   91,
+   48
+  ]
+ },
+ "DROWZEE": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   51
+  ]
+ },
+ "DRUDDIGON": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "DUBWOOL": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "DUDUNSPARCE": {
+  "front": [
+   4,
+   56
+  ]
+ },
+ "DUOSION": {
+  "back": [
+   16,
+   48
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "DUSCLOPS": {
+  "back": [
+   0,
+   44
+  ]
+ },
+ "DUSTOX": {
+  "back": [
+   10,
+   51
+  ],
+  "front": [
+   2,
+   57
+  ]
+ },
+ "EELEKTROSS": {
+  "back": [
+   4,
+   49
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "EEVEE": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "EISCUE": {
+  "back": [
+   7,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "ELGYEM": {
+  "back": [
+   0,
+   38
+  ]
+ },
+ "EMBOAR": {
+  "back": [
+   23,
+   48
+  ],
+  "front": [
+   23,
+   48
+  ]
+ },
+ "EMOLGA": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   40,
+   54
+  ]
+ },
+ "EMPOLEON": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   12,
+   53
+  ]
+ },
+ "ENAMORUS": {
+  "front": [
+   24,
+   54
+  ]
+ },
+ "ENAMORUS_THERIAN": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "ENTEI": {
+  "back": [
+   7,
+   49
+  ]
+ },
+ "ESCAVALIER": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   6,
+   58
+  ]
+ },
+ "ESPATHRA": {
+  "front": [
+   3,
+   56
+  ]
+ },
+ "ESPEON": {
+  "back": [
+   20,
+   52
+  ],
+  "front": [
+   2,
+   54
+  ]
+ },
+ "ETERNATUS": {
+  "back": [
+   0,
+   32
+  ],
+  "front": [
+   60,
+   58
+  ]
+ },
+ "EXCADRILL": {
+  "back": [
+   15,
+   50
+  ],
+  "front": [
+   31,
+   53
+  ]
+ },
+ "EXPLOUD": {
+  "back": [
+   9,
+   48
+  ],
+  "front": [
+   8,
+   51
+  ]
+ },
+ "FENNEKIN": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   2,
+   56
+  ]
+ },
+ "FERROSEED": {
+  "back": [
+   31,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "FERROTHORN": {
+  "back": [
+   12,
+   51
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "FEZANDIPITI": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "FINIZEN": {
+  "front": [
+   8,
+   53
+  ]
+ },
+ "FINNEON": {
+  "back": [
+   40,
+   47
+  ],
+  "front": [
+   40,
+   47
+  ]
+ },
+ "FLAMIGO": {
+  "front": [
+   19,
+   58
+  ]
+ },
+ "FLAREON": {
+  "back": [
+   8,
+   51
+  ],
+  "front": [
+   8,
+   51
+  ]
+ },
+ "FLITTLE": {
+  "front": [
+   0,
+   48
+  ]
+ },
+ "FLOATZEL": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   16,
+   56
+  ]
+ },
+ "FLOETTE_ETERNAL": {
+  "back": [
+   18,
+   46
+  ],
+  "front": [
+   18,
+   46
+  ]
+ },
+ "FLORAGATO": {
+  "front": [
+   9,
+   58
+  ]
+ },
+ "FLUTTER_MANE": {
+  "front": [
+   0,
+   48
+  ]
+ },
+ "FLYGON": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   51
+  ]
+ },
+ "FOMANTIS": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   51,
+   58
+  ]
+ },
+ "FRAXURE": {
+  "back": [
+   8,
+   44
+  ]
+ },
+ "FRIGIBAX": {
+  "front": [
+   32,
+   52
+  ]
+ },
+ "FRILLISH": {
+  "back": [
+   0,
+   42
+  ],
+  "front": [
+   0,
+   42
+  ]
+ },
+ "FROSLASS": {
+  "back": [
+   0,
+   44
+  ],
+  "front": [
+   0,
+   44
+  ]
+ },
+ "FURRET": {
+  "back": [
+   6,
+   49
+  ]
+ },
+ "GALLADE": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   9,
+   57
+  ]
+ },
+ "GALVANTULA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "GARBODOR": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   12,
+   56
+  ]
+ },
+ "GARDEVOIR": {
+  "back": [
+   0,
+   41
+  ],
+  "front": [
+   62,
+   58
+  ]
+ },
+ "GASTLY": {
+  "back": [
+   6,
+   44
+  ]
+ },
+ "GASTRODON": {
+  "back": [
+   0,
+   45
+  ]
+ },
+ "GASTRODON_EAST": {
+  "back": [
+   10,
+   51
+  ],
+  "front": [
+   10,
+   51
+  ]
+ },
+ "GENESECT": {
+  "back": [
+   19,
+   52
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "GEODUDE": {
+  "back": [
+   0,
+   40
+  ]
+ },
+ "GHOLDENGO": {
+  "front": [
+   46,
+   47
+  ]
+ },
+ "GIBLE": {
+  "back": [
+   10,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "GIGALITH": {
+  "back": [
+   26,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "GIMMIGHOUL": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "GIRATINA": {
+  "back": [
+   9,
+   51
+  ],
+  "front": [
+   20,
+   58
+  ]
+ },
+ "GLACEON": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "GLAMEOW": {
+  "back": [
+   35,
+   46
+  ],
+  "front": [
+   15,
+   49
+  ]
+ },
+ "GLASTRIER": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "GLIMMET": {
+  "front": [
+   19,
+   57
+  ]
+ },
+ "GLISCOR": {
+  "back": [
+   0,
+   44
+  ],
+  "front": [
+   0,
+   44
+  ]
+ },
+ "GOLDEEN": {
+  "back": [
+   0,
+   38
+  ]
+ },
+ "GOLEM": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   20,
+   57
+  ]
+ },
+ "GOLURK": {
+  "back": [
+   14,
+   51
+  ],
+  "front": [
+   11,
+   58
+  ]
+ },
+ "GOODRA": {
+  "front": [
+   27,
+   58
+  ]
+ },
+ "GOODRA_HISUI": {
+  "back": [
+   52,
+   42
+  ],
+  "front": [
+   52,
+   42
+  ]
+ },
+ "GOOMY": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   4,
+   58
+  ]
+ },
+ "GOREBYSS": {
+  "back": [
+   0,
+   48
+  ]
+ },
+ "GOSSIFLEUR": {
+  "back": [
+   1,
+   49
+  ]
+ },
+ "GOTHITA": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   11,
+   58
+  ]
+ },
+ "GOTHITELLE": {
+  "back": [
+   16,
+   52
+  ],
+  "front": [
+   13,
+   58
+  ]
+ },
+ "GOTHORITA": {
+  "back": [
+   18,
+   52
+  ],
+  "front": [
+   7,
+   58
+  ]
+ },
+ "GOUGING_FIRE": {
+  "front": [
+   28,
+   48
+  ]
+ },
+ "GRANBULL": {
+  "back": [
+   0,
+   47
+  ],
+  "front": [
+   0,
+   47
+  ]
+ },
+ "GREAT_TUSK": {
+  "front": [
+   0,
+   44
+  ]
+ },
+ "GRIMER": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "GRIMMSNARL": {
+  "back": [
+   16,
+   50
+  ],
+  "front": [
+   16,
+   50
+  ]
+ },
+ "GROOKEY": {
+  "back": [
+   10,
+   46
+  ]
+ },
+ "GROTLE": {
+  "back": [
+   7,
+   50
+  ]
+ },
+ "GROVYLE": {
+  "back": [
+   10,
+   51
+  ],
+  "front": [
+   8,
+   58
+  ]
+ },
+ "GROWLITHE": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "GUMSHOOS": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "GURDURR": {
+  "back": [
+   10,
+   52
+  ],
+  "front": [
+   14,
+   58
+  ]
+ },
+ "HAKAMO_O": {
+  "back": [
+   3,
+   50
+  ],
+  "front": [
+   48,
+   58
+  ]
+ },
+ "HARIYAMA": {
+  "back": [
+   4,
+   51
+  ],
+  "front": [
+   11,
+   55
+  ]
+ },
+ "HATTERENE": {
+  "front": [
+   15,
+   58
+  ]
+ },
+ "HAXORUS": {
+  "back": [
+   54,
+   39
+  ],
+  "front": [
+   35,
+   56
+  ]
+ },
+ "HEATRAN": {
+  "back": [
+   1,
+   52
+  ],
+  "front": [
+   42,
+   57
+  ]
+ },
+ "HELIOPTILE": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   30,
+   54
+  ]
+ },
+ "HERDIER": {
+  "back": [
+   8,
+   51
+  ]
+ },
+ "HIPPOPOTAS": {
+  "back": [
+   33,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "HITMONLEE": {
+  "back": [
+   3,
+   40
+  ]
+ },
+ "HITMONTOP": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   8,
+   57
+  ]
+ },
+ "HOOPA_UNBOUND": {
+  "front": [
+   10,
+   45
+  ]
+ },
+ "HOOTHOOT": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   8,
+   58
+  ]
+ },
+ "HOUNDOUR": {
+  "front": [
+   7,
+   53
+  ]
+ },
+ "HUNTAIL": {
+  "back": [
+   14,
+   43
+  ]
+ },
+ "HYDRAPPLE": {
+  "front": [
+   0,
+   40
+  ]
+ },
+ "HYPNO": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   9,
+   53
+  ]
+ },
+ "IGGLYBUFF": {
+  "back": [
+   13,
+   48
+  ],
+  "front": [
+   13,
+   57
+  ]
+ },
+ "IMPIDIMP": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "INCINEROAR": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   24,
+   58
+  ]
+ },
+ "INDEEDEE": {
+  "back": [
+   0,
+   46
+  ],
+  "front": [
+   18,
+   56
+  ]
+ },
+ "INFERNAPE": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   0,
+   40
+  ]
+ },
+ "INTELEON": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   51
+  ]
+ },
+ "IRON_CROWN": {
+  "front": [
+   6,
+   57
+  ]
+ },
+ "IRON_HANDS": {
+  "front": [
+   5,
+   57
+  ]
+ },
+ "IRON_LEAVES": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "IRON_MOTH": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   10,
+   35
+  ]
+ },
+ "IRON_THORNS": {
+  "back": [
+   1,
+   51
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "IRON_TREADS": {
+  "front": [
+   8,
+   55
+  ]
+ },
+ "IRON_VALIANT": {
+  "front": [
+   12,
+   55
+  ]
+ },
+ "IVYSAUR": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "JANGMO_O": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   0,
+   49
+  ]
+ },
+ "JELLICENT": {
+  "back": [
+   14,
+   40
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "JIGGLYPUFF": {
+  "back": [
+   0,
+   45
+  ]
+ },
+ "JIRACHI": {
+  "back": [
+   17,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "JYNX": {
+  "back": [
+   8,
+   45
+  ]
+ },
+ "KADABRA": {
+  "back": [
+   10,
+   50
+  ],
+  "front": [
+   10,
+   50
+  ]
+ },
+ "KANGASKHAN": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   41,
+   58
+  ]
+ },
+ "KARRABLAST": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "KARTANA": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   40,
+   53
+  ]
+ },
+ "KELDEO": {
+  "back": [
+   0,
+   46
+  ],
+  "front": [
+   19,
+   53
+  ]
+ },
+ "KIRLIA": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "KLANG": {
+  "back": [
+   0,
+   43
+  ],
+  "front": [
+   3,
+   53
+  ]
+ },
+ "KLEFKI": {
+  "back": [
+   81,
+   48
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "KLINK": {
+  "back": [
+   0,
+   51
+  ]
+ },
+ "KLINKLANG": {
+  "back": [
+   0,
+   43
+  ],
+  "front": [
+   1,
+   53
+  ]
+ },
+ "KOMALA": {
+  "back": [
+   21,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "KOMMO_O": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   32,
+   57
+  ]
+ },
+ "KORAIDON": {
+  "front": [
+   17,
+   58
+  ]
+ },
+ "KRICKETOT": {
+  "back": [
+   25,
+   50
+  ],
+  "front": [
+   16,
+   58
+  ]
+ },
+ "KROKOROK": {
+  "back": [
+   9,
+   51
+  ],
+  "front": [
+   9,
+   50
+  ]
+ },
+ "KROOKODILE": {
+  "back": [
+   9,
+   52
+  ]
+ },
+ "KYOGRE": {
+  "back": [
+   17,
+   50
+  ],
+  "front": [
+   17,
+   52
+  ]
+ },
+ "KYUREM": {
+  "back": [
+   0,
+   49
+  ]
+ },
+ "KYUREM_BLACK": {
+  "back": [
+   0,
+   46
+  ],
+  "front": [
+   28,
+   58
+  ]
+ },
+ "KYUREM_WHITE": {
+  "back": [
+   1,
+   44
+  ],
+  "front": [
+   13,
+   53
+  ]
+ },
+ "LAIRON": {
+  "back": [
+   9,
+   46
+  ]
+ },
+ "LAMPENT": {
+  "back": [
+   0,
+   44
+  ],
+  "front": [
+   10,
+   56
+  ]
+ },
+ "LANDORUS": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "LANDORUS_THERIAN": {
+  "back": [
+   15,
+   47
+  ],
+  "front": [
+   63,
+   49
+  ]
+ },
+ "LANTURN": {
+  "back": [
+   14,
+   48
+  ],
+  "front": [
+   8,
+   55
+  ]
+ },
+ "LARVESTA": {
+  "back": [
+   7,
+   51
+  ],
+  "front": [
+   31,
+   58
+  ]
+ },
+ "LATIAS": {
+  "back": [
+   0,
+   45
+  ]
+ },
+ "LEAFEON": {
+  "back": [
+   20,
+   49
+  ],
+  "front": [
+   10,
+   58
+  ]
+ },
+ "LICKILICKY": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   10,
+   54
+  ]
+ },
+ "LIEPARD": {
+  "back": [
+   5,
+   51
+  ]
+ },
+ "LILEEP": {
+  "back": [
+   20,
+   51
+  ],
+  "front": [
+   14,
+   57
+  ]
+ },
+ "LILLIGANT": {
+  "back": [
+   15,
+   43
+  ],
+  "front": [
+   16,
+   44
+  ]
+ },
+ "LILLIGANT_HISUI": {
+  "front": [
+   0,
+   56
+  ]
+ },
+ "LILLIPUP": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "LINOONE": {
+  "back": [
+   3,
+   51
+  ]
+ },
+ "LITTEN": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   16,
+   57
+  ]
+ },
+ "LITWICK": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "LOKIX": {
+  "front": [
+   0,
+   54
+  ]
+ },
+ "LOPUNNY": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "LOTAD": {
+  "back": [
+   18,
+   40
+  ]
+ },
+ "LOUDRED": {
+  "back": [
+   0,
+   50
+  ]
+ },
+ "LUCARIO": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "LUGIA": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   45
+  ]
+ },
+ "LUMINEON": {
+  "back": [
+   0,
+   43
+  ],
+  "front": [
+   0,
+   43
+  ]
+ },
+ "LUNALA": {
+  "back": [
+   29,
+   50
+  ],
+  "front": [
+   29,
+   50
+  ]
+ },
+ "LUNATONE": {
+  "back": [
+   5,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "LUXIO": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "LUXRAY": {
+  "back": [
+   12,
+   50
+  ],
+  "front": [
+   12,
+   50
+  ]
+ },
+ "LYCANROC": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   10,
+   55
+  ]
+ },
+ "LYCANROC_MIDNIGHT": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   39,
+   53
+  ]
+ },
+ "MABOSSTIFF": {
+  "front": [
+   15,
+   57
+  ]
+ },
+ "MACHOP": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   17,
+   58
+  ]
+ },
+ "MAGEARNA": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   38,
+   56
+  ]
+ },
+ "MAGIKARP": {
+  "back": [
+   4,
+   49
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "MAGMORTAR": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   27,
+   53
+  ]
+ },
+ "MAGNETON": {
+  "back": [
+   7,
+   48
+  ],
+  "front": [
+   3,
+   54
+  ]
+ },
+ "MAKUHITA": {
+  "back": [
+   9,
+   48
+  ]
+ },
+ "MAMOSWINE": {
+  "back": [
+   20,
+   52
+  ],
+  "front": [
+   20,
+   52
+  ]
+ },
+ "MANAPHY": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "MANDIBUZZ": {
+  "back": [
+   20,
+   51
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "MANKEY": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "MANTINE": {
+  "back": [
+   14,
+   49
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "MARACTUS": {
+  "back": [
+   17,
+   52
+  ],
+  "front": [
+   2,
+   58
+  ]
+ },
+ "MARILL": {
+  "back": [
+   16,
+   51
+  ],
+  "front": [
+   12,
+   55
+  ]
+ },
+ "MAROWAK": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   7,
+   55
+  ]
+ },
+ "MARSHADOW": {
+  "front": [
+   10,
+   52
+  ]
+ },
+ "MARSHTOMP": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "MASCHIFF": {
+  "front": [
+   21,
+   58
+  ]
+ },
+ "MASQUERAIN": {
+  "front": [
+   90,
+   47
+  ]
+ },
+ "MAUSHOLD": {
+  "front": [
+   0,
+   40
+  ]
+ },
+ "MAWILE": {
+  "back": [
+   13,
+   52
+  ],
+  "front": [
+   2,
+   58
+  ]
+ },
+ "MEDITITE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   37,
+   58
+  ]
+ },
+ "MELOETTA": {
+  "back": [
+   42,
+   51
+  ],
+  "front": [
+   42,
+   57
+  ]
+ },
+ "MELTAN": {
+  "back": [
+   37,
+   52
+  ]
+ },
+ "MEOWSCARADA": {
+  "front": [
+   11,
+   56
+  ]
+ },
+ "MEOWSTIC_FEMALE": {
+  "front": [
+   35,
+   37
+  ]
+ },
+ "MEOWTH": {
+  "back": [
+   18,
+   51
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "MESPRIT": {
+  "back": [
+   15,
+   40
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "METANG": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   7,
+   58
+  ]
+ },
+ "METAPOD": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "MEW": {
+  "back": [
+   1,
+   48
+  ],
+  "front": [
+   1,
+   48
+  ]
+ },
+ "MEWTWO": {
+  "back": [
+   10,
+   52
+  ],
+  "front": [
+   10,
+   52
+  ]
+ },
+ "MIENFOO": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   2,
+   58
+  ]
+ },
+ "MIENSHAO": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   0,
+   49
+  ]
+ },
+ "MIGHTYENA": {
+  "back": [
+   0,
+   42
+  ]
+ },
+ "MILOTIC": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "MIME_JR": {
+  "back": [
+   18,
+   52
+  ],
+  "front": [
+   7,
+   58
+  ]
+ },
+ "MIMIKYU": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   7,
+   56
+  ]
+ },
+ "MINCCINO": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "MINIOR": {
+  "back": [
+   43,
+   50
+  ],
+  "front": [
+   40,
+   54
+  ]
+ },
+ "MINUN": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   7,
+   57
+  ]
+ },
+ "MIRAIDON": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   12,
+   58
+  ]
+ },
+ "MONFERNO": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   12,
+   52
+  ]
+ },
+ "MORELULL": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   2,
+   57
+  ]
+ },
+ "MR_MIME": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "MR_RIME": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "MUDBRAY": {
+  "back": [
+   14,
+   52
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "MUDKIP": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "MUDSDALE": {
+  "back": [
+   0,
+   46
+  ],
+  "front": [
+   46,
+   56
+  ]
+ },
+ "MUNCHLAX": {
+  "back": [
+   24,
+   47
+  ],
+  "front": [
+   18,
+   53
+  ]
+ },
+ "MUNNA": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   3,
+   39
+  ]
+ },
+ "NACLI": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "NATU": {
+  "back": [
+   16,
+   49
+  ],
+  "front": [
+   16,
+   49
+  ]
+ },
+ "NECROZMA_DAWN": {
+  "back": [
+   29,
+   50
+  ],
+  "front": [
+   29,
+   50
+  ]
+ },
+ "NECROZMA_DUSK": {
+  "back": [
+   36,
+   40
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "NIDOKING": {
+  "back": [
+   9,
+   44
+  ]
+ },
+ "NIDOQUEEN": {
+  "back": [
+   14,
+   47
+  ],
+  "front": [
+   14,
+   47
+  ]
+ },
+ "NIDORAN_M": {
+  "back": [
+   7,
+   48
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "NIHILEGO": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "NINCADA": {
+  "back": [
+   6,
+   47
+  ]
+ },
+ "NINETALES": {
+  "back": [
+   0,
+   45
+  ]
+ },
+ "NYMBLE": {
+  "front": [
+   0,
+   54
+  ]
+ },
+ "ODDISH": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "OGERPON": {
+  "front": [
+   18,
+   45
+  ]
+ },
+ "OGERPON_CORNERSTONE_MASK": {
+  "front": [
+   18,
+   45
+  ]
+ },
+ "OGERPON_HEARTHFLAME_MASK": {
+  "front": [
+   18,
+   45
+  ]
+ },
+ "OGERPON_WELLSPRING_MASK": {
+  "front": [
+   18,
+   45
+  ]
+ },
+ "OKIDOGI": {
+  "front": [
+   0,
+   53
+  ]
+ },
+ "OMASTAR": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "ONIX": {
+  "back": [
+   3,
+   44
+  ]
+ },
+ "ORICORIO": {
+  "front": [
+   12,
+   51
+  ]
+ },
+ "ORICORIO_PAU": {
+  "back": [
+   28,
+   50
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ORICORIO_POM_POM": {
+  "back": [
+   24,
+   49
+  ],
+  "front": [
+   18,
+   55
+  ]
+ },
+ "ORICORIO_SENSU": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "ORTHWORM": {
+  "front": [
+   4,
+   58
+  ]
+ },
+ "OSHAWOTT": {
+  "back": [
+   91,
+   52
+  ],
+  "front": [
+   84,
+   53
+  ]
+ },
+ "OVERQWIL": {
+  "back": [
+   60,
+   41
+  ],
+  "front": [
+   60,
+   41
+  ]
+ },
+ "PACHIRISU": {
+  "back": [
+   10,
+   46
+  ]
+ },
+ "PALAFIN": {
+  "front": [
+   8,
+   53
+  ]
+ },
+ "PALKIA": {
+  "back": [
+   18,
+   46
+  ],
+  "front": [
+   9,
+   55
+  ]
+ },
+ "PALKIA_ORIGIN": {
+  "front": [
+   8,
+   57
+  ]
+ },
+ "PALOSSAND": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "PALPITOAD": {
+  "back": [
+   11,
+   49
+  ]
+ },
+ "PANCHAM": {
+  "back": [
+   1,
+   52
+  ]
+ },
+ "PANSAGE": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "PAWMI": {
+  "back": [
+   42,
+   48
+  ],
+  "front": [
+   42,
+   48
+  ]
+ },
+ "PAWMO": {
+  "back": [
+   30,
+   48
+  ],
+  "front": [
+   30,
+   48
+  ]
+ },
+ "PAWMOT": {
+  "back": [
+   30,
+   52
+  ],
+  "front": [
+   30,
+   52
+  ]
+ },
+ "PAWNIARD": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "PECHARUNT": {
+  "front": [
+   0,
+   49
+  ]
+ },
+ "PELIPPER": {
+  "back": [
+   33,
+   36
+  ],
+  "front": [
+   0,
+   53
+  ]
+ },
+ "PERRSERKER": {
+  "back": [
+   5,
+   52
+  ],
+  "front": [
+   3,
+   57
+  ]
+ },
+ "PERSIAN": {
+  "back": [
+   1,
+   33
+  ]
+ },
+ "PETILIL": {
+  "back": [
+   0,
+   48
+  ]
+ },
+ "PHANPY": {
+  "back": [
+   7,
+   47
+  ]
+ },
+ "PHANTUMP": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "PHEROMOSA": {
+  "back": [
+   54,
+   43
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "PHIONE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "PICHU": {
+  "back": [
+   0,
+   47
+  ]
+ },
+ "PIGNITE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "PIKACHU": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "PIKIPEK": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "PINSIR": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "PIPLUP": {
+  "back": [
+   1,
+   51
+  ],
+  "front": [
+   8,
+   58
+  ]
+ },
+ "PLUSLE": {
+  "back": [
+   19,
+   52
+  ],
+  "front": [
+   7,
+   57
+  ]
+ },
+ "POLIWHIRL": {
+  "back": [
+   6,
+   47
+  ]
+ },
+ "POLTCHAGEIST": {
+  "front": [
+   15,
+   49
+  ]
+ },
+ "POPPLIO": {
+  "back": [
+   36,
+   49
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "PRIMARINA": {
+  "back": [
+   44,
+   48
+  ],
+  "front": [
+   44,
+   48
+  ]
+ },
+ "PRINPLUP": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   8,
+   55
+  ]
+ },
+ "PROBOPASS": {
+  "back": [
+   9,
+   48
+  ],
+  "front": [
+   9,
+   48
+  ]
+ },
+ "PUMPKABOO": {
+  "front": [
+   8,
+   56
+  ]
+ },
+ "PUMPKABOO_LARGE": {
+  "front": [
+   8,
+   56
+  ]
+ },
+ "PUMPKABOO_SMALL": {
+  "front": [
+   8,
+   56
+  ]
+ },
+ "PUMPKABOO_SUPER": {
+  "front": [
+   8,
+   56
+  ]
+ },
+ "PURUGLY": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   8,
+   53
+  ]
+ },
+ "PYROAR": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   45
+  ]
+ },
+ "PYUKUMUKU": {
+  "back": [
+   120,
+   43
+  ],
+  "front": [
+   120,
+   43
+  ]
+ },
+ "QUAXLY": {
+  "front": [
+   3,
+   57
+  ]
+ },
+ "QUAXWELL": {
+  "front": [
+   12,
+   58
+  ]
+ },
+ "QUILAVA": {
+  "back": [
+   16,
+   48
+  ],
+  "front": [
+   16,
+   48
+  ]
+ },
+ "QUILLADIN": {
+  "back": [
+   0,
+   40
+  ],
+  "front": [
+   20,
+   58
+  ]
+ },
+ "QWILFISH_HISUI": {
+  "front": [
+   0,
+   48
+  ]
+ },
+ "RABOOT": {
+  "back": [
+   7,
+   46
+  ],
+  "front": [
+   0,
+   53
+  ]
+ },
+ "RABSCA": {
+  "back": [
+   4,
+   52
+  ]
+ },
+ "RAGING_BOLT": {
+  "front": [
+   3,
+   58
+  ]
+ },
+ "RAICHU": {
+  "back": [
+   0,
+   42
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "RAIKOU": {
+  "back": [
+   18,
+   52
+  ],
+  "front": [
+   21,
+   54
+  ]
+ },
+ "RALTS": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   13,
+   53
+  ]
+ },
+ "RAMPARDOS": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   12,
+   52
+  ]
+ },
+ "RATICATE": {
+  "back": [
+   2,
+   50
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "RAYQUAZA": {
+  "back": [
+   3,
+   52
+  ]
+ },
+ "REGIDRAGO": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   14,
+   58
+  ]
+ },
+ "REGIGIGAS": {
+  "back": [
+   24,
+   49
+  ],
+  "front": [
+   24,
+   49
+  ]
+ },
+ "RELICANTH": {
+  "back": [
+   14,
+   43
+  ]
+ },
+ "RESHIRAM": {
+  "back": [
+   32,
+   48
+  ],
+  "front": [
+   32,
+   48
+  ]
+ },
+ "REUNICLUS": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "REVAVROOM": {
+  "front": [
+   0,
+   48
+  ]
+ },
+ "RHYDON": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "RHYHORN": {
+  "back": [
+   33,
+   51
+  ],
+  "front": [
+   20,
+   58
+  ]
+ },
+ "RHYPERIOR": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "RIBOMBEE": {
+  "back": [
+   33,
+   36
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "RIOLU": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "ROCKRUFF": {
+  "back": [
+   12,
+   50
+  ],
+  "front": [
+   6,
+   56
+  ]
+ },
+ "ROGGENROLA": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ROOKIDEE": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   30,
+   54
+  ]
+ },
+ "ROSELIA": {
+  "front": [
+   2,
+   57
+  ]
+ },
+ "ROSERADE": {
+  "back": [
+   18,
+   52
+  ],
+  "front": [
+   36,
+   58
+  ]
+ },
+ "ROTOM": {
+  "back": [
+   3,
+   48
+  ],
+  "front": [
+   1,
+   53
+  ]
+ },
+ "ROTOM_FAN": {
+  "back": [
+   0,
+   43
+  ],
+  "front": [
+   11,
+   53
+  ]
+ },
+ "ROTOM_FROST": {
+  "back": [
+   14,
+   51
+  ],
+  "front": [
+   1,
+   56
+  ]
+ },
+ "ROTOM_HEAT": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "ROTOM_MOW": {
+  "back": [
+   2,
+   51
+  ],
+  "front": [
+   20,
+   51
+  ]
+ },
+ "ROTOM_WASH": {
+  "back": [
+   6,
+   48
+  ],
+  "front": [
+   1,
+   53
+  ]
+ },
+ "ROWLET": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "RUFFLET": {
+  "back": [
+   0,
+   39
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "RUNERIGUS": {
+  "front": [
+   15,
+   50
+  ]
+ },
+ "SALAMENCE": {
+  "back": [
+   13,
+   52
+  ],
+  "front": [
+   9,
+   53
+  ]
+ },
+ "SAMUROTT": {
+  "back": [
+   5,
+   44
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "SAMUROTT_HISUI": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   0,
+   51
+  ]
+ },
+ "SANDACONDA": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   11,
+   56
+  ]
+ },
+ "SANDSHREW": {
+  "back": [
+   5,
+   51
+  ],
+  "front": [
+   2,
+   57
+  ]
+ },
+ "SANDSLASH": {
+  "back": [
+   11,
+   45
+  ]
+ },
+ "SANDY_SHOCKS": {
+  "back": [
+   32,
+   52
+  ]
+ },
+ "SAWK": {
+  "back": [
+   1,
+   50
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "SAWSBUCK": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "SCEPTILE": {
+  "back": [
+   20,
+   48
+  ],
+  "front": [
+   10,
+   53
+  ]
+ },
+ "SCIZOR": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "SCOLIPEDE": {
+  "back": [
+   20,
+   49
+  ],
+  "front": [
+   40,
+   57
+  ]
+ },
+ "SCORBUNNY": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   14,
+   58
+  ]
+ },
+ "SCRAFTY": {
+  "back": [
+   5,
+   50
+  ],
+  "front": [
+   25,
+   58
+  ]
+ },
+ "SCRAGGY": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   1,
+   57
+  ]
+ },
+ "SCREAM_TAIL": {
+  "front": [
+   3,
+   58
+  ]
+ },
+ "SCYTHER": {
+  "back": [
+   16,
+   52
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "SEALEO": {
+  "back": [
+   2,
+   51
+  ]
+ },
+ "SEEDOT": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "SEISMITOAD": {
+  "back": [
+   1,
+   52
+  ],
+  "front": [
+   28,
+   58
+  ]
+ },
+ "SERPERIOR": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   49
+  ]
+ },
+ "SEWADDLE": {
+  "back": [
+   10,
+   52
+  ],
+  "front": [
+   7,
+   57
+  ]
+ },
+ "SHARPEDO": {
+  "back": [
+   12,
+   49
+  ],
+  "front": [
+   2,
+   56
+  ]
+ },
+ "SHAYMIN": {
+  "back": [
+   7,
+   48
+  ]
+ },
+ "SHAYMIN_SKY": {
+  "back": [
+   7,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "SHELMET": {
+  "back": [
+   6,
+   50
+  ],
+  "front": [
+   2,
+   57
+  ]
+ },
+ "SHIELDON": {
+  "back": [
+   7,
+   51
+  ]
+ },
+ "SHIFTRY": {
+  "back": [
+   7,
+   46
+  ]
+ },
+ "SHIINOTIC": {
+  "back": [
+   27,
+   49
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "SHINX": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "SIGILYPH": {
+  "back": [
+   0,
+   47
+  ]
+ },
+ "SILICOBRA": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   13,
+   57
+  ]
+ },
+ "SILVALLY": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   16,
+   57
+  ]
+ },
+ "SIMISAGE": {
+  "back": [
+   0,
+   51
+  ],
+  "front": [
+   7,
+   55
+  ]
+ },
+ "SIZZLIPEDE": {
+  "front": [
+   0,
+   56
+  ]
+ },
+ "SKARMORY": {
+  "back": [
+   5,
+   40
+  ]
+ },
+ "SKELEDIRGE": {
+  "front": [
+   0,
+   54
+  ]
+ },
+ "SKITTY": {
+  "back": [
+   11,
+   52
+  ],
+  "front": [
+   10,
+   58
+  ]
+ },
+ "SLIGGOO": {
+  "back": [
+   16,
+   49
+  ],
+  "front": [
+   16,
+   49
+  ]
+ },
+ "SLIGGOO_HISUI": {
+  "front": [
+   34,
+   56
+  ]
+ },
+ "SLITHER_WING": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   6,
+   58
+  ]
+ },
+ "SLOWBRO": {
+  "back": [
+   18,
+   38
+  ]
+ },
+ "SNEASEL": {
+  "back": [
+   1,
+   46
+  ]
+ },
+ "SNEASLER": {
+  "front": [
+   2,
+   58
+  ]
+ },
+ "SNIVY": {
+  "back": [
+   25,
+   48
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "SNORLAX": {
+  "back": [
+   34,
+   52
+  ],
+  "front": [
+   34,
+   53
+  ]
+ },
+ "SNOVER": {
+  "back": [
+   0,
+   47
+  ]
+ },
+ "SOLGALEO": {
+  "back": [
+   36,
+   40
+  ],
+  "front": [
+   18,
+   58
+  ]
+ },
+ "SOLOSIS": {
+  "back": [
+   0,
+   47
+  ],
+  "front": [
+   0,
+   47
+  ]
+ },
+ "SOLROCK": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   23,
+   58
+  ]
+ },
+ "SPEWPA": {
+  "back": [
+   12,
+   52
+  ],
+  "front": [
+   10,
+   55
+  ]
+ },
+ "SPIDOPS": {
+  "front": [
+   3,
+   53
+  ]
+ },
+ "SPINDA": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "SPIRITOMB": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "SPOINK": {
+  "back": [
+   13,
+   52
+  ],
+  "front": [
+   11,
+   50
+  ]
+ },
+ "SQUAWKABILLY": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "STAKATAKA": {
+  "front": [
+   44,
+   48
+  ]
+ },
+ "STARAVIA": {
+  "back": [
+   8,
+   50
+  ]
+ },
+ "STARMIE": {
+  "back": [
+   4,
+   52
+  ],
+  "front": [
+   16,
+   58
+  ]
+ },
+ "STONJOURNER": {
+  "back": [
+   46,
+   52
+  ],
+  "front": [
+   62,
+   53
+  ]
+ },
+ "STOUTLAND": {
+  "back": [
+   10,
+   46
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "STUFFUL": {
+  "back": [
+   6,
+   52
+  ]
+ },
+ "STUNFISK": {
+  "back": [
+   12,
+   51
+  ],
+  "front": [
+   12,
+   50
+  ]
+ },
+ "SURSKIT": {
+  "back": [
+   0,
+   45
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "SWADLOON": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   8,
+   55
+  ]
+ },
+ "SWANNA": {
+  "back": [
+   0,
+   47
+  ],
+  "front": [
+   0,
+   46
+  ]
+ },
+ "SWELLOW": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "SWIRLIX": {
+  "back": [
+   9,
+   52
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "SWOOBAT": {
+  "back": [
+   4,
+   50
+  ]
+ },
+ "SYLVEON": {
+  "back": [
+   16,
+   48
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "TADBULB": {
+  "front": [
+   4,
+   43
+  ]
+ },
+ "TALONFLAME": {
+  "back": [
+   16,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "TANDEMAUS": {
+  "front": [
+   0,
+   40
+  ]
+ },
+ "TANGROWTH": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   8,
+   56
+  ]
+ },
+ "TAPU_BULU": {
+  "back": [
+   42,
+   43
+  ],
+  "front": [
+   28,
+   57
+  ]
+ },
+ "TEPIG": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "TERAPAGOS": {
+  "front": [
+   5,
+   58
+  ]
+ },
+ "TERRAKION": {
+  "back": [
+   29,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "THROH": {
+  "back": [
+   10,
+   46
+  ]
+ },
+ "THUNDURUS": {
+  "back": [
+   32,
+   34
+  ],
+  "front": [
+   61,
+   37
+  ]
+ },
+ "THUNDURUS_THERIAN": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   16,
+   48
+  ]
+ },
+ "THWACKEY": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   26,
+   57
+  ]
+ },
+ "TIMBURR": {
+  "back": [
+   7,
+   52
+  ],
+  "front": [
+   5,
+   56
+  ]
+ },
+ "TING_LU": {
+  "front": [
+   0,
+   40
+  ]
+ },
+ "TINKATINK": {
+  "back": [
+   3,
+   46
+  ],
+  "front": [
+   0,
+   54
+  ]
+ },
+ "TINKATON": {
+  "back": [
+   10,
+   47
+  ]
+ },
+ "TIRTOUGA": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "TORCHIC": {
+  "back": [
+   3,
+   50
+  ],
+  "front": [
+   18,
+   56
+  ]
+ },
+ "TORKOAL": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   4,
+   57
+  ]
+ },
+ "TORNADUS": {
+  "back": [
+   57,
+   52
+  ],
+  "front": [
+   54,
+   58
+  ]
+ },
+ "TORNADUS_THERIAN": {
+  "back": [
+   0,
+   47
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "TORTERRA": {
+  "back": [
+   10,
+   45
+  ]
+ },
+ "TOUCANNON": {
+  "back": [
+   0,
+   38
+  ],
+  "front": [
+   18,
+   57
+  ]
+ },
+ "TOXICROAK": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   3,
+   58
+  ]
+ },
+ "TOXTRICITY": {
+  "front": [
+   1,
+   58
+  ]
+ },
+ "TRANQUILL": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   7,
+   54
+  ]
+ },
+ "TREECKO": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "TREVENANT": {
+  "front": [
+   0,
+   58
+  ]
+ },
+ "TRUBBISH": {
+  "back": [
+   14,
+   51
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "TRUMBEAK": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   12,
+   58
+  ]
+ },
+ "TSAREENA": {
+  "front": [
+   0,
+   56
+  ]
+ },
+ "TURTONATOR": {
+  "back": [
+   42,
+   48
+  ],
+  "front": [
+   42,
+   48
+  ]
+ },
+ "TYMPOLE": {
+  "back": [
+   44,
+   51
+  ],
+  "front": [
+   11,
+   58
+  ]
+ },
+ "TYNAMO": {
+  "back": [
+   6,
+   47
+  ],
+  "front": [
+   39,
+   57
+  ]
+ },
+ "TYPE_NULL": {
+  "back": [
+   10,
+   52
+  ],
+  "front": [
+   10,
+   58
+  ]
+ },
+ "TYPHLOSION": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   6,
+   52
+  ]
+ },
+ "TYRANTRUM": {
+  "back": [
+   32,
+   52
+  ],
+  "front": [
+   32,
+   56
+  ]
+ },
+ "TYRUNT": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   11,
+   58
+  ]
+ },
+ "UNFEZANT": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "URSALUNA": {
+  "front": [
+   27,
+   47
+  ]
+ },
+ "URSALUNA_BLOODMOON": {
+  "front": [
+   0,
+   56
+  ]
+ },
+ "URSARING": {
+  "back": [
+   6,
+   48
+  ],
+  "front": [
+   7,
+   48
+  ]
+ },
+ "UXIE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "VANILLISH": {
+  "back": [
+   0,
+   49
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "VANILLITE": {
+  "back": [
+   8,
+   45
+  ]
+ },
+ "VANILLUXE": {
+  "back": [
+   27,
+   52
+  ],
+  "front": [
+   21,
+   58
+  ]
+ },
+ "VAPOREON": {
+  "back": [
+   0,
+   45
+  ]
+ },
+ "VENIPEDE": {
+  "back": [
+   2,
+   52
+  ],
+  "front": [
+   16,
+   57
+  ]
+ },
+ "VENUSAUR": {
+  "back": [
+   0,
+   42
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "VESPIQUEN": {
+  "back": [
+   40,
+   48
+  ],
+  "front": [
+   40,
+   48
+  ]
+ },
+ "VICTINI": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "VICTREEBEL": {
+  "back": [
+   1,
+   37
+  ]
+ },
+ "VIKAVOLT": {
+  "back": [
+   8,
+   51
+  ],
+  "front": [
+   5,
+   57
+  ]
+ },
+ "VIRIZION": {
+  "back": [
+   24,
+   48
+  ],
+  "front": [
+   12,
+   56
+  ]
+ },
+ "VIVILLON": {
+  "front": [
+   1,
+   58
+  ]
+ },
+ "VOLCANION": {
+  "front": [
+   63,
+   56
+  ]
+ },
+ "VULLABY": {
+  "back": [
+   10,
+   49
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "WAILMER": {
+  "back": [
+   21,
+   32
+  ]
+ },
+ "WALKING_WAKE": {
+  "back": [
+   19,
+   47
+  ],
+  "front": [
+   1,
+   58
+  ]
+ },
+ "WATCHOG": {
+  "back": [
+   36,
+   48
+  ],
+  "front": [
+   27,
+   57
+  ]
+ },
+ "WEAVILE": {
+  "back": [
+   8,
+   47
+  ],
+  "front": [
+   27,
+   58
+  ]
+ },
+ "WEEDLE": {
+  "back": [
+   10,
+   51
+  ],
+  "front": [
+   10,
+   51
+  ]
+ },
+ "WHIMSICOTT": {
+  "back": [
+   6,
+   52
+  ],
+  "front": [
+   0,
+   58
+  ]
+ },
+ "WHIRLIPEDE": {
+  "back": [
+   20,
+   50
+  ],
+  "front": [
+   0,
+   55
+  ]
+ },
+ "WHISCASH": {
+  "back": [
+   0,
+   38
+  ],
+  "front": [
+   38,
+   58
+  ]
+ },
+ "WIGGLYTUFF": {
+  "back": [
+   0,
+   50
+  ]
+ },
+ "WIGLETT": {
+  "back": [
+   15,
+   52
+  ]
+ },
+ "WIMPOD": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   6,
+   58
+  ]
+ },
+ "WINGULL": {
+  "back": [
+   28,
+   47
+  ],
+  "front": [
+   0,
+   57
+  ]
+ },
+ "WOBBUFFET": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   12,
+   49
+  ]
+ },
+ "WOOBAT": {
+  "back": [
+   17,
+   49
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "WOOLOO": {
+  "back": [
+   9,
+   52
+  ]
+ },
+ "WORMADAM": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "WORMADAM_SANDY": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "WORMADAM_TRASH": {
+  "back": [
+   8,
+   52
+  ],
+  "front": [
+   5,
+   58
+  ]
+ },
+ "WO_CHIEN": {
+  "front": [
+   60,
+   42
+  ]
+ },
+ "WUGTRIO": {
+  "front": [
+   40,
+   57
+  ]
+ },
+ "WYNAUT": {
+  "back": [
+   0,
+   52
+  ]
+ },
+ "WYRDEER": {
+  "front": [
+   19,
+   58
+  ]
+ },
+ "XURKITREE": {
+  "back": [
+   84,
+   40
+  ],
+  "front": [
+   0,
+   56
+  ]
+ },
+ "YAMASK": {
+  "back": [
+   23,
+   49
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "YANMEGA": {
+  "back": [
+   32,
+   51
+  ],
+  "front": [
+   31,
+   56
+  ]
+ },
+ "YUNGOOS": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   10,
+   54
+  ]
+ },
+ "ZACIAN": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   24,
+   54
+  ]
+ },
+ "ZACIAN_CROWNED": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   0,
+   52
+  ]
+ },
+ "ZAMAZENTA": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   12,
+   56
+  ]
+ },
+ "ZAMAZENTA_CROWNED": {
+  "back": [
+   0,
+   42
+  ],
+  "front": [
+   0,
+   42
+  ]
+ },
+ "ZEBSTRIKA": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   21,
+   55
+  ]
+ },
+ "ZEKROM": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   0,
+   48
+  ]
+ },
+ "ZERAORA": {
+  "back": [
+   0,
+   52
+  ],
+  "front": [
+   6,
+   58
+  ]
+ },
+ "ZOROARK": {
+  "back": [
+   0,
+   50
+  ],
+  "front": [
+   0,
+   50
+  ]
+ },
+ "ZORUA": {
+  "back": [
+   9,
+   50
+  ],
+  "front": [
+   8,
+   51
+  ]
+ },
+ "ZORUA_HISUI": {
+  "front": [
+   18,
+   58
+  ]
+ },
+ "ZWEILOUS": {
+  "back": [
+   0,
+   46
+  ]
+ },
+ "ZYGARDE": {
+  "back": [
+   0,
+   48
+  ],
+  "front": [
+   32,
+   56
+  ]
+ },
+ "ZYGARDE_10": {
+  "back": [
+   28,
+   47
+  ],
+  "front": [
+   28,
+   47
+  ]
+ }
+}

@@ -105,6 +105,59 @@ do
   check(cx0 >= -96 and cx1 <= 160 and cy0 >= -96, "front: capped at 96px past the box")
 end
 
+-- ------- a front pic dropped below its frame's bottom edge (`fy`)
+do
+  local s, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout({ fs = 100, fy = 20 })
+  check(s == 1 and near(oy, -36 + 20), "front drop: 20px lower than the plain layout (oy = " .. oy .. ")")
+  check(ymin == -16 and ymax == 84, "front drop: the canvas holds the frame in its new place (" .. ymin .. " .. " .. ymax .. ")")
+  local _, _, oy0, _, _, y0, y1 = Atlas.frontLayout({ fs = 100 })
+  check(near(oy0, -36) and y0 == -36 and y1 == 64, "front drop: no `fy` is the plain layout")
+end
+
+-- ------- back pics framed like the cart: body top on the reference's row, at its scale
+do
+  -- Abomasnow-sized body (x 7-90, y 15-85), reference body top on row 4, drawn at 1x
+  local cell = { fs = 94, cx0 = 7, cy0 = 15, cx1 = 90, cy1 = 85, bt = 4, bs = 1,
+                 ux0 = 0, uy0 = 0, ux1 = 94, uy1 = 94 }
+  local s, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(cell, true)
+  check(s == 1, "framed: scale 1")
+  check(near(oy, 4 - 15), "framed: the body's top sits on the reference's row, with no extra lift (oy = " .. oy .. ")")
+  check(near(ox, 32 - 48.5), "framed: centred on the body (ox = " .. ox .. ")")
+  check(ymin == math.floor(oy), "framed: the canvas still reaches the top of the animation (" .. ymin .. ")")
+  -- upscaled: 1.5x grows the body down from the same row, and the canvas grows with it
+  local up = { fs = 60, cx0 = 10, cy0 = 12, cx1 = 50, cy1 = 48, bt = 8, bs = 1.5,
+               ux0 = 4, uy0 = 6, ux1 = 56, uy1 = 54 }
+  local s2, ox2, oy2, x0, x1, y0, y1 = Atlas.backLayout(up, true)
+  check(s2 == 1.5, "framed: 1.5x is kept")
+  check(near(oy2, 8 - 1.5 * 12), "framed: the top is still on the reference's row (oy = " .. oy2 .. ")")
+  check(near(ox2, 32 - 1.5 * 30), "framed: centred at the new size (ox = " .. ox2 .. ")")
+  check(x1 - x0 >= 1.5 * (56 - 4) - 1, "framed: the canvas holds the scaled animation's width (" .. x0 .. " .. " .. x1 .. ")")
+  -- a cell with no reference is laid out as before (this one fits whole, feet on the box bottom, lifted)
+  local _, _, oy3 = Atlas.backLayout({ fs = 60, cx0 = 10, cy0 = 12, cx1 = 50, cy1 = 48 }, true)
+  check(near(oy3, 64 - 48 - RAISE), "no reference: unchanged (oy = " .. oy3 .. ")")
+end
+
+-- ------- exact zoom and anchor (gen3-hd-sprites): the body matches the cart sprite's height and column
+do
+  -- Treecko-like: body 44 x 46 starting at (9, 12); the cart's body is 51 rows tall from row 7, centred on column 31
+  local cell = { fs = 63, cx0 = 9, cy0 = 12, cx1 = 53, cy1 = 58, bt = 7, bs = 1, bv = 51, bx = 31,
+                 ux0 = 9, uy0 = 0, ux1 = 55, uy1 = 63 }
+  local s, ox, oy = Atlas.backLayout(cell, true, true)
+  check(near(s, 51 / 46), "exact: zoomed to the cart's height, not a clean step (s = " .. s .. ")")
+  check(near(oy, 7 - s * 12), "exact: the body's top is on the cart's row (oy = " .. oy .. ")")
+  check(near(ox, 31 - s * 31), "exact: centred on the cart body's column (ox = " .. ox .. ")")
+  local s1 = Atlas.backLayout(cell, true, false)
+  check(s1 == 1, "not exact: the clean step is used")
+  -- clamped
+  local huge = { fs = 40, cx0 = 0, cy0 = 0, cx1 = 20, cy1 = 10, bt = 0, bs = 2, bv = 64, bx = 32 }
+  check(Atlas.backLayout(huge, true, true) == 3, "exact: never more than 3x")
+  local tiny = { fs = 200, cx0 = 0, cy0 = 0, cx1 = 100, cy1 = 200, bt = 0, bs = 1, bv = 40, bx = 32 }
+  check(Atlas.backLayout(tiny, true, true) == 1, "exact: zooms in only, never below 1x")
+  -- no reference height: the clean step
+  local old = { fs = 63, cx0 = 9, cy0 = 12, cx1 = 53, cy1 = 58, bt = 7, bs = 1.5 }
+  check(Atlas.backLayout(old, true, true) == 1.5, "exact: an index without `bv` keeps its step")
+end
+
 -- ------- the draw wrap swaps the engine's (32, 32) origin for a wide canvas's own pivot
 do
   local calls = {}

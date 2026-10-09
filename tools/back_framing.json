@@ -1,0 +1,6644 @@
+{
+ "ABOMASNOW": {
+  "src": "abomasnow/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "ABRA": {
+  "src": "abra/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.5
+ },
+ "ABSOL": {
+  "src": "absol/back_gba.png",
+  "t": 4,
+  "v": 57,
+  "x": 30.5
+ },
+ "ACCELGOR": {
+  "src": "accelgor/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 27.5
+ },
+ "AEGISLASH": {
+  "src": "aegislash/back.png",
+  "t": 1,
+  "v": 54,
+  "x": 32.0
+ },
+ "AERODACTYL": {
+  "src": "aerodactyl/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "AGGRON": {
+  "src": "aggron/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 31.5
+ },
+ "AIPOM": {
+  "src": "aipom/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.5
+ },
+ "ALAKAZAM": {
+  "src": "alakazam/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "ALCREMIE": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_CARAMEL_SWIRL": {
+  "src": "alcremie/caramel_swirl/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_LEMON_CREAM": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_MATCHA_CREAM": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_MINT_CREAM": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_RAINBOW_SWIRL": {
+  "src": "alcremie/rainbow_swirl/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_RUBY_CREAM": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_RUBY_SWIRL": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALCREMIE_SALTED_CREAM": {
+  "src": "alcremie/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "ALOMOMOLA": {
+  "src": "alomomola/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 33.0
+ },
+ "ALTARIA": {
+  "src": "altaria/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "AMAURA": {
+  "src": "amaura/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 29.0
+ },
+ "AMBIPOM": {
+  "src": "ambipom/back.png",
+  "t": 8,
+  "v": 53,
+  "x": 32.0
+ },
+ "AMOONGUSS": {
+  "src": "amoonguss/back.png",
+  "t": 9,
+  "v": 43,
+  "x": 32.0
+ },
+ "AMPHAROS": {
+  "src": "ampharos/back_gba.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.0
+ },
+ "ANNIHILAPE": {
+  "src": "annihilape/back.png",
+  "t": 2,
+  "v": 61,
+  "x": 31.5
+ },
+ "ANORITH": {
+  "src": "anorith/back_gba.png",
+  "t": 24,
+  "v": 17,
+  "x": 33.0
+ },
+ "APPLETUN": {
+  "src": "appletun/back.png",
+  "t": 6,
+  "v": 47,
+  "x": 32.5
+ },
+ "APPLIN": {
+  "src": "applin/back.png",
+  "t": 11,
+  "v": 38,
+  "x": 31.0
+ },
+ "ARAQUANID": {
+  "src": "araquanid/back.png",
+  "t": 11,
+  "v": 41,
+  "x": 34.0
+ },
+ "ARBOK": {
+  "src": "arbok/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "ARBOLIVA": {
+  "src": "arboliva/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 36.0
+ },
+ "ARCANINE": {
+  "src": "arcanine/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.5
+ },
+ "ARCEUS": {
+  "src": "arceus/back.png",
+  "t": 6,
+  "v": 55,
+  "x": 33.0
+ },
+ "ARCHALUDON": {
+  "src": "archaludon/back.png",
+  "t": 9,
+  "v": 48,
+  "x": 30.5
+ },
+ "ARCHEN": {
+  "src": "archen/back.png",
+  "t": 16,
+  "v": 32,
+  "x": 34.0
+ },
+ "ARCHEOPS": {
+  "src": "archeops/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 31.0
+ },
+ "ARCTIBAX": {
+  "src": "arctibax/back.png",
+  "t": 13,
+  "v": 41,
+  "x": 31.5
+ },
+ "ARCTOVISH": {
+  "src": "arctovish/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "ARCTOZOLT": {
+  "src": "arctozolt/back.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "ARIADOS": {
+  "src": "ariados/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "ARMALDO": {
+  "src": "armaldo/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 34.0
+ },
+ "ARMAROUGE": {
+  "src": "armarouge/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.0
+ },
+ "AROMATISSE": {
+  "src": "aromatisse/back.png",
+  "t": 1,
+  "v": 58,
+  "x": 32.5
+ },
+ "ARON": {
+  "src": "aron/back_gba.png",
+  "t": 17,
+  "v": 30,
+  "x": 32.5
+ },
+ "ARROKUDA": {
+  "src": "arrokuda/back.png",
+  "t": 15,
+  "v": 34,
+  "x": 31.5
+ },
+ "ARTICUNO": {
+  "src": "articuno/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.5
+ },
+ "AUDINO": {
+  "src": "audino/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 33.0
+ },
+ "AURORUS": {
+  "src": "aurorus/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 33.5
+ },
+ "AVALUGG": {
+  "src": "avalugg/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "AVALUGG_HISUI": {
+  "src": "avalugg/hisui/back.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.0
+ },
+ "AXEW": {
+  "src": "axew/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 32.0
+ },
+ "AZELF": {
+  "src": "azelf/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 29.5
+ },
+ "AZUMARILL": {
+  "src": "azumarill/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "AZURILL": {
+  "src": "azurill/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 27.5
+ },
+ "BAGON": {
+  "src": "bagon/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.5
+ },
+ "BALTOY": {
+  "src": "baltoy/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 28.5
+ },
+ "BANETTE": {
+  "src": "banette/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.5
+ },
+ "BARBARACLE": {
+  "src": "barbaracle/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "BARBOACH": {
+  "src": "barboach/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 33.0
+ },
+ "BARRASKEWDA": {
+  "src": "barraskewda/back.png",
+  "t": 22,
+  "v": 31,
+  "x": 32.5
+ },
+ "BASCULEGION": {
+  "src": "basculegion/back.png",
+  "t": 21,
+  "v": 35,
+  "x": 32.0
+ },
+ "BASCULEGION_FEMALE": {
+  "src": "basculegion/back.png",
+  "t": 21,
+  "v": 35,
+  "x": 32.0
+ },
+ "BASCULIN": {
+  "src": "basculin/back.png",
+  "t": 10,
+  "v": 38,
+  "x": 33.5
+ },
+ "BASCULIN_WHITE_STRIPED": {
+  "src": "basculin/white_striped/back.png",
+  "t": 15,
+  "v": 33,
+  "x": 32.0
+ },
+ "BASTIODON": {
+  "src": "bastiodon/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "BAXCALIBUR": {
+  "src": "baxcalibur/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "BAYLEEF": {
+  "src": "bayleef/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "BEARTIC": {
+  "src": "beartic/back.png",
+  "t": 2,
+  "v": 57,
+  "x": 30.0
+ },
+ "BEAUTIFLY": {
+  "src": "beautifly/back_gba.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "BEEDRILL": {
+  "src": "beedrill/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "BEHEEYEM": {
+  "src": "beheeyem/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 30.5
+ },
+ "BELDUM": {
+  "src": "beldum/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 30.5
+ },
+ "BELLIBOLT": {
+  "src": "bellibolt/back.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "BELLOSSOM": {
+  "src": "bellossom/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "BELLSPROUT": {
+  "src": "bellsprout/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 31.5
+ },
+ "BERGMITE": {
+  "src": "bergmite/back.png",
+  "t": 9,
+  "v": 42,
+  "x": 30.5
+ },
+ "BEWEAR": {
+  "src": "bewear/back.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.5
+ },
+ "BIBAREL": {
+  "src": "bibarel/back.png",
+  "t": 9,
+  "v": 49,
+  "x": 32.0
+ },
+ "BIDOOF": {
+  "src": "bidoof/back.png",
+  "t": 15,
+  "v": 36,
+  "x": 31.0
+ },
+ "BINACLE": {
+  "src": "binacle/back.png",
+  "t": 1,
+  "v": 58,
+  "x": 35.0
+ },
+ "BISHARP": {
+  "src": "bisharp/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 29.5
+ },
+ "BLACEPHALON": {
+  "src": "blacephalon/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "BLASTOISE": {
+  "src": "blastoise/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "BLAZIKEN": {
+  "src": "blaziken/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.5
+ },
+ "BLIPBUG": {
+  "src": "blipbug/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 31.5
+ },
+ "BLISSEY": {
+  "src": "blissey/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "BLITZLE": {
+  "src": "blitzle/back.png",
+  "t": 6,
+  "v": 51,
+  "x": 32.0
+ },
+ "BOLDORE": {
+  "src": "boldore/back.png",
+  "t": 13,
+  "v": 35,
+  "x": 32.0
+ },
+ "BOLTUND": {
+  "src": "boltund/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "BOMBIRDIER": {
+  "src": "bombirdier/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.0
+ },
+ "BONSLY": {
+  "src": "bonsly/back.png",
+  "t": 2,
+  "v": 56,
+  "x": 29.5
+ },
+ "BOUFFALANT": {
+  "src": "bouffalant/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 32.0
+ },
+ "BOUNSWEET": {
+  "src": "bounsweet/back.png",
+  "t": 13,
+  "v": 37,
+  "x": 31.5
+ },
+ "BRAIXEN": {
+  "src": "braixen/back.png",
+  "t": 6,
+  "v": 48,
+  "x": 32.0
+ },
+ "BRAMBLEGHAST": {
+  "src": "brambleghast/back.png",
+  "t": 11,
+  "v": 46,
+  "x": 32.0
+ },
+ "BRAMBLIN": {
+  "src": "bramblin/back.png",
+  "t": 7,
+  "v": 43,
+  "x": 30.5
+ },
+ "BRAVIARY": {
+  "src": "braviary/back.png",
+  "t": 8,
+  "v": 46,
+  "x": 32.0
+ },
+ "BRAVIARY_HISUI": {
+  "src": "braviary/hisui/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "BRELOOM": {
+  "src": "breloom/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 31.5
+ },
+ "BRIONNE": {
+  "src": "brionne/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 31.0
+ },
+ "BRONZONG": {
+  "src": "bronzong/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "BRONZOR": {
+  "src": "bronzor/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "BRUTE_BONNET": {
+  "src": "brute_bonnet/back.png",
+  "t": 10,
+  "v": 41,
+  "x": 32.0
+ },
+ "BRUXISH": {
+  "src": "bruxish/back.png",
+  "t": 10,
+  "v": 40,
+  "x": 32.0
+ },
+ "BUDEW": {
+  "src": "budew/back.png",
+  "t": 7,
+  "v": 46,
+  "x": 33.0
+ },
+ "BUIZEL": {
+  "src": "buizel/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.0
+ },
+ "BULBASAUR": {
+  "src": "bulbasaur/back_gba.png",
+  "t": 16,
+  "v": 32,
+  "x": 32.5
+ },
+ "BUNEARY": {
+  "src": "buneary/back.png",
+  "t": 1,
+  "v": 59,
+  "x": 34.0
+ },
+ "BUNNELBY": {
+  "src": "bunnelby/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 38.0
+ },
+ "BURMY": {
+  "src": "burmy/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 31.5
+ },
+ "BUTTERFREE": {
+  "src": "butterfree/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 29.5
+ },
+ "BUZZWOLE": {
+  "src": "buzzwole/back.png",
+  "t": 5,
+  "v": 45,
+  "x": 32.0
+ },
+ "CACNEA": {
+  "src": "cacnea/back_gba.png",
+  "t": 16,
+  "v": 33,
+  "x": 32.0
+ },
+ "CACTURNE": {
+  "src": "cacturne/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "CALYREX": {
+  "src": "calyrex/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 31.5
+ },
+ "CALYREX_ICE": {
+  "src": "calyrex/ice/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 32.0
+ },
+ "CALYREX_SHADOW": {
+  "src": "calyrex/shadow/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "CAMERUPT": {
+  "src": "camerupt/back_gba.png",
+  "t": 19,
+  "v": 26,
+  "x": 32.0
+ },
+ "CAPSAKID": {
+  "src": "capsakid/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 31.5
+ },
+ "CARBINK": {
+  "src": "carbink/back.png",
+  "t": 14,
+  "v": 43,
+  "x": 32.0
+ },
+ "CARKOL": {
+  "src": "carkol/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "CARNIVINE": {
+  "src": "carnivine/back.png",
+  "t": 16,
+  "v": 42,
+  "x": 31.5
+ },
+ "CARRACOSTA": {
+  "src": "carracosta/back.png",
+  "t": 15,
+  "v": 36,
+  "x": 32.0
+ },
+ "CARVANHA": {
+  "src": "carvanha/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 31.0
+ },
+ "CASCOON": {
+  "src": "cascoon/back_gba.png",
+  "t": 21,
+  "v": 23,
+  "x": 31.0
+ },
+ "CASTFORM": {
+  "src": "castform/back_gba.png",
+  "t": 27,
+  "v": 37,
+  "x": 31.5
+ },
+ "CATERPIE": {
+  "src": "caterpie/back_gba.png",
+  "t": 15,
+  "v": 34,
+  "x": 33.0
+ },
+ "CELEBI": {
+  "src": "celebi/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "CELESTEELA": {
+  "src": "celesteela/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "CENTISKORCH": {
+  "src": "centiskorch/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 33.5
+ },
+ "CERULEDGE": {
+  "src": "ceruledge/back.png",
+  "t": 0,
+  "v": 61,
+  "x": 31.0
+ },
+ "CETITAN": {
+  "src": "cetitan/back.png",
+  "t": 5,
+  "v": 46,
+  "x": 32.0
+ },
+ "CETODDLE": {
+  "src": "cetoddle/back.png",
+  "t": 16,
+  "v": 32,
+  "x": 32.5
+ },
+ "CHANDELURE": {
+  "src": "chandelure/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "CHANSEY": {
+  "src": "chansey/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.5
+ },
+ "CHARCADET": {
+  "src": "charcadet/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 29.5
+ },
+ "CHARIZARD": {
+  "src": "charizard/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "CHARJABUG": {
+  "src": "charjabug/back.png",
+  "t": 16,
+  "v": 33,
+  "x": 32.0
+ },
+ "CHARMANDER": {
+  "src": "charmander/back_gba.png",
+  "t": 15,
+  "v": 35,
+  "x": 32.0
+ },
+ "CHARMELEON": {
+  "src": "charmeleon/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "CHATOT": {
+  "src": "chatot/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "CHERRIM": {
+  "src": "cherrim/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 33.5
+ },
+ "CHERUBI": {
+  "src": "cherubi/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 35.0
+ },
+ "CHESNAUGHT": {
+  "src": "chesnaught/back.png",
+  "t": 6,
+  "v": 48,
+  "x": 32.0
+ },
+ "CHESPIN": {
+  "src": "chespin/back.png",
+  "t": 1,
+  "v": 57,
+  "x": 28.5
+ },
+ "CHEWTLE": {
+  "src": "chewtle/back.png",
+  "t": 5,
+  "v": 51,
+  "x": 31.5
+ },
+ "CHIEN_PAO": {
+  "src": "chien_pao/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.0
+ },
+ "CHIKORITA": {
+  "src": "chikorita/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "CHIMCHAR": {
+  "src": "chimchar/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 31.0
+ },
+ "CHIMECHO": {
+  "src": "chimecho/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 34.0
+ },
+ "CHINCHOU": {
+  "src": "chinchou/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "CHINGLING": {
+  "src": "chingling/back.png",
+  "t": 10,
+  "v": 41,
+  "x": 29.5
+ },
+ "CHI_YU": {
+  "src": "chi_yu/back.png",
+  "t": 17,
+  "v": 33,
+  "x": 27.5
+ },
+ "CINCCINO": {
+  "src": "cinccino/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 32.5
+ },
+ "CINDERACE": {
+  "src": "cinderace/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "CLAMPERL": {
+  "src": "clamperl/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 29.5
+ },
+ "CLAUNCHER": {
+  "src": "clauncher/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "CLAWITZER": {
+  "src": "clawitzer/back.png",
+  "t": 9,
+  "v": 44,
+  "x": 32.0
+ },
+ "CLAYDOL": {
+  "src": "claydol/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 29.5
+ },
+ "CLEFABLE": {
+  "src": "clefable/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "CLEFAIRY": {
+  "src": "clefairy/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "CLEFFA": {
+  "src": "cleffa/back_gba.png",
+  "t": 15,
+  "v": 34,
+  "x": 32.5
+ },
+ "CLOBBOPUS": {
+  "src": "clobbopus/back.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "CLODSIRE": {
+  "src": "clodsire/back.png",
+  "t": 15,
+  "v": 34,
+  "x": 32.0
+ },
+ "CLOYSTER": {
+  "src": "cloyster/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.5
+ },
+ "COALOSSAL": {
+  "src": "coalossal/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 31.5
+ },
+ "COBALION": {
+  "src": "cobalion/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 30.0
+ },
+ "COFAGRIGUS": {
+  "src": "cofagrigus/back.png",
+  "t": 9,
+  "v": 49,
+  "x": 31.5
+ },
+ "COMBEE": {
+  "src": "combee/back.png",
+  "t": 10,
+  "v": 32,
+  "x": 32.5
+ },
+ "COMBUSKEN": {
+  "src": "combusken/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.5
+ },
+ "COMFEY": {
+  "src": "comfey/back.png",
+  "t": 7,
+  "v": 46,
+  "x": 32.0
+ },
+ "CONKELDURR": {
+  "src": "conkeldurr/back.png",
+  "t": 7,
+  "v": 44,
+  "x": 31.5
+ },
+ "COPPERAJAH": {
+  "src": "copperajah/back.png",
+  "t": 16,
+  "v": 32,
+  "x": 32.0
+ },
+ "CORPHISH": {
+  "src": "corphish/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.5
+ },
+ "CORSOLA": {
+  "src": "corsola/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 33.0
+ },
+ "CORVIKNIGHT": {
+  "src": "corviknight/back.png",
+  "t": 2,
+  "v": 59,
+  "x": 32.0
+ },
+ "CORVISQUIRE": {
+  "src": "corvisquire/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "COSMOEM": {
+  "src": "cosmoem/back.png",
+  "t": 12,
+  "v": 35,
+  "x": 32.0
+ },
+ "COSMOG": {
+  "src": "cosmog/back.png",
+  "t": 12,
+  "v": 42,
+  "x": 31.5
+ },
+ "COTTONEE": {
+  "src": "cottonee/back.png",
+  "t": 17,
+  "v": 29,
+  "x": 32.5
+ },
+ "CRABOMINABLE": {
+  "src": "crabominable/back.png",
+  "t": 2,
+  "v": 59,
+  "x": 32.5
+ },
+ "CRABRAWLER": {
+  "src": "crabrawler/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "CRADILY": {
+  "src": "cradily/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 34.0
+ },
+ "CRAMORANT": {
+  "src": "cramorant/back.png",
+  "t": 15,
+  "v": 48,
+  "x": 25.5
+ },
+ "CRANIDOS": {
+  "src": "cranidos/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.5
+ },
+ "CRAWDAUNT": {
+  "src": "crawdaunt/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "CRESSELIA": {
+  "src": "cresselia/back.png",
+  "t": 5,
+  "v": 59,
+  "x": 36.0
+ },
+ "CROAGUNK": {
+  "src": "croagunk/back.png",
+  "t": 13,
+  "v": 45,
+  "x": 31.0
+ },
+ "CROBAT": {
+  "src": "crobat/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.5
+ },
+ "CROCALOR": {
+  "src": "crocalor/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 31.0
+ },
+ "CROCONAW": {
+  "src": "croconaw/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "CRUSTLE": {
+  "src": "crustle/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 32.0
+ },
+ "CRYOGONAL": {
+  "src": "cryogonal/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 33.0
+ },
+ "CUBCHOO": {
+  "src": "cubchoo/back.png",
+  "t": 16,
+  "v": 36,
+  "x": 31.0
+ },
+ "CUBONE": {
+  "src": "cubone/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "CUFANT": {
+  "src": "cufant/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 31.5
+ },
+ "CURSOLA": {
+  "src": "cursola/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "CUTIEFLY": {
+  "src": "cutiefly/back.png",
+  "t": 11,
+  "v": 38,
+  "x": 33.5
+ },
+ "CYCLIZAR": {
+  "src": "cyclizar/back.png",
+  "t": 12,
+  "v": 43,
+  "x": 33.0
+ },
+ "CYNDAQUIL": {
+  "src": "cyndaquil/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 31.5
+ },
+ "DACHSBUN": {
+  "src": "dachsbun/back.png",
+  "t": 18,
+  "v": 37,
+  "x": 33.0
+ },
+ "DARKRAI": {
+  "src": "darkrai/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "DARMANITAN": {
+  "src": "darmanitan/back.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.0
+ },
+ "DARMANITAN_GALAR_STANDARD": {
+  "src": "darmanitan/galar_standard/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "DARTRIX": {
+  "src": "dartrix/back.png",
+  "t": 6,
+  "v": 54,
+  "x": 32.0
+ },
+ "DARUMAKA": {
+  "src": "darumaka/back.png",
+  "t": 11,
+  "v": 41,
+  "x": 31.5
+ },
+ "DARUMAKA_GALAR": {
+  "src": "darumaka/galar/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "DECIDUEYE": {
+  "src": "decidueye/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 32.0
+ },
+ "DECIDUEYE_HISUI": {
+  "src": "decidueye/hisui/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 33.0
+ },
+ "DEDENNE": {
+  "src": "dedenne/back.png",
+  "t": 11,
+  "v": 41,
+  "x": 32.0
+ },
+ "DEERLING": {
+  "src": "deerling/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 34.5
+ },
+ "DEINO": {
+  "src": "deino/back.png",
+  "t": 8,
+  "v": 42,
+  "x": 32.5
+ },
+ "DELCATTY": {
+  "src": "delcatty/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "DELIBIRD": {
+  "src": "delibird/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.5
+ },
+ "DELPHOX": {
+  "src": "delphox/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 32.0
+ },
+ "DEOXYS": {
+  "src": "deoxys/back_gba.png",
+  "t": 2,
+  "v": 118,
+  "x": 30.5
+ },
+ "DEWGONG": {
+  "src": "dewgong/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "DEWOTT": {
+  "src": "dewott/back.png",
+  "t": 2,
+  "v": 57,
+  "x": 31.0
+ },
+ "DEWPIDER": {
+  "src": "dewpider/back.png",
+  "t": 14,
+  "v": 42,
+  "x": 32.0
+ },
+ "DHELMISE": {
+  "src": "dhelmise/back.png",
+  "t": 2,
+  "v": 59,
+  "x": 31.5
+ },
+ "DIALGA": {
+  "src": "dialga/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 34.0
+ },
+ "DIALGA_ORIGIN": {
+  "src": "dialga/origin/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "DIANCIE": {
+  "src": "diancie/back.png",
+  "t": 3,
+  "v": 54,
+  "x": 32.0
+ },
+ "DIGGERSBY": {
+  "src": "diggersby/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 32.0
+ },
+ "DIGLETT": {
+  "src": "diglett/back_gba.png",
+  "t": 17,
+  "v": 31,
+  "x": 31.5
+ },
+ "DIPPLIN": {
+  "src": "dipplin/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.0
+ },
+ "DITTO": {
+  "src": "ditto/back_gba.png",
+  "t": 18,
+  "v": 29,
+  "x": 32.0
+ },
+ "DODRIO": {
+  "src": "dodrio/back_gba.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.5
+ },
+ "DODUO": {
+  "src": "doduo/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "DOLLIV": {
+  "src": "dolliv/back.png",
+  "t": 6,
+  "v": 55,
+  "x": 31.0
+ },
+ "DONDOZO": {
+  "src": "dondozo/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.5
+ },
+ "DONPHAN": {
+  "src": "donphan/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "DOTTLER": {
+  "src": "dottler/back.png",
+  "t": 17,
+  "v": 30,
+  "x": 32.0
+ },
+ "DOUBLADE": {
+  "src": "doublade/back.png",
+  "t": 3,
+  "v": 54,
+  "x": 32.0
+ },
+ "DRACOVISH": {
+  "src": "dracovish/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 33.5
+ },
+ "DRACOZOLT": {
+  "src": "dracozolt/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 31.5
+ },
+ "DRAGALGE": {
+  "src": "dragalge/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "DRAGAPULT": {
+  "src": "dragapult/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 31.5
+ },
+ "DRAGONAIR": {
+  "src": "dragonair/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.5
+ },
+ "DRAGONITE": {
+  "src": "dragonite/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "DRAKLOAK": {
+  "src": "drakloak/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "DRAMPA": {
+  "src": "drampa/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 32.0
+ },
+ "DRAPION": {
+  "src": "drapion/back.png",
+  "t": 10,
+  "v": 48,
+  "x": 32.0
+ },
+ "DRATINI": {
+  "src": "dratini/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "DREDNAW": {
+  "src": "drednaw/back.png",
+  "t": 13,
+  "v": 33,
+  "x": 32.0
+ },
+ "DREEPY": {
+  "src": "dreepy/back.png",
+  "t": 14,
+  "v": 35,
+  "x": 31.5
+ },
+ "DRIFBLIM": {
+  "src": "drifblim/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 29.0
+ },
+ "DRIFLOON": {
+  "src": "drifloon/back.png",
+  "t": 4,
+  "v": 60,
+  "x": 31.5
+ },
+ "DRILBUR": {
+  "src": "drilbur/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 32.5
+ },
+ "DRIZZILE": {
+  "src": "drizzile/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "DROWZEE": {
+  "src": "drowzee/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "DRUDDIGON": {
+  "src": "druddigon/back.png",
+  "t": 4,
+  "v": 52,
+  "x": 32.0
+ },
+ "DUBWOOL": {
+  "src": "dubwool/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 32.0
+ },
+ "DUCKLETT": {
+  "src": "ducklett/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 30.5
+ },
+ "DUDUNSPARCE": {
+  "src": "dudunsparce/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.5
+ },
+ "DUGTRIO": {
+  "src": "dugtrio/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "DUNSPARCE": {
+  "src": "dunsparce/back_gba.png",
+  "t": 16,
+  "v": 33,
+  "x": 32.0
+ },
+ "DUOSION": {
+  "src": "duosion/back.png",
+  "t": 8,
+  "v": 43,
+  "x": 32.5
+ },
+ "DURALUDON": {
+  "src": "duraludon/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.5
+ },
+ "DURANT": {
+  "src": "durant/back.png",
+  "t": 18,
+  "v": 29,
+  "x": 32.0
+ },
+ "DUSCLOPS": {
+  "src": "dusclops/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.5
+ },
+ "DUSKNOIR": {
+  "src": "dusknoir/back.png",
+  "t": 10,
+  "v": 48,
+  "x": 32.0
+ },
+ "DUSKULL": {
+  "src": "duskull/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "DUSTOX": {
+  "src": "dustox/back_gba.png",
+  "t": 20,
+  "v": 24,
+  "x": 31.5
+ },
+ "DWEBBLE": {
+  "src": "dwebble/back.png",
+  "t": 17,
+  "v": 30,
+  "x": 31.5
+ },
+ "EELEKTRIK": {
+  "src": "eelektrik/back.png",
+  "t": 3,
+  "v": 57,
+  "x": 32.5
+ },
+ "EELEKTROSS": {
+  "src": "eelektross/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "EEVEE": {
+  "src": "eevee/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "EISCUE": {
+  "src": "eiscue/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.5
+ },
+ "EKANS": {
+  "src": "ekans/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "ELDEGOSS": {
+  "src": "eldegoss/back.png",
+  "t": 12,
+  "v": 37,
+  "x": 32.5
+ },
+ "ELECTABUZZ": {
+  "src": "electabuzz/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "ELECTIVIRE": {
+  "src": "electivire/back.png",
+  "t": 11,
+  "v": 44,
+  "x": 32.0
+ },
+ "ELECTRIKE": {
+  "src": "electrike/back_gba.png",
+  "t": 17,
+  "v": 31,
+  "x": 30.5
+ },
+ "ELECTRODE": {
+  "src": "electrode/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 31.5
+ },
+ "ELEKID": {
+  "src": "elekid/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "ELGYEM": {
+  "src": "elgyem/back.png",
+  "t": 5,
+  "v": 49,
+  "x": 31.0
+ },
+ "EMBOAR": {
+  "src": "emboar/back.png",
+  "t": 0,
+  "v": 58,
+  "x": 32.0
+ },
+ "EMOLGA": {
+  "src": "emolga/back.png",
+  "t": 12,
+  "v": 36,
+  "x": 31.0
+ },
+ "EMPOLEON": {
+  "src": "empoleon/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "ENAMORUS": {
+  "src": "enamorus/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 30.5
+ },
+ "ENAMORUS_THERIAN": {
+  "src": "enamorus/therian/back.png",
+  "t": 7,
+  "v": 51,
+  "x": 31.5
+ },
+ "ENTEI": {
+  "src": "entei/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 32.5
+ },
+ "ESCAVALIER": {
+  "src": "escavalier/back.png",
+  "t": 5,
+  "v": 50,
+  "x": 32.0
+ },
+ "ESPATHRA": {
+  "src": "espathra/back.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.0
+ },
+ "ESPEON": {
+  "src": "espeon/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "ESPURR": {
+  "src": "espurr/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 29.5
+ },
+ "ETERNATUS": {
+  "src": "eternatus/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 32.0
+ },
+ "EXCADRILL": {
+  "src": "excadrill/back.png",
+  "t": 3,
+  "v": 50,
+  "x": 32.0
+ },
+ "EXEGGCUTE": {
+  "src": "exeggcute/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 31.5
+ },
+ "EXEGGUTOR": {
+  "src": "exeggutor/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "EXPLOUD": {
+  "src": "exploud/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "FALINKS": {
+  "src": "falinks/back.png",
+  "t": 14,
+  "v": 35,
+  "x": 31.5
+ },
+ "FARFETCHD": {
+  "src": "farfetchd/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "FARIGIRAF": {
+  "src": "farigiraf/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 33.5
+ },
+ "FEAROW": {
+  "src": "fearow/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "FEEBAS": {
+  "src": "feebas/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 30.5
+ },
+ "FENNEKIN": {
+  "src": "fennekin/back.png",
+  "t": 10,
+  "v": 46,
+  "x": 31.5
+ },
+ "FERALIGATR": {
+  "src": "feraligatr/back_gba.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.0
+ },
+ "FERROSEED": {
+  "src": "ferroseed/back.png",
+  "t": 14,
+  "v": 35,
+  "x": 31.5
+ },
+ "FERROTHORN": {
+  "src": "ferrothorn/back.png",
+  "t": 12,
+  "v": 38,
+  "x": 32.0
+ },
+ "FEZANDIPITI": {
+  "src": "fezandipiti/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 34.5
+ },
+ "FIDOUGH": {
+  "src": "fidough/back.png",
+  "t": 20,
+  "v": 32,
+  "x": 33.5
+ },
+ "FINIZEN": {
+  "src": "finizen/back.png",
+  "t": 15,
+  "v": 34,
+  "x": 32.0
+ },
+ "FINNEON": {
+  "src": "finneon/back.png",
+  "t": 13,
+  "v": 38,
+  "x": 33.0
+ },
+ "FLAAFFY": {
+  "src": "flaaffy/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "FLABEBE": {
+  "src": "flabebe/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "FLABEBE_BLUE": {
+  "src": "flabebe/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "FLABEBE_ORANGE": {
+  "src": "flabebe/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "FLABEBE_WHITE": {
+  "src": "flabebe/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "FLABEBE_YELLOW": {
+  "src": "flabebe/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "FLAMIGO": {
+  "src": "flamigo/back.png",
+  "t": 11,
+  "v": 50,
+  "x": 30.5
+ },
+ "FLAPPLE": {
+  "src": "flapple/back.png",
+  "t": 5,
+  "v": 51,
+  "x": 29.0
+ },
+ "FLAREON": {
+  "src": "flareon/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "FLETCHINDER": {
+  "src": "fletchinder/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "FLETCHLING": {
+  "src": "fletchling/back.png",
+  "t": 20,
+  "v": 30,
+  "x": 30.5
+ },
+ "FLITTLE": {
+  "src": "flittle/back.png",
+  "t": 12,
+  "v": 43,
+  "x": 31.0
+ },
+ "FLOATZEL": {
+  "src": "floatzel/back.png",
+  "t": 2,
+  "v": 56,
+  "x": 31.5
+ },
+ "FLOETTE": {
+  "src": "floette/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "FLOETTE_BLUE": {
+  "src": "floette/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "FLOETTE_ETERNAL": {
+  "src": "floette/eternal/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 31.5
+ },
+ "FLOETTE_ORANGE": {
+  "src": "floette/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "FLOETTE_WHITE": {
+  "src": "floette/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "FLOETTE_YELLOW": {
+  "src": "floette/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "FLORAGATO": {
+  "src": "floragato/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "FLORGES": {
+  "src": "florges/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "FLORGES_BLUE": {
+  "src": "florges/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "FLORGES_ORANGE": {
+  "src": "florges/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "FLORGES_WHITE": {
+  "src": "florges/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "FLORGES_YELLOW": {
+  "src": "florges/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "FLUTTER_MANE": {
+  "src": "flutter_mane/back.png",
+  "t": 3,
+  "v": 60,
+  "x": 32.0
+ },
+ "FLYGON": {
+  "src": "flygon/back_gba.png",
+  "t": 2,
+  "v": 60,
+  "x": 31.5
+ },
+ "FOMANTIS": {
+  "src": "fomantis/back.png",
+  "t": 9,
+  "v": 50,
+  "x": 31.5
+ },
+ "FOONGUS": {
+  "src": "foongus/back.png",
+  "t": 16,
+  "v": 35,
+  "x": 31.0
+ },
+ "FORRETRESS": {
+  "src": "forretress/back_gba.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.0
+ },
+ "FRAXURE": {
+  "src": "fraxure/back.png",
+  "t": 11,
+  "v": 40,
+  "x": 32.0
+ },
+ "FRIGIBAX": {
+  "src": "frigibax/back.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "FRILLISH": {
+  "src": "frillish/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.5
+ },
+ "FROAKIE": {
+  "src": "froakie/back.png",
+  "t": 12,
+  "v": 45,
+  "x": 29.5
+ },
+ "FROGADIER": {
+  "src": "frogadier/back.png",
+  "t": 9,
+  "v": 49,
+  "x": 32.0
+ },
+ "FROSLASS": {
+  "src": "froslass/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.5
+ },
+ "FROSMOTH": {
+  "src": "frosmoth/back.png",
+  "t": 2,
+  "v": 59,
+  "x": 32.0
+ },
+ "FUECOCO": {
+  "src": "fuecoco/back.png",
+  "t": 9,
+  "v": 51,
+  "x": 32.5
+ },
+ "FURFROU": {
+  "src": "furfrou/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.5
+ },
+ "FURRET": {
+  "src": "furret/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "GABITE": {
+  "src": "gabite/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 31.0
+ },
+ "GALLADE": {
+  "src": "gallade/back.png",
+  "t": 2,
+  "v": 57,
+  "x": 31.5
+ },
+ "GALVANTULA": {
+  "src": "galvantula/back.png",
+  "t": 13,
+  "v": 33,
+  "x": 32.0
+ },
+ "GARBODOR": {
+  "src": "garbodor/back.png",
+  "t": 2,
+  "v": 57,
+  "x": 32.0
+ },
+ "GARCHOMP": {
+  "src": "garchomp/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "GARDEVOIR": {
+  "src": "gardevoir/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 28.5
+ },
+ "GARGANACL": {
+  "src": "garganacl/back.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "GASTLY": {
+  "src": "gastly/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "GASTRODON": {
+  "src": "gastrodon/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 31.5
+ },
+ "GASTRODON_EAST": {
+  "src": "gastrodon/east/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 32.0
+ },
+ "GENESECT": {
+  "src": "genesect/back.png",
+  "t": 10,
+  "v": 46,
+  "x": 32.0
+ },
+ "GENGAR": {
+  "src": "gengar/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.5
+ },
+ "GEODUDE": {
+  "src": "geodude/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "GHOLDENGO": {
+  "src": "gholdengo/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 33.0
+ },
+ "GIBLE": {
+  "src": "gible/back.png",
+  "t": 11,
+  "v": 44,
+  "x": 30.0
+ },
+ "GIGALITH": {
+  "src": "gigalith/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 29.5
+ },
+ "GIMMIGHOUL": {
+  "src": "gimmighoul/back.png",
+  "t": 20,
+  "v": 29,
+  "x": 33.5
+ },
+ "GIRAFARIG": {
+  "src": "girafarig/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "GIRATINA": {
+  "src": "giratina/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 32.0
+ },
+ "GIRATINA_ORIGIN": {
+  "src": "giratina/origin/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "GLACEON": {
+  "src": "glaceon/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 31.5
+ },
+ "GLALIE": {
+  "src": "glalie/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "GLAMEOW": {
+  "src": "glameow/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 34.0
+ },
+ "GLASTRIER": {
+  "src": "glastrier/back.png",
+  "t": 0,
+  "v": 59,
+  "x": 32.0
+ },
+ "GLIGAR": {
+  "src": "gligar/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "GLIMMET": {
+  "src": "glimmet/back.png",
+  "t": 18,
+  "v": 32,
+  "x": 33.5
+ },
+ "GLIMMORA": {
+  "src": "glimmora/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "GLISCOR": {
+  "src": "gliscor/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "GLOOM": {
+  "src": "gloom/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "GOGOAT": {
+  "src": "gogoat/back.png",
+  "t": 5,
+  "v": 50,
+  "x": 32.0
+ },
+ "GOLBAT": {
+  "src": "golbat/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 32.5
+ },
+ "GOLDEEN": {
+  "src": "goldeen/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "GOLDUCK": {
+  "src": "golduck/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.5
+ },
+ "GOLEM": {
+  "src": "golem/back_gba.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.0
+ },
+ "GOLETT": {
+  "src": "golett/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 32.0
+ },
+ "GOLISOPOD": {
+  "src": "golisopod/back.png",
+  "t": 11,
+  "v": 44,
+  "x": 32.0
+ },
+ "GOLURK": {
+  "src": "golurk/back.png",
+  "t": 4,
+  "v": 53,
+  "x": 32.0
+ },
+ "GOODRA": {
+  "src": "goodra/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "GOODRA_HISUI": {
+  "src": "goodra/hisui/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "GOOMY": {
+  "src": "goomy/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 31.5
+ },
+ "GOREBYSS": {
+  "src": "gorebyss/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.5
+ },
+ "GOSSIFLEUR": {
+  "src": "gossifleur/back.png",
+  "t": 11,
+  "v": 38,
+  "x": 32.5
+ },
+ "GOTHITA": {
+  "src": "gothita/back.png",
+  "t": 8,
+  "v": 46,
+  "x": 33.0
+ },
+ "GOTHITELLE": {
+  "src": "gothitelle/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "GOTHORITA": {
+  "src": "gothorita/back.png",
+  "t": 9,
+  "v": 48,
+  "x": 32.0
+ },
+ "GOUGING_FIRE": {
+  "src": "gouging_fire/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 32.0
+ },
+ "GOURGEIST": {
+  "src": "gourgeist/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 32.5
+ },
+ "GOURGEIST_LARGE": {
+  "src": "gourgeist/large/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 33.0
+ },
+ "GOURGEIST_SMALL": {
+  "src": "gourgeist/small/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "GOURGEIST_SUPER": {
+  "src": "gourgeist/super/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 33.0
+ },
+ "GRAFAIAI": {
+  "src": "grafaiai/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "GRANBULL": {
+  "src": "granbull/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 31.5
+ },
+ "GRAPPLOCT": {
+  "src": "grapploct/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 31.5
+ },
+ "GRAVELER": {
+  "src": "graveler/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 31.5
+ },
+ "GREAT_TUSK": {
+  "src": "great_tusk/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 32.0
+ },
+ "GREAVARD": {
+  "src": "greavard/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 31.0
+ },
+ "GREEDENT": {
+  "src": "greedent/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "GRENINJA": {
+  "src": "greninja/back.png",
+  "t": 9,
+  "v": 44,
+  "x": 34.0
+ },
+ "GRIMER": {
+  "src": "grimer/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "GRIMMSNARL": {
+  "src": "grimmsnarl/back.png",
+  "t": 13,
+  "v": 41,
+  "x": 32.0
+ },
+ "GROOKEY": {
+  "src": "grookey/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 31.5
+ },
+ "GROTLE": {
+  "src": "grotle/back.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "GROUDON": {
+  "src": "groudon/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "GROVYLE": {
+  "src": "grovyle/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "GROWLITHE": {
+  "src": "growlithe/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "GRUBBIN": {
+  "src": "grubbin/back.png",
+  "t": 21,
+  "v": 27,
+  "x": 34.5
+ },
+ "GRUMPIG": {
+  "src": "grumpig/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.5
+ },
+ "GULPIN": {
+  "src": "gulpin/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "GUMSHOOS": {
+  "src": "gumshoos/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "GURDURR": {
+  "src": "gurdurr/back.png",
+  "t": 16,
+  "v": 39,
+  "x": 32.0
+ },
+ "GUZZLORD": {
+  "src": "guzzlord/back.png",
+  "t": 7,
+  "v": 47,
+  "x": 32.0
+ },
+ "GYARADOS": {
+  "src": "gyarados/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.5
+ },
+ "HAKAMO_O": {
+  "src": "hakamo_o/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 31.5
+ },
+ "HAPPINY": {
+  "src": "happiny/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 33.0
+ },
+ "HARIYAMA": {
+  "src": "hariyama/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "HATENNA": {
+  "src": "hatenna/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "HATTERENE": {
+  "src": "hatterene/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "HATTREM": {
+  "src": "hattrem/back.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "HAUNTER": {
+  "src": "haunter/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.5
+ },
+ "HAWLUCHA": {
+  "src": "hawlucha/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 32.0
+ },
+ "HAXORUS": {
+  "src": "haxorus/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 32.0
+ },
+ "HEATMOR": {
+  "src": "heatmor/back.png",
+  "t": 20,
+  "v": 23,
+  "x": 32.0
+ },
+ "HEATRAN": {
+  "src": "heatran/back.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "HELIOLISK": {
+  "src": "heliolisk/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 29.5
+ },
+ "HELIOPTILE": {
+  "src": "helioptile/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "HERACROSS": {
+  "src": "heracross/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.5
+ },
+ "HERDIER": {
+  "src": "herdier/back.png",
+  "t": 6,
+  "v": 48,
+  "x": 32.5
+ },
+ "HIPPOPOTAS": {
+  "src": "hippopotas/back.png",
+  "t": 15,
+  "v": 35,
+  "x": 32.0
+ },
+ "HIPPOWDON": {
+  "src": "hippowdon/back.png",
+  "t": 9,
+  "v": 49,
+  "x": 32.0
+ },
+ "HITMONCHAN": {
+  "src": "hitmonchan/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "HITMONLEE": {
+  "src": "hitmonlee/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "HITMONTOP": {
+  "src": "hitmontop/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "HONCHKROW": {
+  "src": "honchkrow/back.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.5
+ },
+ "HONEDGE": {
+  "src": "honedge/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 31.5
+ },
+ "HOOPA": {
+  "src": "hoopa/back.png",
+  "t": 4,
+  "v": 52,
+  "x": 31.5
+ },
+ "HOOPA_UNBOUND": {
+  "src": "hoopa/unbound/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "HOOTHOOT": {
+  "src": "hoothoot/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 31.5
+ },
+ "HOPPIP": {
+  "src": "hoppip/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 31.5
+ },
+ "HORSEA": {
+  "src": "horsea/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 33.0
+ },
+ "HOUNDOOM": {
+  "src": "houndoom/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.5
+ },
+ "HOUNDOUR": {
+  "src": "houndour/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.5
+ },
+ "HOUNDSTONE": {
+  "src": "houndstone/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "HO_OH": {
+  "src": "ho_oh/back_gba.png",
+  "t": 2,
+  "v": 61,
+  "x": 32.5
+ },
+ "HUNTAIL": {
+  "src": "huntail/back_gba.png",
+  "t": 2,
+  "v": 60,
+  "x": 29.0
+ },
+ "HYDRAPPLE": {
+  "src": "hydrapple/back.png",
+  "t": 6,
+  "v": 58,
+  "x": 32.0
+ },
+ "HYDREIGON": {
+  "src": "hydreigon/back.png",
+  "t": 5,
+  "v": 48,
+  "x": 32.0
+ },
+ "HYPNO": {
+  "src": "hypno/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "IGGLYBUFF": {
+  "src": "igglybuff/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "ILLUMISE": {
+  "src": "illumise/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 31.5
+ },
+ "IMPIDIMP": {
+  "src": "impidimp/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 32.0
+ },
+ "INCINEROAR": {
+  "src": "incineroar/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "INDEEDEE": {
+  "src": "indeedee/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 30.5
+ },
+ "INFERNAPE": {
+  "src": "infernape/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "INKAY": {
+  "src": "inkay/back.png",
+  "t": 3,
+  "v": 52,
+  "x": 32.0
+ },
+ "INTELEON": {
+  "src": "inteleon/back.png",
+  "t": 3,
+  "v": 57,
+  "x": 32.0
+ },
+ "IRON_BOULDER": {
+  "src": "iron_boulder/back.png",
+  "t": 18,
+  "v": 34,
+  "x": 32.5
+ },
+ "IRON_BUNDLE": {
+  "src": "iron_bundle/back.png",
+  "t": 12,
+  "v": 46,
+  "x": 28.0
+ },
+ "IRON_CROWN": {
+  "src": "iron_crown/back.png",
+  "t": 4,
+  "v": 58,
+  "x": 32.0
+ },
+ "IRON_HANDS": {
+  "src": "iron_hands/back.png",
+  "t": 8,
+  "v": 52,
+  "x": 32.0
+ },
+ "IRON_JUGULIS": {
+  "src": "iron_jugulis/back.png",
+  "t": 5,
+  "v": 48,
+  "x": 32.0
+ },
+ "IRON_LEAVES": {
+  "src": "iron_leaves/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "IRON_MOTH": {
+  "src": "iron_moth/back.png",
+  "t": 10,
+  "v": 51,
+  "x": 32.0
+ },
+ "IRON_THORNS": {
+  "src": "iron_thorns/back.png",
+  "t": 3,
+  "v": 60,
+  "x": 32.0
+ },
+ "IRON_TREADS": {
+  "src": "iron_treads/back.png",
+  "t": 18,
+  "v": 37,
+  "x": 32.0
+ },
+ "IRON_VALIANT": {
+  "src": "iron_valiant/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 21.0
+ },
+ "IVYSAUR": {
+  "src": "ivysaur/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "JANGMO_O": {
+  "src": "jangmo_o/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 30.5
+ },
+ "JELLICENT": {
+  "src": "jellicent/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 30.5
+ },
+ "JIGGLYPUFF": {
+  "src": "jigglypuff/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.5
+ },
+ "JIRACHI": {
+  "src": "jirachi/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 31.5
+ },
+ "JOLTEON": {
+  "src": "jolteon/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 33.0
+ },
+ "JOLTIK": {
+  "src": "joltik/back.png",
+  "t": 20,
+  "v": 25,
+  "x": 32.5
+ },
+ "JUMPLUFF": {
+  "src": "jumpluff/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.0
+ },
+ "JYNX": {
+  "src": "jynx/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.5
+ },
+ "KABUTO": {
+  "src": "kabuto/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "KABUTOPS": {
+  "src": "kabutops/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 31.5
+ },
+ "KADABRA": {
+  "src": "kadabra/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "KAKUNA": {
+  "src": "kakuna/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "KANGASKHAN": {
+  "src": "kangaskhan/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.5
+ },
+ "KARRABLAST": {
+  "src": "karrablast/back.png",
+  "t": 10,
+  "v": 40,
+  "x": 31.5
+ },
+ "KARTANA": {
+  "src": "kartana/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 33.5
+ },
+ "KECLEON": {
+  "src": "kecleon/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 28.0
+ },
+ "KELDEO": {
+  "src": "keldeo/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 30.5
+ },
+ "KILOWATTREL": {
+  "src": "kilowattrel/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 35.0
+ },
+ "KINGAMBIT": {
+  "src": "kingambit/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "KINGDRA": {
+  "src": "kingdra/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "KINGLER": {
+  "src": "kingler/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 31.5
+ },
+ "KIRLIA": {
+  "src": "kirlia/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "KLANG": {
+  "src": "klang/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 33.0
+ },
+ "KLAWF": {
+  "src": "klawf/back.png",
+  "t": 21,
+  "v": 23,
+  "x": 32.0
+ },
+ "KLEAVOR": {
+  "src": "kleavor/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 31.5
+ },
+ "KLEFKI": {
+  "src": "klefki/back.png",
+  "t": 2,
+  "v": 54,
+  "x": 31.5
+ },
+ "KLINK": {
+  "src": "klink/back.png",
+  "t": 1,
+  "v": 46,
+  "x": 34.0
+ },
+ "KLINKLANG": {
+  "src": "klinklang/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 32.0
+ },
+ "KOFFING": {
+  "src": "koffing/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "KOMALA": {
+  "src": "komala/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "KOMMO_O": {
+  "src": "kommo_o/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "KORAIDON": {
+  "src": "koraidon/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 32.0
+ },
+ "KRABBY": {
+  "src": "krabby/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "KRICKETOT": {
+  "src": "kricketot/back.png",
+  "t": 9,
+  "v": 49,
+  "x": 32.0
+ },
+ "KRICKETUNE": {
+  "src": "kricketune/back.png",
+  "t": 2,
+  "v": 59,
+  "x": 31.5
+ },
+ "KROKOROK": {
+  "src": "krokorok/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 34.5
+ },
+ "KROOKODILE": {
+  "src": "krookodile/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 32.0
+ },
+ "KUBFU": {
+  "src": "kubfu/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "KYOGRE": {
+  "src": "kyogre/back_gba.png",
+  "t": 20,
+  "v": 25,
+  "x": 32.0
+ },
+ "KYUREM": {
+  "src": "kyurem/back.png",
+  "t": 15,
+  "v": 37,
+  "x": 32.0
+ },
+ "KYUREM_BLACK": {
+  "src": "kyurem/black/back.png",
+  "t": 7,
+  "v": 54,
+  "x": 32.5
+ },
+ "KYUREM_WHITE": {
+  "src": "kyurem/white/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "LAIRON": {
+  "src": "lairon/back_gba.png",
+  "t": 18,
+  "v": 29,
+  "x": 32.0
+ },
+ "LAMPENT": {
+  "src": "lampent/back.png",
+  "t": 11,
+  "v": 41,
+  "x": 32.5
+ },
+ "LANDORUS": {
+  "src": "landorus/back.png",
+  "t": 3,
+  "v": 61,
+  "x": 32.0
+ },
+ "LANDORUS_THERIAN": {
+  "src": "landorus/therian/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "LANTURN": {
+  "src": "lanturn/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.5
+ },
+ "LAPRAS": {
+  "src": "lapras/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "LARVESTA": {
+  "src": "larvesta/back.png",
+  "t": 9,
+  "v": 43,
+  "x": 31.5
+ },
+ "LARVITAR": {
+  "src": "larvitar/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "LATIAS": {
+  "src": "latias/back_gba.png",
+  "t": 2,
+  "v": 60,
+  "x": 30.5
+ },
+ "LATIOS": {
+  "src": "latios/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "LEAFEON": {
+  "src": "leafeon/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 30.5
+ },
+ "LEAVANNY": {
+  "src": "leavanny/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 30.5
+ },
+ "LECHONK": {
+  "src": "lechonk/back.png",
+  "t": 18,
+  "v": 35,
+  "x": 31.5
+ },
+ "LEDIAN": {
+  "src": "ledian/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.5
+ },
+ "LEDYBA": {
+  "src": "ledyba/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.5
+ },
+ "LICKILICKY": {
+  "src": "lickilicky/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 32.0
+ },
+ "LICKITUNG": {
+  "src": "lickitung/back_gba.png",
+  "t": 15,
+  "v": 35,
+  "x": 32.0
+ },
+ "LIEPARD": {
+  "src": "liepard/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 30.0
+ },
+ "LILEEP": {
+  "src": "lileep/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 33.5
+ },
+ "LILLIGANT": {
+  "src": "lilligant/back.png",
+  "t": 5,
+  "v": 51,
+  "x": 33.0
+ },
+ "LILLIGANT_HISUI": {
+  "src": "lilligant/hisui/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 35.0
+ },
+ "LILLIPUP": {
+  "src": "lillipup/back.png",
+  "t": 10,
+  "v": 42,
+  "x": 34.0
+ },
+ "LINOONE": {
+  "src": "linoone/back_gba.png",
+  "t": 16,
+  "v": 33,
+  "x": 32.0
+ },
+ "LITLEO": {
+  "src": "litleo/back.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "LITTEN": {
+  "src": "litten/back.png",
+  "t": 9,
+  "v": 44,
+  "x": 32.5
+ },
+ "LITWICK": {
+  "src": "litwick/back.png",
+  "t": 12,
+  "v": 38,
+  "x": 32.0
+ },
+ "LOKIX": {
+  "src": "lokix/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 31.5
+ },
+ "LOMBRE": {
+  "src": "lombre/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 25.5
+ },
+ "LOPUNNY": {
+  "src": "lopunny/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 34.0
+ },
+ "LOTAD": {
+  "src": "lotad/back_gba.png",
+  "t": 15,
+  "v": 34,
+  "x": 33.5
+ },
+ "LOUDRED": {
+  "src": "loudred/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "LUCARIO": {
+  "src": "lucario/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "LUDICOLO": {
+  "src": "ludicolo/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 31.5
+ },
+ "LUGIA": {
+  "src": "lugia/back_gba.png",
+  "t": 2,
+  "v": 61,
+  "x": 32.0
+ },
+ "LUMINEON": {
+  "src": "lumineon/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "LUNALA": {
+  "src": "lunala/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 31.5
+ },
+ "LUNATONE": {
+  "src": "lunatone/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "LURANTIS": {
+  "src": "lurantis/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.5
+ },
+ "LUVDISC": {
+  "src": "luvdisc/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 29.5
+ },
+ "LUXIO": {
+  "src": "luxio/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 32.5
+ },
+ "LUXRAY": {
+  "src": "luxray/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "LYCANROC": {
+  "src": "lycanroc/back.png",
+  "t": 10,
+  "v": 47,
+  "x": 32.5
+ },
+ "LYCANROC_DUSK": {
+  "src": "lycanroc/dusk/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "LYCANROC_MIDNIGHT": {
+  "src": "lycanroc/midnight/back.png",
+  "t": 4,
+  "v": 53,
+  "x": 32.0
+ },
+ "MABOSSTIFF": {
+  "src": "mabosstiff/back.png",
+  "t": 9,
+  "v": 42,
+  "x": 32.0
+ },
+ "MACHAMP": {
+  "src": "machamp/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "MACHOKE": {
+  "src": "machoke/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.5
+ },
+ "MACHOP": {
+  "src": "machop/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 32.0
+ },
+ "MAGBY": {
+  "src": "magby/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.5
+ },
+ "MAGCARGO": {
+  "src": "magcargo/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "MAGEARNA": {
+  "src": "magearna/back.png",
+  "t": 7,
+  "v": 53,
+  "x": 32.0
+ },
+ "MAGIKARP": {
+  "src": "magikarp/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "MAGMAR": {
+  "src": "magmar/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "MAGMORTAR": {
+  "src": "magmortar/back.png",
+  "t": 10,
+  "v": 48,
+  "x": 32.0
+ },
+ "MAGNEMITE": {
+  "src": "magnemite/back_gba.png",
+  "t": 21,
+  "v": 23,
+  "x": 31.5
+ },
+ "MAGNETON": {
+  "src": "magneton/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "MAGNEZONE": {
+  "src": "magnezone/back.png",
+  "t": 16,
+  "v": 36,
+  "x": 32.0
+ },
+ "MAKUHITA": {
+  "src": "makuhita/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 30.0
+ },
+ "MALAMAR": {
+  "src": "malamar/back.png",
+  "t": 4,
+  "v": 52,
+  "x": 32.0
+ },
+ "MAMOSWINE": {
+  "src": "mamoswine/back.png",
+  "t": 24,
+  "v": 34,
+  "x": 32.5
+ },
+ "MANAPHY": {
+  "src": "manaphy/back.png",
+  "t": 7,
+  "v": 47,
+  "x": 34.0
+ },
+ "MANDIBUZZ": {
+  "src": "mandibuzz/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 32.0
+ },
+ "MANECTRIC": {
+  "src": "manectric/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 26.0
+ },
+ "MANKEY": {
+  "src": "mankey/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.5
+ },
+ "MANTINE": {
+  "src": "mantine/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "MANTYKE": {
+  "src": "mantyke/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 31.0
+ },
+ "MARACTUS": {
+  "src": "maractus/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 32.0
+ },
+ "MAREANIE": {
+  "src": "mareanie/back.png",
+  "t": 10,
+  "v": 39,
+  "x": 31.0
+ },
+ "MAREEP": {
+  "src": "mareep/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "MARILL": {
+  "src": "marill/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "MAROWAK": {
+  "src": "marowak/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "MARSHADOW": {
+  "src": "marshadow/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 31.0
+ },
+ "MARSHTOMP": {
+  "src": "marshtomp/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "MASCHIFF": {
+  "src": "maschiff/back.png",
+  "t": 12,
+  "v": 42,
+  "x": 31.0
+ },
+ "MASQUERAIN": {
+  "src": "masquerain/back_gba.png",
+  "t": 0,
+  "v": 64,
+  "x": 30.5
+ },
+ "MAUSHOLD": {
+  "src": "maushold/back.png",
+  "t": 13,
+  "v": 36,
+  "x": 31.0
+ },
+ "MAWILE": {
+  "src": "mawile/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.5
+ },
+ "MEDICHAM": {
+  "src": "medicham/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 35.5
+ },
+ "MEDITITE": {
+  "src": "meditite/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 30.5
+ },
+ "MEGANIUM": {
+  "src": "meganium/back_gba.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "MELMETAL": {
+  "src": "melmetal/back.png",
+  "t": 15,
+  "v": 36,
+  "x": 33.0
+ },
+ "MELOETTA": {
+  "src": "meloetta/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 29.5
+ },
+ "MELTAN": {
+  "src": "meltan/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.0
+ },
+ "MEOWSCARADA": {
+  "src": "meowscarada/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 33.0
+ },
+ "MEOWSTIC": {
+  "src": "meowstic/back.png",
+  "t": 3,
+  "v": 52,
+  "x": 30.0
+ },
+ "MEOWSTIC_FEMALE": {
+  "src": "meowstic/back.png",
+  "t": 3,
+  "v": 52,
+  "x": 30.0
+ },
+ "MEOWTH": {
+  "src": "meowth/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "MESPRIT": {
+  "src": "mesprit/back.png",
+  "t": 14,
+  "v": 42,
+  "x": 26.0
+ },
+ "METAGROSS": {
+  "src": "metagross/back_gba.png",
+  "t": 20,
+  "v": 24,
+  "x": 32.0
+ },
+ "METANG": {
+  "src": "metang/back_gba.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.5
+ },
+ "METAPOD": {
+  "src": "metapod/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 33.5
+ },
+ "MEW": {
+  "src": "mew/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "MEWTWO": {
+  "src": "mewtwo/back_gba.png",
+  "t": 2,
+  "v": 61,
+  "x": 32.0
+ },
+ "MIENFOO": {
+  "src": "mienfoo/back.png",
+  "t": 15,
+  "v": 35,
+  "x": 31.0
+ },
+ "MIENSHAO": {
+  "src": "mienshao/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.5
+ },
+ "MIGHTYENA": {
+  "src": "mightyena/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 33.0
+ },
+ "MILCERY": {
+  "src": "milcery/back.png",
+  "t": 9,
+  "v": 39,
+  "x": 34.0
+ },
+ "MILOTIC": {
+  "src": "milotic/back_gba.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.5
+ },
+ "MILTANK": {
+  "src": "miltank/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 33.5
+ },
+ "MIME_JR": {
+  "src": "mime_jr/back.png",
+  "t": 0,
+  "v": 63,
+  "x": 33.0
+ },
+ "MIMIKYU": {
+  "src": "mimikyu/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 34.5
+ },
+ "MINCCINO": {
+  "src": "minccino/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 32.5
+ },
+ "MINIOR": {
+  "src": "minior/back.png",
+  "t": 11,
+  "v": 40,
+  "x": 32.5
+ },
+ "MINUN": {
+  "src": "minun/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 28.0
+ },
+ "MIRAIDON": {
+  "src": "miraidon/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 32.0
+ },
+ "MISDREAVUS": {
+  "src": "misdreavus/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.5
+ },
+ "MISMAGIUS": {
+  "src": "mismagius/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 32.5
+ },
+ "MOLTRES": {
+  "src": "moltres/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 34.0
+ },
+ "MONFERNO": {
+  "src": "monferno/back.png",
+  "t": 5,
+  "v": 59,
+  "x": 31.5
+ },
+ "MORELULL": {
+  "src": "morelull/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 33.5
+ },
+ "MORGREM": {
+  "src": "morgrem/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "MORPEKO": {
+  "src": "morpeko/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 31.5
+ },
+ "MOTHIM": {
+  "src": "mothim/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 32.0
+ },
+ "MR_MIME": {
+  "src": "mr_mime/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "MR_RIME": {
+  "src": "mr_rime/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.0
+ },
+ "MUDBRAY": {
+  "src": "mudbray/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 32.0
+ },
+ "MUDKIP": {
+  "src": "mudkip/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 30.5
+ },
+ "MUDSDALE": {
+  "src": "mudsdale/back.png",
+  "t": 7,
+  "v": 52,
+  "x": 32.0
+ },
+ "MUK": {
+  "src": "muk/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "MUNCHLAX": {
+  "src": "munchlax/back.png",
+  "t": 9,
+  "v": 48,
+  "x": 33.5
+ },
+ "MUNKIDORI": {
+  "src": "munkidori/back.png",
+  "t": 5,
+  "v": 57,
+  "x": 34.0
+ },
+ "MUNNA": {
+  "src": "munna/back.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.5
+ },
+ "MURKROW": {
+  "src": "murkrow/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "MUSHARNA": {
+  "src": "musharna/back.png",
+  "t": 0,
+  "v": 56,
+  "x": 32.0
+ },
+ "NACLI": {
+  "src": "nacli/back.png",
+  "t": 10,
+  "v": 44,
+  "x": 31.0
+ },
+ "NACLSTACK": {
+  "src": "naclstack/back.png",
+  "t": 17,
+  "v": 30,
+  "x": 31.5
+ },
+ "NAGANADEL": {
+  "src": "naganadel/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.5
+ },
+ "NATU": {
+  "src": "natu/back_gba.png",
+  "t": 18,
+  "v": 29,
+  "x": 31.0
+ },
+ "NECROZMA": {
+  "src": "necrozma/back.png",
+  "t": 3,
+  "v": 57,
+  "x": 32.5
+ },
+ "NECROZMA_DAWN": {
+  "src": "necrozma/back.png",
+  "t": 3,
+  "v": 57,
+  "x": 32.5
+ },
+ "NECROZMA_DUSK": {
+  "src": "necrozma/back.png",
+  "t": 3,
+  "v": 57,
+  "x": 32.5
+ },
+ "NICKIT": {
+  "src": "nickit/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "NIDOKING": {
+  "src": "nidoking/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 32.0
+ },
+ "NIDOQUEEN": {
+  "src": "nidoqueen/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.5
+ },
+ "NIDORAN_F": {
+  "src": "nidoran_f/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "NIDORAN_M": {
+  "src": "nidoran_m/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "NIDORINA": {
+  "src": "nidorina/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 33.0
+ },
+ "NIDORINO": {
+  "src": "nidorino/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "NIHILEGO": {
+  "src": "nihilego/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "NINCADA": {
+  "src": "nincada/back_gba.png",
+  "t": 20,
+  "v": 24,
+  "x": 33.0
+ },
+ "NINETALES": {
+  "src": "ninetales/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.5
+ },
+ "NINJASK": {
+  "src": "ninjask/back_gba.png",
+  "t": 8,
+  "v": 42,
+  "x": 32.5
+ },
+ "NOCTOWL": {
+  "src": "noctowl/back_gba.png",
+  "t": 4,
+  "v": 57,
+  "x": 31.0
+ },
+ "NOIBAT": {
+  "src": "noibat/back.png",
+  "t": 1,
+  "v": 56,
+  "x": 27.5
+ },
+ "NOIVERN": {
+  "src": "noivern/back.png",
+  "t": 1,
+  "v": 59,
+  "x": 32.0
+ },
+ "NOSEPASS": {
+  "src": "nosepass/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 33.5
+ },
+ "NUMEL": {
+  "src": "numel/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 31.5
+ },
+ "NUZLEAF": {
+  "src": "nuzleaf/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 29.0
+ },
+ "NYMBLE": {
+  "src": "nymble/back.png",
+  "t": 15,
+  "v": 35,
+  "x": 32.0
+ },
+ "OBSTAGOON": {
+  "src": "obstagoon/back.png",
+  "t": 10,
+  "v": 53,
+  "x": 31.5
+ },
+ "OCTILLERY": {
+  "src": "octillery/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 31.5
+ },
+ "ODDISH": {
+  "src": "oddish/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "OGERPON": {
+  "src": "ogerpon/back.png",
+  "t": 14,
+  "v": 50,
+  "x": 32.0
+ },
+ "OGERPON_CORNERSTONE_MASK": {
+  "src": "ogerpon/back.png",
+  "t": 14,
+  "v": 50,
+  "x": 32.0
+ },
+ "OGERPON_HEARTHFLAME_MASK": {
+  "src": "ogerpon/back.png",
+  "t": 14,
+  "v": 50,
+  "x": 32.0
+ },
+ "OGERPON_WELLSPRING_MASK": {
+  "src": "ogerpon/back.png",
+  "t": 14,
+  "v": 50,
+  "x": 32.0
+ },
+ "OINKOLOGNE": {
+  "src": "oinkologne/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.5
+ },
+ "OINKOLOGNE_FEMALE": {
+  "src": "oinkologne/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 31.5
+ },
+ "OKIDOGI": {
+  "src": "okidogi/back.png",
+  "t": 9,
+  "v": 43,
+  "x": 32.0
+ },
+ "OMANYTE": {
+  "src": "omanyte/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "OMASTAR": {
+  "src": "omastar/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "ONIX": {
+  "src": "onix/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 32.0
+ },
+ "ORANGURU": {
+  "src": "oranguru/back.png",
+  "t": 10,
+  "v": 42,
+  "x": 32.0
+ },
+ "ORBEETLE": {
+  "src": "orbeetle/back.png",
+  "t": 13,
+  "v": 45,
+  "x": 32.0
+ },
+ "ORICORIO": {
+  "src": "oricorio/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 30.5
+ },
+ "ORICORIO_PAU": {
+  "src": "oricorio/pau/back.png",
+  "t": 8,
+  "v": 56,
+  "x": 33.0
+ },
+ "ORICORIO_POM_POM": {
+  "src": "oricorio/pom_pom/back.png",
+  "t": 14,
+  "v": 50,
+  "x": 32.0
+ },
+ "ORICORIO_SENSU": {
+  "src": "oricorio/sensu/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 28.5
+ },
+ "ORTHWORM": {
+  "src": "orthworm/back.png",
+  "t": 4,
+  "v": 60,
+  "x": 32.0
+ },
+ "OSHAWOTT": {
+  "src": "oshawott/back.png",
+  "t": 11,
+  "v": 39,
+  "x": 32.0
+ },
+ "OVERQWIL": {
+  "src": "overqwil/back.png",
+  "t": 3,
+  "v": 50,
+  "x": 32.0
+ },
+ "PACHIRISU": {
+  "src": "pachirisu/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 31.5
+ },
+ "PALAFIN": {
+  "src": "palafin/back.png",
+  "t": 15,
+  "v": 34,
+  "x": 32.0
+ },
+ "PALKIA": {
+  "src": "palkia/back.png",
+  "t": 2,
+  "v": 56,
+  "x": 32.0
+ },
+ "PALKIA_ORIGIN": {
+  "src": "palkia/origin/back.png",
+  "t": 6,
+  "v": 55,
+  "x": 32.0
+ },
+ "PALOSSAND": {
+  "src": "palossand/back.png",
+  "t": 0,
+  "v": 62,
+  "x": 31.5
+ },
+ "PALPITOAD": {
+  "src": "palpitoad/back.png",
+  "t": 12,
+  "v": 40,
+  "x": 29.0
+ },
+ "PANCHAM": {
+  "src": "pancham/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 33.0
+ },
+ "PANGORO": {
+  "src": "pangoro/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.5
+ },
+ "PANPOUR": {
+  "src": "panpour/back.png",
+  "t": 10,
+  "v": 45,
+  "x": 30.5
+ },
+ "PANSAGE": {
+  "src": "pansage/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "PANSEAR": {
+  "src": "pansear/back.png",
+  "t": 7,
+  "v": 47,
+  "x": 31.5
+ },
+ "PARAS": {
+  "src": "paras/back_gba.png",
+  "t": 21,
+  "v": 23,
+  "x": 31.5
+ },
+ "PARASECT": {
+  "src": "parasect/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.5
+ },
+ "PASSIMIAN": {
+  "src": "passimian/back.png",
+  "t": 5,
+  "v": 52,
+  "x": 30.5
+ },
+ "PATRAT": {
+  "src": "patrat/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 30.5
+ },
+ "PAWMI": {
+  "src": "pawmi/back.png",
+  "t": 4,
+  "v": 53,
+  "x": 28.5
+ },
+ "PAWMO": {
+  "src": "pawmo/back.png",
+  "t": 7,
+  "v": 51,
+  "x": 29.0
+ },
+ "PAWMOT": {
+  "src": "pawmot/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "PAWNIARD": {
+  "src": "pawniard/back.png",
+  "t": 14,
+  "v": 40,
+  "x": 35.0
+ },
+ "PECHARUNT": {
+  "src": "pecharunt/back.png",
+  "t": 22,
+  "v": 37,
+  "x": 32.0
+ },
+ "PELIPPER": {
+  "src": "pelipper/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "PERRSERKER": {
+  "src": "perrserker/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 32.0
+ },
+ "PERSIAN": {
+  "src": "persian/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.5
+ },
+ "PETILIL": {
+  "src": "petilil/back.png",
+  "t": 5,
+  "v": 50,
+  "x": 30.0
+ },
+ "PHANPY": {
+  "src": "phanpy/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "PHANTUMP": {
+  "src": "phantump/back.png",
+  "t": 7,
+  "v": 48,
+  "x": 32.0
+ },
+ "PHEROMOSA": {
+  "src": "pheromosa/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "PHIONE": {
+  "src": "phione/back.png",
+  "t": 12,
+  "v": 43,
+  "x": 33.0
+ },
+ "PICHU": {
+  "src": "pichu/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "PIDGEOT": {
+  "src": "pidgeot/back_gba.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.0
+ },
+ "PIDGEOTTO": {
+  "src": "pidgeotto/back_gba.png",
+  "t": 12,
+  "v": 40,
+  "x": 33.0
+ },
+ "PIDGEY": {
+  "src": "pidgey/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "PIDOVE": {
+  "src": "pidove/back.png",
+  "t": 16,
+  "v": 35,
+  "x": 31.5
+ },
+ "PIGNITE": {
+  "src": "pignite/back.png",
+  "t": 3,
+  "v": 52,
+  "x": 32.0
+ },
+ "PIKACHU": {
+  "src": "pikachu/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 30.5
+ },
+ "PIKIPEK": {
+  "src": "pikipek/back.png",
+  "t": 11,
+  "v": 45,
+  "x": 34.0
+ },
+ "PILOSWINE": {
+  "src": "piloswine/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "PINCURCHIN": {
+  "src": "pincurchin/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 31.5
+ },
+ "PINECO": {
+  "src": "pineco/back_gba.png",
+  "t": 16,
+  "v": 33,
+  "x": 32.0
+ },
+ "PINSIR": {
+  "src": "pinsir/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "PIPLUP": {
+  "src": "piplup/back.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.5
+ },
+ "PLUSLE": {
+  "src": "plusle/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 28.0
+ },
+ "POIPOLE": {
+  "src": "poipole/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 32.0
+ },
+ "POLITOED": {
+  "src": "politoed/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "POLIWAG": {
+  "src": "poliwag/back_gba.png",
+  "t": 16,
+  "v": 32,
+  "x": 33.0
+ },
+ "POLIWHIRL": {
+  "src": "poliwhirl/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 31.5
+ },
+ "POLIWRATH": {
+  "src": "poliwrath/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 31.0
+ },
+ "POLTCHAGEIST": {
+  "src": "poltchageist/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "POLTEAGEIST": {
+  "src": "polteageist/back.png",
+  "t": 13,
+  "v": 38,
+  "x": 31.5
+ },
+ "PONYTA": {
+  "src": "ponyta/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 32.0
+ },
+ "POOCHYENA": {
+  "src": "poochyena/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 31.5
+ },
+ "POPPLIO": {
+  "src": "popplio/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 30.0
+ },
+ "PORYGON": {
+  "src": "porygon/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "PORYGON2": {
+  "src": "porygon2/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 30.5
+ },
+ "PORYGON_Z": {
+  "src": "porygon_z/back.png",
+  "t": 8,
+  "v": 50,
+  "x": 30.0
+ },
+ "PRIMARINA": {
+  "src": "primarina/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "PRIMEAPE": {
+  "src": "primeape/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "PRINPLUP": {
+  "src": "prinplup/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "PROBOPASS": {
+  "src": "probopass/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.0
+ },
+ "PSYDUCK": {
+  "src": "psyduck/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.5
+ },
+ "PUMPKABOO": {
+  "src": "pumpkaboo/back.png",
+  "t": 11,
+  "v": 40,
+  "x": 31.0
+ },
+ "PUMPKABOO_LARGE": {
+  "src": "pumpkaboo/large/back.png",
+  "t": 9,
+  "v": 42,
+  "x": 31.0
+ },
+ "PUMPKABOO_SMALL": {
+  "src": "pumpkaboo/small/back.png",
+  "t": 11,
+  "v": 39,
+  "x": 30.5
+ },
+ "PUMPKABOO_SUPER": {
+  "src": "pumpkaboo/super/back.png",
+  "t": 8,
+  "v": 44,
+  "x": 31.0
+ },
+ "PUPITAR": {
+  "src": "pupitar/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.5
+ },
+ "PURRLOIN": {
+  "src": "purrloin/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.5
+ },
+ "PURUGLY": {
+  "src": "purugly/back.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "PYROAR": {
+  "src": "pyroar/back.png",
+  "t": 0,
+  "v": 61,
+  "x": 32.0
+ },
+ "PYUKUMUKU": {
+  "src": "pyukumuku/back.png",
+  "t": 18,
+  "v": 30,
+  "x": 31.5
+ },
+ "QUAGSIRE": {
+  "src": "quagsire/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "QUAQUAVAL": {
+  "src": "quaquaval/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 32.5
+ },
+ "QUAXLY": {
+  "src": "quaxly/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 27.5
+ },
+ "QUAXWELL": {
+  "src": "quaxwell/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "QUILAVA": {
+  "src": "quilava/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 28.0
+ },
+ "QUILLADIN": {
+  "src": "quilladin/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 32.0
+ },
+ "QWILFISH": {
+  "src": "qwilfish/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.5
+ },
+ "QWILFISH_HISUI": {
+  "src": "qwilfish/hisui/back.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "RABOOT": {
+  "src": "raboot/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "RABSCA": {
+  "src": "rabsca/back.png",
+  "t": 1,
+  "v": 59,
+  "x": 33.0
+ },
+ "RAGING_BOLT": {
+  "src": "raging_bolt/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 33.0
+ },
+ "RAICHU": {
+  "src": "raichu/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.5
+ },
+ "RAIKOU": {
+  "src": "raikou/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "RALTS": {
+  "src": "ralts/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 33.0
+ },
+ "RAMPARDOS": {
+  "src": "rampardos/back.png",
+  "t": 1,
+  "v": 57,
+  "x": 32.0
+ },
+ "RAPIDASH": {
+  "src": "rapidash/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "RATICATE": {
+  "src": "raticate/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "RATTATA": {
+  "src": "rattata/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.5
+ },
+ "RAYQUAZA": {
+  "src": "rayquaza/back_gba.png",
+  "t": 1,
+  "v": 63,
+  "x": 30.0
+ },
+ "REGICE": {
+  "src": "regice/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "REGIDRAGO": {
+  "src": "regidrago/back.png",
+  "t": 6,
+  "v": 51,
+  "x": 32.0
+ },
+ "REGIELEKI": {
+  "src": "regieleki/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "REGIGIGAS": {
+  "src": "regigigas/back.png",
+  "t": 22,
+  "v": 29,
+  "x": 32.0
+ },
+ "REGIROCK": {
+  "src": "regirock/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 31.0
+ },
+ "REGISTEEL": {
+  "src": "registeel/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "RELICANTH": {
+  "src": "relicanth/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "RELLOR": {
+  "src": "rellor/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "REMORAID": {
+  "src": "remoraid/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.5
+ },
+ "RESHIRAM": {
+  "src": "reshiram/back.png",
+  "t": 3,
+  "v": 54,
+  "x": 31.5
+ },
+ "REUNICLUS": {
+  "src": "reuniclus/back.png",
+  "t": 9,
+  "v": 42,
+  "x": 31.0
+ },
+ "REVAVROOM": {
+  "src": "revavroom/back.png",
+  "t": 10,
+  "v": 38,
+  "x": 32.5
+ },
+ "RHYDON": {
+  "src": "rhydon/back_gba.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.5
+ },
+ "RHYHORN": {
+  "src": "rhyhorn/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "RHYPERIOR": {
+  "src": "rhyperior/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 31.5
+ },
+ "RIBOMBEE": {
+  "src": "ribombee/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "RILLABOOM": {
+  "src": "rillaboom/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 31.5
+ },
+ "RIOLU": {
+  "src": "riolu/back.png",
+  "t": 3,
+  "v": 53,
+  "x": 32.0
+ },
+ "ROARING_MOON": {
+  "src": "roaring_moon/back.png",
+  "t": 8,
+  "v": 46,
+  "x": 32.0
+ },
+ "ROCKRUFF": {
+  "src": "rockruff/back.png",
+  "t": 14,
+  "v": 43,
+  "x": 31.5
+ },
+ "ROGGENROLA": {
+  "src": "roggenrola/back.png",
+  "t": 8,
+  "v": 43,
+  "x": 30.5
+ },
+ "ROLYCOLY": {
+  "src": "rolycoly/back.png",
+  "t": 16,
+  "v": 31,
+  "x": 32.0
+ },
+ "ROOKIDEE": {
+  "src": "rookidee/back.png",
+  "t": 17,
+  "v": 30,
+  "x": 31.5
+ },
+ "ROSELIA": {
+  "src": "roselia/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.0
+ },
+ "ROSERADE": {
+  "src": "roserade/back.png",
+  "t": 4,
+  "v": 54,
+  "x": 29.5
+ },
+ "ROTOM": {
+  "src": "rotom/back.png",
+  "t": 7,
+  "v": 52,
+  "x": 31.5
+ },
+ "ROTOM_FAN": {
+  "src": "rotom/fan/back.png",
+  "t": 13,
+  "v": 43,
+  "x": 32.5
+ },
+ "ROTOM_FROST": {
+  "src": "rotom/frost/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "ROTOM_HEAT": {
+  "src": "rotom/heat/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "ROTOM_MOW": {
+  "src": "rotom/mow/back.png",
+  "t": 15,
+  "v": 39,
+  "x": 32.0
+ },
+ "ROTOM_WASH": {
+  "src": "rotom/wash/back.png",
+  "t": 16,
+  "v": 37,
+  "x": 33.5
+ },
+ "ROWLET": {
+  "src": "rowlet/back.png",
+  "t": 13,
+  "v": 36,
+  "x": 31.5
+ },
+ "RUFFLET": {
+  "src": "rufflet/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 31.0
+ },
+ "RUNERIGUS": {
+  "src": "runerigus/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.5
+ },
+ "SABLEYE": {
+  "src": "sableye/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.0
+ },
+ "SALAMENCE": {
+  "src": "salamence/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.5
+ },
+ "SALANDIT": {
+  "src": "salandit/back.png",
+  "t": 17,
+  "v": 35,
+  "x": 32.5
+ },
+ "SALAZZLE": {
+  "src": "salazzle/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 33.5
+ },
+ "SAMUROTT": {
+  "src": "samurott/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 32.0
+ },
+ "SAMUROTT_HISUI": {
+  "src": "samurott/hisui/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 32.0
+ },
+ "SANDACONDA": {
+  "src": "sandaconda/back.png",
+  "t": 12,
+  "v": 39,
+  "x": 31.5
+ },
+ "SANDILE": {
+  "src": "sandile/back.png",
+  "t": 19,
+  "v": 27,
+  "x": 31.5
+ },
+ "SANDSHREW": {
+  "src": "sandshrew/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 30.5
+ },
+ "SANDSLASH": {
+  "src": "sandslash/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "SANDYGAST": {
+  "src": "sandygast/back.png",
+  "t": 10,
+  "v": 43,
+  "x": 32.0
+ },
+ "SANDY_SHOCKS": {
+  "src": "sandy_shocks/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 32.0
+ },
+ "SAWK": {
+  "src": "sawk/back.png",
+  "t": 16,
+  "v": 35,
+  "x": 32.0
+ },
+ "SAWSBUCK": {
+  "src": "sawsbuck/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 30.0
+ },
+ "SCATTERBUG": {
+  "src": "scatterbug/back.png",
+  "t": 5,
+  "v": 47,
+  "x": 32.0
+ },
+ "SCEPTILE": {
+  "src": "sceptile/back_gba.png",
+  "t": 2,
+  "v": 61,
+  "x": 31.0
+ },
+ "SCIZOR": {
+  "src": "scizor/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.5
+ },
+ "SCOLIPEDE": {
+  "src": "scolipede/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 32.0
+ },
+ "SCORBUNNY": {
+  "src": "scorbunny/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 31.5
+ },
+ "SCOVILLAIN": {
+  "src": "scovillain/back.png",
+  "t": 11,
+  "v": 45,
+  "x": 32.0
+ },
+ "SCRAFTY": {
+  "src": "scrafty/back.png",
+  "t": 2,
+  "v": 57,
+  "x": 28.5
+ },
+ "SCRAGGY": {
+  "src": "scraggy/back.png",
+  "t": 8,
+  "v": 49,
+  "x": 30.5
+ },
+ "SCREAM_TAIL": {
+  "src": "scream_tail/back.png",
+  "t": 8,
+  "v": 46,
+  "x": 31.5
+ },
+ "SCYTHER": {
+  "src": "scyther/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "SEADRA": {
+  "src": "seadra/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "SEAKING": {
+  "src": "seaking/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "SEALEO": {
+  "src": "sealeo/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "SEEDOT": {
+  "src": "seedot/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 26.5
+ },
+ "SEEL": {
+  "src": "seel/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "SEISMITOAD": {
+  "src": "seismitoad/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "SENTRET": {
+  "src": "sentret/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "SERPERIOR": {
+  "src": "serperior/back.png",
+  "t": 0,
+  "v": 63,
+  "x": 31.0
+ },
+ "SERVINE": {
+  "src": "servine/back.png",
+  "t": 0,
+  "v": 59,
+  "x": 34.5
+ },
+ "SEVIPER": {
+  "src": "seviper/back_gba.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.0
+ },
+ "SEWADDLE": {
+  "src": "sewaddle/back.png",
+  "t": 11,
+  "v": 40,
+  "x": 31.5
+ },
+ "SHARPEDO": {
+  "src": "sharpedo/back_gba.png",
+  "t": 3,
+  "v": 59,
+  "x": 32.0
+ },
+ "SHAYMIN": {
+  "src": "shaymin/back.png",
+  "t": 13,
+  "v": 36,
+  "x": 29.0
+ },
+ "SHAYMIN_SKY": {
+  "src": "shaymin/sky/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 30.0
+ },
+ "SHEDINJA": {
+  "src": "shedinja/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 32.0
+ },
+ "SHELGON": {
+  "src": "shelgon/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 33.0
+ },
+ "SHELLDER": {
+  "src": "shellder/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "SHELLOS": {
+  "src": "shellos/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 31.0
+ },
+ "SHELLOS_EAST": {
+  "src": "shellos/east/back.png",
+  "t": 10,
+  "v": 46,
+  "x": 28.0
+ },
+ "SHELMET": {
+  "src": "shelmet/back.png",
+  "t": 18,
+  "v": 27,
+  "x": 32.5
+ },
+ "SHIELDON": {
+  "src": "shieldon/back.png",
+  "t": 8,
+  "v": 45,
+  "x": 32.0
+ },
+ "SHIFTRY": {
+  "src": "shiftry/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "SHIINOTIC": {
+  "src": "shiinotic/back.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.5
+ },
+ "SHINX": {
+  "src": "shinx/back.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "SHROODLE": {
+  "src": "shroodle/back.png",
+  "t": 16,
+  "v": 32,
+  "x": 31.5
+ },
+ "SHROOMISH": {
+  "src": "shroomish/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "SHUCKLE": {
+  "src": "shuckle/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.5
+ },
+ "SHUPPET": {
+  "src": "shuppet/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 29.5
+ },
+ "SIGILYPH": {
+  "src": "sigilyph/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 29.5
+ },
+ "SILCOON": {
+  "src": "silcoon/back_gba.png",
+  "t": 21,
+  "v": 22,
+  "x": 32.5
+ },
+ "SILICOBRA": {
+  "src": "silicobra/back.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "SILVALLY": {
+  "src": "silvally/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 33.0
+ },
+ "SIMIPOUR": {
+  "src": "simipour/back.png",
+  "t": 9,
+  "v": 50,
+  "x": 31.5
+ },
+ "SIMISAGE": {
+  "src": "simisage/back.png",
+  "t": 0,
+  "v": 58,
+  "x": 32.0
+ },
+ "SIMISEAR": {
+  "src": "simisear/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 32.0
+ },
+ "SINISTCHA": {
+  "src": "sinistcha/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 31.5
+ },
+ "SINISTEA": {
+  "src": "sinistea/back.png",
+  "t": 24,
+  "v": 24,
+  "x": 32.5
+ },
+ "SIRFETCHD": {
+  "src": "sirfetchd/back.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "SIZZLIPEDE": {
+  "src": "sizzlipede/back.png",
+  "t": 20,
+  "v": 28,
+  "x": 30.0
+ },
+ "SKARMORY": {
+  "src": "skarmory/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 27.5
+ },
+ "SKELEDIRGE": {
+  "src": "skeledirge/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 33.5
+ },
+ "SKIDDO": {
+  "src": "skiddo/back.png",
+  "t": 12,
+  "v": 44,
+  "x": 30.5
+ },
+ "SKIPLOOM": {
+  "src": "skiploom/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "SKITTY": {
+  "src": "skitty/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "SKORUPI": {
+  "src": "skorupi/back.png",
+  "t": 13,
+  "v": 45,
+  "x": 32.0
+ },
+ "SKRELP": {
+  "src": "skrelp/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 30.0
+ },
+ "SKUNTANK": {
+  "src": "skuntank/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 32.0
+ },
+ "SKWOVET": {
+  "src": "skwovet/back.png",
+  "t": 6,
+  "v": 51,
+  "x": 32.0
+ },
+ "SLAKING": {
+  "src": "slaking/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.5
+ },
+ "SLAKOTH": {
+  "src": "slakoth/back_gba.png",
+  "t": 15,
+  "v": 34,
+  "x": 32.0
+ },
+ "SLIGGOO": {
+  "src": "sliggoo/back.png",
+  "t": 1,
+  "v": 63,
+  "x": 27.5
+ },
+ "SLIGGOO_HISUI": {
+  "src": "sliggoo/hisui/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 30.0
+ },
+ "SLITHER_WING": {
+  "src": "slither_wing/back.png",
+  "t": 1,
+  "v": 58,
+  "x": 31.5
+ },
+ "SLOWBRO": {
+  "src": "slowbro/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.0
+ },
+ "SLOWKING": {
+  "src": "slowking/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "SLOWPOKE": {
+  "src": "slowpoke/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 31.5
+ },
+ "SLUGMA": {
+  "src": "slugma/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 33.5
+ },
+ "SLURPUFF": {
+  "src": "slurpuff/back.png",
+  "t": 2,
+  "v": 58,
+  "x": 31.5
+ },
+ "SMEARGLE": {
+  "src": "smeargle/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "SMOLIV": {
+  "src": "smoliv/back.png",
+  "t": 13,
+  "v": 38,
+  "x": 31.5
+ },
+ "SMOOCHUM": {
+  "src": "smoochum/back_gba.png",
+  "t": 10,
+  "v": 45,
+  "x": 31.0
+ },
+ "SNEASEL": {
+  "src": "sneasel/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "SNEASLER": {
+  "src": "sneasler/back.png",
+  "t": 13,
+  "v": 45,
+  "x": 31.5
+ },
+ "SNIVY": {
+  "src": "snivy/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "SNOM": {
+  "src": "snom/back.png",
+  "t": 16,
+  "v": 31,
+  "x": 31.5
+ },
+ "SNORLAX": {
+  "src": "snorlax/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "SNORUNT": {
+  "src": "snorunt/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 33.0
+ },
+ "SNOVER": {
+  "src": "snover/back.png",
+  "t": 7,
+  "v": 51,
+  "x": 31.5
+ },
+ "SNUBBULL": {
+  "src": "snubbull/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "SOBBLE": {
+  "src": "sobble/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 31.5
+ },
+ "SOLGALEO": {
+  "src": "solgaleo/back.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.5
+ },
+ "SOLOSIS": {
+  "src": "solosis/back.png",
+  "t": 21,
+  "v": 24,
+  "x": 31.0
+ },
+ "SOLROCK": {
+  "src": "solrock/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "SPEAROW": {
+  "src": "spearow/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.5
+ },
+ "SPECTRIER": {
+  "src": "spectrier/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "SPEWPA": {
+  "src": "spewpa/back.png",
+  "t": 11,
+  "v": 41,
+  "x": 30.5
+ },
+ "SPHEAL": {
+  "src": "spheal/back_gba.png",
+  "t": 19,
+  "v": 27,
+  "x": 32.0
+ },
+ "SPIDOPS": {
+  "src": "spidops/back.png",
+  "t": 14,
+  "v": 39,
+  "x": 32.5
+ },
+ "SPINARAK": {
+  "src": "spinarak/back_gba.png",
+  "t": 21,
+  "v": 22,
+  "x": 32.5
+ },
+ "SPINDA": {
+  "src": "spinda/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 30.5
+ },
+ "SPIRITOMB": {
+  "src": "spiritomb/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 32.0
+ },
+ "SPOINK": {
+  "src": "spoink/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 31.5
+ },
+ "SPRIGATITO": {
+  "src": "sprigatito/back.png",
+  "t": 14,
+  "v": 43,
+  "x": 31.0
+ },
+ "SPRITZEE": {
+  "src": "spritzee/back.png",
+  "t": 8,
+  "v": 45,
+  "x": 33.0
+ },
+ "SQUAWKABILLY": {
+  "src": "squawkabilly/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 31.5
+ },
+ "SQUIRTLE": {
+  "src": "squirtle/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 33.0
+ },
+ "STAKATAKA": {
+  "src": "stakataka/back.png",
+  "t": 8,
+  "v": 44,
+  "x": 31.5
+ },
+ "STANTLER": {
+  "src": "stantler/back_gba.png",
+  "t": 4,
+  "v": 57,
+  "x": 32.0
+ },
+ "STARAPTOR": {
+  "src": "staraptor/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 32.0
+ },
+ "STARAVIA": {
+  "src": "staravia/back.png",
+  "t": 2,
+  "v": 56,
+  "x": 30.5
+ },
+ "STARLY": {
+  "src": "starly/back.png",
+  "t": 8,
+  "v": 45,
+  "x": 31.5
+ },
+ "STARMIE": {
+  "src": "starmie/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 31.5
+ },
+ "STARYU": {
+  "src": "staryu/back_gba.png",
+  "t": 14,
+  "v": 37,
+  "x": 32.0
+ },
+ "STEELIX": {
+  "src": "steelix/back_gba.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "STEENEE": {
+  "src": "steenee/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 31.5
+ },
+ "STONJOURNER": {
+  "src": "stonjourner/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 32.0
+ },
+ "STOUTLAND": {
+  "src": "stoutland/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "STUFFUL": {
+  "src": "stufful/back.png",
+  "t": 13,
+  "v": 39,
+  "x": 31.5
+ },
+ "STUNFISK": {
+  "src": "stunfisk/back.png",
+  "t": 23,
+  "v": 19,
+  "x": 32.0
+ },
+ "STUNFISK_GALAR": {
+  "src": "stunfisk/galar/back.png",
+  "t": 23,
+  "v": 18,
+  "x": 32.0
+ },
+ "STUNKY": {
+  "src": "stunky/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 32.0
+ },
+ "SUDOWOODO": {
+  "src": "sudowoodo/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "SUICUNE": {
+  "src": "suicune/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "SUNFLORA": {
+  "src": "sunflora/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "SUNKERN": {
+  "src": "sunkern/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 32.5
+ },
+ "SURSKIT": {
+  "src": "surskit/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "SWABLU": {
+  "src": "swablu/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "SWADLOON": {
+  "src": "swadloon/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 32.0
+ },
+ "SWALOT": {
+  "src": "swalot/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.0
+ },
+ "SWAMPERT": {
+  "src": "swampert/back_gba.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.0
+ },
+ "SWANNA": {
+  "src": "swanna/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.0
+ },
+ "SWELLOW": {
+  "src": "swellow/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "SWINUB": {
+  "src": "swinub/back_gba.png",
+  "t": 22,
+  "v": 21,
+  "x": 32.0
+ },
+ "SWIRLIX": {
+  "src": "swirlix/back.png",
+  "t": 16,
+  "v": 36,
+  "x": 30.5
+ },
+ "SWOOBAT": {
+  "src": "swoobat/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 32.0
+ },
+ "SYLVEON": {
+  "src": "sylveon/back.png",
+  "t": 1,
+  "v": 59,
+  "x": 30.0
+ },
+ "TADBULB": {
+  "src": "tadbulb/back.png",
+  "t": 10,
+  "v": 46,
+  "x": 32.0
+ },
+ "TAILLOW": {
+  "src": "taillow/back_gba.png",
+  "t": 17,
+  "v": 30,
+  "x": 36.0
+ },
+ "TALONFLAME": {
+  "src": "talonflame/back.png",
+  "t": 8,
+  "v": 51,
+  "x": 32.0
+ },
+ "TANDEMAUS": {
+  "src": "tandemaus/back.png",
+  "t": 13,
+  "v": 36,
+  "x": 31.0
+ },
+ "TANGELA": {
+  "src": "tangela/back_gba.png",
+  "t": 15,
+  "v": 35,
+  "x": 31.5
+ },
+ "TANGROWTH": {
+  "src": "tangrowth/back.png",
+  "t": 11,
+  "v": 47,
+  "x": 32.0
+ },
+ "TAPU_BULU": {
+  "src": "tapu_bulu/back.png",
+  "t": 2,
+  "v": 61,
+  "x": 32.0
+ },
+ "TAPU_FINI": {
+  "src": "tapu_fini/back.png",
+  "t": 7,
+  "v": 53,
+  "x": 31.5
+ },
+ "TAPU_KOKO": {
+  "src": "tapu_koko/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 31.5
+ },
+ "TAPU_LELE": {
+  "src": "tapu_lele/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.0
+ },
+ "TAROUNTULA": {
+  "src": "tarountula/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "TATSUGIRI": {
+  "src": "tatsugiri/back.png",
+  "t": 17,
+  "v": 30,
+  "x": 32.0
+ },
+ "TAUROS": {
+  "src": "tauros/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "TEDDIURSA": {
+  "src": "teddiursa/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 30.5
+ },
+ "TENTACOOL": {
+  "src": "tentacool/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "TENTACRUEL": {
+  "src": "tentacruel/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "TEPIG": {
+  "src": "tepig/back.png",
+  "t": 6,
+  "v": 50,
+  "x": 31.0
+ },
+ "TERAPAGOS": {
+  "src": "terapagos/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "TERRAKION": {
+  "src": "terrakion/back.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.0
+ },
+ "THIEVUL": {
+  "src": "thievul/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 31.5
+ },
+ "THROH": {
+  "src": "throh/back.png",
+  "t": 23,
+  "v": 30,
+  "x": 32.0
+ },
+ "THUNDURUS": {
+  "src": "thundurus/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "THUNDURUS_THERIAN": {
+  "src": "thundurus/therian/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 31.5
+ },
+ "THWACKEY": {
+  "src": "thwackey/back.png",
+  "t": 5,
+  "v": 54,
+  "x": 31.5
+ },
+ "TIMBURR": {
+  "src": "timburr/back.png",
+  "t": 12,
+  "v": 37,
+  "x": 32.0
+ },
+ "TING_LU": {
+  "src": "ting_lu/back.png",
+  "t": 3,
+  "v": 47,
+  "x": 32.0
+ },
+ "TINKATINK": {
+  "src": "tinkatink/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 31.0
+ },
+ "TINKATON": {
+  "src": "tinkaton/back.png",
+  "t": 5,
+  "v": 56,
+  "x": 32.5
+ },
+ "TINKATUFF": {
+  "src": "tinkatuff/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 33.5
+ },
+ "TIRTOUGA": {
+  "src": "tirtouga/back.png",
+  "t": 19,
+  "v": 29,
+  "x": 31.0
+ },
+ "TOEDSCOOL": {
+  "src": "toedscool/back.png",
+  "t": 9,
+  "v": 47,
+  "x": 31.5
+ },
+ "TOEDSCRUEL": {
+  "src": "toedscruel/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "TOGEDEMARU": {
+  "src": "togedemaru/back.png",
+  "t": 9,
+  "v": 42,
+  "x": 30.0
+ },
+ "TOGEKISS": {
+  "src": "togekiss/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 32.0
+ },
+ "TOGEPI": {
+  "src": "togepi/back_gba.png",
+  "t": 16,
+  "v": 32,
+  "x": 32.5
+ },
+ "TOGETIC": {
+  "src": "togetic/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "TORCHIC": {
+  "src": "torchic/back_gba.png",
+  "t": 6,
+  "v": 53,
+  "x": 30.5
+ },
+ "TORKOAL": {
+  "src": "torkoal/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "TORNADUS": {
+  "src": "tornadus/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "TORNADUS_THERIAN": {
+  "src": "tornadus/therian/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 29.5
+ },
+ "TORRACAT": {
+  "src": "torracat/back.png",
+  "t": 4,
+  "v": 53,
+  "x": 31.5
+ },
+ "TORTERRA": {
+  "src": "torterra/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.0
+ },
+ "TOTODILE": {
+  "src": "totodile/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 31.0
+ },
+ "TOUCANNON": {
+  "src": "toucannon/back.png",
+  "t": 8,
+  "v": 50,
+  "x": 32.0
+ },
+ "TOXAPEX": {
+  "src": "toxapex/back.png",
+  "t": 4,
+  "v": 52,
+  "x": 32.5
+ },
+ "TOXEL": {
+  "src": "toxel/back.png",
+  "t": 7,
+  "v": 49,
+  "x": 32.0
+ },
+ "TOXICROAK": {
+  "src": "toxicroak/back.png",
+  "t": 7,
+  "v": 51,
+  "x": 32.0
+ },
+ "TOXTRICITY": {
+  "src": "toxtricity/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "TRANQUILL": {
+  "src": "tranquill/back.png",
+  "t": 8,
+  "v": 47,
+  "x": 31.0
+ },
+ "TRAPINCH": {
+  "src": "trapinch/back_gba.png",
+  "t": 15,
+  "v": 35,
+  "x": 33.5
+ },
+ "TREECKO": {
+  "src": "treecko/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 31.0
+ },
+ "TREVENANT": {
+  "src": "trevenant/back.png",
+  "t": 3,
+  "v": 56,
+  "x": 32.0
+ },
+ "TROPIUS": {
+  "src": "tropius/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "TRUBBISH": {
+  "src": "trubbish/back.png",
+  "t": 8,
+  "v": 43,
+  "x": 32.0
+ },
+ "TRUMBEAK": {
+  "src": "trumbeak/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "TSAREENA": {
+  "src": "tsareena/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "TURTONATOR": {
+  "src": "turtonator/back.png",
+  "t": 6,
+  "v": 49,
+  "x": 32.0
+ },
+ "TURTWIG": {
+  "src": "turtwig/back.png",
+  "t": 6,
+  "v": 52,
+  "x": 33.0
+ },
+ "TYMPOLE": {
+  "src": "tympole/back.png",
+  "t": 16,
+  "v": 31,
+  "x": 32.5
+ },
+ "TYNAMO": {
+  "src": "tynamo/back.png",
+  "t": 22,
+  "v": 21,
+  "x": 30.5
+ },
+ "TYPE_NULL": {
+  "src": "type_null/back.png",
+  "t": 1,
+  "v": 62,
+  "x": 32.5
+ },
+ "TYPHLOSION": {
+  "src": "typhlosion/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 31.5
+ },
+ "TYRANITAR": {
+  "src": "tyranitar/back_gba.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "TYRANTRUM": {
+  "src": "tyrantrum/back.png",
+  "t": 6,
+  "v": 53,
+  "x": 32.0
+ },
+ "TYROGUE": {
+  "src": "tyrogue/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "TYRUNT": {
+  "src": "tyrunt/back.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "UMBREON": {
+  "src": "umbreon/back_gba.png",
+  "t": 5,
+  "v": 55,
+  "x": 33.0
+ },
+ "UNFEZANT": {
+  "src": "unfezant/back.png",
+  "t": 0,
+  "v": 63,
+  "x": 30.5
+ },
+ "URSALUNA": {
+  "src": "ursaluna/back.png",
+  "t": 11,
+  "v": 44,
+  "x": 32.0
+ },
+ "URSALUNA_BLOODMOON": {
+  "src": "ursaluna/bloodmoon/back.png",
+  "t": 12,
+  "v": 43,
+  "x": 31.5
+ },
+ "URSARING": {
+  "src": "ursaring/back_gba.png",
+  "t": 3,
+  "v": 58,
+  "x": 31.5
+ },
+ "URSHIFU": {
+  "src": "urshifu/back.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "URSHIFU_RAPID_STRIKE": {
+  "src": "urshifu/rapid_strike/back.png",
+  "t": 9,
+  "v": 51,
+  "x": 32.5
+ },
+ "UXIE": {
+  "src": "uxie/back.png",
+  "t": 10,
+  "v": 46,
+  "x": 29.0
+ },
+ "VANILLISH": {
+  "src": "vanillish/back.png",
+  "t": 5,
+  "v": 55,
+  "x": 32.0
+ },
+ "VANILLITE": {
+  "src": "vanillite/back.png",
+  "t": 9,
+  "v": 46,
+  "x": 31.0
+ },
+ "VANILLUXE": {
+  "src": "vanilluxe/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 32.0
+ },
+ "VAPOREON": {
+  "src": "vaporeon/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 33.0
+ },
+ "VAROOM": {
+  "src": "varoom/back.png",
+  "t": 18,
+  "v": 33,
+  "x": 32.5
+ },
+ "VELUZA": {
+  "src": "veluza/back.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "VENIPEDE": {
+  "src": "venipede/back.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.0
+ },
+ "VENOMOTH": {
+  "src": "venomoth/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "VENONAT": {
+  "src": "venonat/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 32.5
+ },
+ "VENUSAUR": {
+  "src": "venusaur/back_gba.png",
+  "t": 7,
+  "v": 50,
+  "x": 32.0
+ },
+ "VESPIQUEN": {
+  "src": "vespiquen/back.png",
+  "t": 3,
+  "v": 61,
+  "x": 32.5
+ },
+ "VIBRAVA": {
+  "src": "vibrava/back_gba.png",
+  "t": 17,
+  "v": 30,
+  "x": 32.5
+ },
+ "VICTINI": {
+  "src": "victini/back.png",
+  "t": 2,
+  "v": 55,
+  "x": 32.0
+ },
+ "VICTREEBEL": {
+  "src": "victreebel/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 32.0
+ },
+ "VIGOROTH": {
+  "src": "vigoroth/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.5
+ },
+ "VIKAVOLT": {
+  "src": "vikavolt/back.png",
+  "t": 4,
+  "v": 53,
+  "x": 32.0
+ },
+ "VILEPLUME": {
+  "src": "vileplume/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 32.0
+ },
+ "VIRIZION": {
+  "src": "virizion/back.png",
+  "t": 5,
+  "v": 51,
+  "x": 32.0
+ },
+ "VIVILLON": {
+  "src": "vivillon/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "VOLBEAT": {
+  "src": "volbeat/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "VOLCANION": {
+  "src": "volcanion/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 30.5
+ },
+ "VOLCARONA": {
+  "src": "volcarona/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 32.0
+ },
+ "VOLTORB": {
+  "src": "voltorb/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 31.0
+ },
+ "VULLABY": {
+  "src": "vullaby/back.png",
+  "t": 9,
+  "v": 41,
+  "x": 32.0
+ },
+ "VULPIX": {
+  "src": "vulpix/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.5
+ },
+ "WAILMER": {
+  "src": "wailmer/back_gba.png",
+  "t": 21,
+  "v": 22,
+  "x": 32.0
+ },
+ "WAILORD": {
+  "src": "wailord/back_gba.png",
+  "t": 23,
+  "v": 19,
+  "x": 32.0
+ },
+ "WALKING_WAKE": {
+  "src": "walking_wake/back.png",
+  "t": 2,
+  "v": 62,
+  "x": 32.5
+ },
+ "WALREIN": {
+  "src": "walrein/back_gba.png",
+  "t": 7,
+  "v": 51,
+  "x": 33.5
+ },
+ "WARTORTLE": {
+  "src": "wartortle/back_gba.png",
+  "t": 10,
+  "v": 44,
+  "x": 31.5
+ },
+ "WATCHOG": {
+  "src": "watchog/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 29.0
+ },
+ "WATTREL": {
+  "src": "wattrel/back.png",
+  "t": 14,
+  "v": 36,
+  "x": 31.5
+ },
+ "WEAVILE": {
+  "src": "weavile/back.png",
+  "t": 3,
+  "v": 55,
+  "x": 32.5
+ },
+ "WEEDLE": {
+  "src": "weedle/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "WEEPINBELL": {
+  "src": "weepinbell/back_gba.png",
+  "t": 9,
+  "v": 46,
+  "x": 32.0
+ },
+ "WEEZING": {
+  "src": "weezing/back_gba.png",
+  "t": 6,
+  "v": 52,
+  "x": 31.5
+ },
+ "WHIMSICOTT": {
+  "src": "whimsicott/back.png",
+  "t": 13,
+  "v": 42,
+  "x": 32.0
+ },
+ "WHIRLIPEDE": {
+  "src": "whirlipede/back.png",
+  "t": 16,
+  "v": 33,
+  "x": 31.5
+ },
+ "WHISCASH": {
+  "src": "whiscash/back_gba.png",
+  "t": 11,
+  "v": 43,
+  "x": 32.0
+ },
+ "WHISMUR": {
+  "src": "whismur/back_gba.png",
+  "t": 13,
+  "v": 38,
+  "x": 36.5
+ },
+ "WIGGLYTUFF": {
+  "src": "wigglytuff/back_gba.png",
+  "t": 9,
+  "v": 47,
+  "x": 32.5
+ },
+ "WIGLETT": {
+  "src": "wiglett/back.png",
+  "t": 16,
+  "v": 34,
+  "x": 39.0
+ },
+ "WIMPOD": {
+  "src": "wimpod/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 33.5
+ },
+ "WINGULL": {
+  "src": "wingull/back_gba.png",
+  "t": 14,
+  "v": 36,
+  "x": 32.5
+ },
+ "WISHIWASHI": {
+  "src": "wishiwashi/back.png",
+  "t": 20,
+  "v": 26,
+  "x": 32.0
+ },
+ "WOBBUFFET": {
+  "src": "wobbuffet/back_gba.png",
+  "t": 13,
+  "v": 39,
+  "x": 32.0
+ },
+ "WOOBAT": {
+  "src": "woobat/back.png",
+  "t": 17,
+  "v": 31,
+  "x": 32.0
+ },
+ "WOOLOO": {
+  "src": "wooloo/back.png",
+  "t": 19,
+  "v": 27,
+  "x": 32.0
+ },
+ "WOOPER": {
+  "src": "wooper/back_gba.png",
+  "t": 15,
+  "v": 34,
+  "x": 36.5
+ },
+ "WORMADAM": {
+  "src": "wormadam/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 31.5
+ },
+ "WORMADAM_SANDY": {
+  "src": "wormadam/sandy/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 32.0
+ },
+ "WORMADAM_TRASH": {
+  "src": "wormadam/trash/back.png",
+  "t": 2,
+  "v": 60,
+  "x": 30.5
+ },
+ "WO_CHIEN": {
+  "src": "wo_chien/back.png",
+  "t": 3,
+  "v": 58,
+  "x": 33.0
+ },
+ "WUGTRIO": {
+  "src": "wugtrio/back.png",
+  "t": 12,
+  "v": 41,
+  "x": 31.5
+ },
+ "WURMPLE": {
+  "src": "wurmple/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 32.0
+ },
+ "WYNAUT": {
+  "src": "wynaut/back_gba.png",
+  "t": 8,
+  "v": 49,
+  "x": 24.5
+ },
+ "WYRDEER": {
+  "src": "wyrdeer/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 31.5
+ },
+ "XATU": {
+  "src": "xatu/back_gba.png",
+  "t": 8,
+  "v": 48,
+  "x": 32.0
+ },
+ "XERNEAS": {
+  "src": "xerneas/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "XURKITREE": {
+  "src": "xurkitree/back.png",
+  "t": 1,
+  "v": 61,
+  "x": 32.0
+ },
+ "YAMASK": {
+  "src": "yamask/back.png",
+  "t": 12,
+  "v": 38,
+  "x": 31.0
+ },
+ "YAMASK_GALAR": {
+  "src": "yamask/galar/back.png",
+  "t": 13,
+  "v": 38,
+  "x": 32.0
+ },
+ "YAMPER": {
+  "src": "yamper/back.png",
+  "t": 10,
+  "v": 41,
+  "x": 31.5
+ },
+ "YANMA": {
+  "src": "yanma/back_gba.png",
+  "t": 4,
+  "v": 56,
+  "x": 32.0
+ },
+ "YANMEGA": {
+  "src": "yanmega/back.png",
+  "t": 8,
+  "v": 50,
+  "x": 32.0
+ },
+ "YUNGOOS": {
+  "src": "yungoos/back.png",
+  "t": 15,
+  "v": 35,
+  "x": 31.0
+ },
+ "YVELTAL": {
+  "src": "yveltal/back.png",
+  "t": 9,
+  "v": 45,
+  "x": 32.0
+ },
+ "ZACIAN": {
+  "src": "zacian/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.0
+ },
+ "ZACIAN_CROWNED": {
+  "src": "zacian/back.png",
+  "t": 5,
+  "v": 53,
+  "x": 32.0
+ },
+ "ZAMAZENTA": {
+  "src": "zamazenta/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 31.5
+ },
+ "ZAMAZENTA_CROWNED": {
+  "src": "zamazenta/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 31.5
+ },
+ "ZANGOOSE": {
+  "src": "zangoose/back_gba.png",
+  "t": 2,
+  "v": 61,
+  "x": 32.0
+ },
+ "ZAPDOS": {
+  "src": "zapdos/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "ZARUDE": {
+  "src": "zarude/back.png",
+  "t": 4,
+  "v": 55,
+  "x": 32.0
+ },
+ "ZEBSTRIKA": {
+  "src": "zebstrika/back.png",
+  "t": 1,
+  "v": 56,
+  "x": 32.0
+ },
+ "ZEKROM": {
+  "src": "zekrom/back.png",
+  "t": 1,
+  "v": 60,
+  "x": 32.5
+ },
+ "ZERAORA": {
+  "src": "zeraora/back.png",
+  "t": 7,
+  "v": 46,
+  "x": 33.0
+ },
+ "ZIGZAGOON": {
+  "src": "zigzagoon/back_gba.png",
+  "t": 11,
+  "v": 42,
+  "x": 33.0
+ },
+ "ZOROARK": {
+  "src": "zoroark/back.png",
+  "t": 6,
+  "v": 48,
+  "x": 32.0
+ },
+ "ZOROARK_HISUI": {
+  "src": "zoroark/hisui/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 32.0
+ },
+ "ZORUA": {
+  "src": "zorua/back.png",
+  "t": 7,
+  "v": 50,
+  "x": 30.5
+ },
+ "ZORUA_HISUI": {
+  "src": "zorua/hisui/back.png",
+  "t": 2,
+  "v": 61,
+  "x": 31.5
+ },
+ "ZUBAT": {
+  "src": "zubat/back_gba.png",
+  "t": 12,
+  "v": 41,
+  "x": 32.0
+ },
+ "ZWEILOUS": {
+  "src": "zweilous/back.png",
+  "t": 4,
+  "v": 51,
+  "x": 31.0
+ },
+ "ZYGARDE": {
+  "src": "zygarde/back.png",
+  "t": 0,
+  "v": 60,
+  "x": 32.0
+ },
+ "ZYGARDE_10": {
+  "src": "zygarde/back.png",
+  "t": 0,
+  "v": 60,
+  "x": 32.0
+ },
+ "ZYGARDE_COMPLETE": {
+  "src": "zygarde/complete/back.png",
+  "t": 0,
+  "v": 64,
+  "x": 31.5
+ }
+}
