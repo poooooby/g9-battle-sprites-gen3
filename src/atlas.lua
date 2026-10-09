@@ -132,10 +132,17 @@ local function loadIndex(load)
   -- alternate form (a slot of its own, with its base's dex number) are both
   -- one entry, so a form never replaces its base. An index without `slot`
   -- (an older build) is read as dex + 64.
+  -- A female sheet (MEOWSTIC_FEMALE) has `female_of` instead: the slot of the species
+  -- it is the female look of. It is kept under the NEGATIVE of that slot, so it never
+  -- replaces the species and the hooks can ask for it by gender.
   local bySlot = {}
   for id, rec in pairs(index.species) do
-    local slot = type(rec) == "table" and (tonumber(rec.slot) or (tonumber(rec.dex) and tonumber(rec.dex) + 64))
-    if slot then bySlot[slot] = { id = id, cells = rec } end
+    if type(rec) == "table" and tonumber(rec.female_of) then
+      bySlot[-tonumber(rec.female_of)] = { id = id, cells = rec }
+    else
+      local slot = type(rec) == "table" and (tonumber(rec.slot) or (tonumber(rec.dex) and tonumber(rec.dex) + 64))
+      if slot then bySlot[slot] = { id = id, cells = rec } end
+    end
   end
   return bySlot
 end

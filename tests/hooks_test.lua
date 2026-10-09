@@ -10,8 +10,8 @@ local function check(cond, msg)
 end
 
 -- a fake atlas: answers every slot it has art for -- the base species (451-1089,
--- dex + 64) and the alternate forms (1090-1145) -- with one cell per variant
-local function has(slot) return slot >= 451 and slot <= 1145 end
+-- dex + 64) and the alternate forms (1090-1173), plus the female Meowstic sheet kept under -742 -- with one cell per variant
+local function has(slot) return (slot >= 451 and slot <= 1173) or slot == -742 end
 local calls = {}
 local atlas = {
   hasSlot = has,
@@ -42,7 +42,25 @@ check(Pokemon.backPic(451, 0, false).image.fake == "back", "dex 387 back comes f
 check(Pokemon.icon(451).fake_icon == 451, "dex 387 icon comes from the atlas")
 -- the top of the range, and one past it
 check(Pokemon.frontPic(1089, 0, false).image.fake == "front", "dex 1025 (slot 1089) from the atlas")
-check(Pokemon.frontPic(1146, 0, false).orig == "front", "slot 1146 (past the last form) stays vanilla")
+check(Pokemon.frontPic(1174, 0, false).orig == "front", "slot 1174 (past the last form) stays vanilla")
+
+-- a female Meowstic (slot 742) has a sheet of its own, reached by the personality
+do
+  local P = { frontPic = origFront, backPic = origBack, icon = origIcon,
+              gender = function(slot, personality) return personality % 2 == 1 and "F" or "M" end }
+  Hooks.install(P, atlas)
+  calls[#calls + 1] = "mark"
+  P.frontPic(742, 0, false, 3)
+  check(calls[#calls] == "-742:front", "a female Meowstic gets the female sheet, got " .. tostring(calls[#calls]))
+  P.frontPic(742, 0, false, 2)
+  check(calls[#calls] == "742:front", "a male gets the species' own, got " .. tostring(calls[#calls]))
+  P.frontPic(742, 0, false)
+  check(calls[#calls] == "742:front", "with no personality too, got " .. tostring(calls[#calls]))
+  P.frontPic(742, 0, true, 3)
+  check(calls[#calls] == "-742:front_shiny", "shiny and female, got " .. tostring(calls[#calls]))
+  P.frontPic(743, 0, false, 3)
+  check(calls[#calls] == "743:front", "a species with no female sheet keeps its own, got " .. tostring(calls[#calls]))
+end
 -- an alternate form has a slot of its own and is answered like any other
 check(Pokemon.frontPic(1105, 0, false).image.fake == "front", "a form slot (ROTOM_HEAT, 1105) comes from the atlas")
 check(Pokemon.backPic(1105, 0, false).image.fake == "back", "and its back")

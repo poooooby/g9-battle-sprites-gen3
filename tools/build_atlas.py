@@ -47,6 +47,39 @@ PAGE_SIZE = 4096          # max atlas edge; a page fills shelf by shelf, then a 
 VARIANTS = ["front", "front_shiny", "back", "back_shiny"]
 BLOCK_MAX = 2048          # tallest block, so blocks pack tightly into pages
 BACK_VARIANTS = ("back", "back_shiny")
+
+# Sheets of the DBK pack that the pack's own species map (dbk_data.lua) names wrongly or not
+# at all, by their id in national_dex_gen3: Flabebe, Floette and Florges keep their colours in
+# _1.._4 (yellow, orange, blue, white; the base is red), Eternal Floette is _6 (_5 is the
+# Mega), the east-sea Shellos and Gastrodon are _1, Galarian Darmanitan (Standard) is _2 (the
+# pack's _1 is Zen Mode, which dbk_data.lua maps all three Darmanitan forms to), and Alcremie's
+# nine creams are blocks of seven sheets, one per sweet (ALCREMIE, then _1.._62): each cream
+# uses the first sheet of its block, the Strawberry Sweet. Checked by eye against the sheets.
+STEM_OVERRIDES = {
+    "FLOETTE_ETERNAL": "FLOETTE_6",
+    "DARMANITAN_GALAR_STANDARD": "DARMANITAN_2",
+    "SHELLOS_EAST": "SHELLOS_1", "GASTRODON_EAST": "GASTRODON_1",
+    **{f"ALCREMIE_{cream}": f"ALCREMIE_{7 * k}"
+       for k, cream in enumerate(("RUBY_CREAM", "MATCHA_CREAM", "MINT_CREAM", "LEMON_CREAM",
+                                  "SALTED_CREAM", "RUBY_SWIRL", "CARAMEL_SWIRL", "RAINBOW_SWIRL"), 1)},
+    **{f"{base}_{color}": f"{base}_{n}"
+       for base in ("FLABEBE", "FLOETTE", "FLORGES")
+       for n, color in enumerate(("YELLOW", "ORANGE", "BLUE", "WHITE"), 1)},
+}
+
+# Party icons live in their own folder (the Gen 9 Pack's Icons/), numbered like the sheets for
+# most species but not all, and one file is spelt in lower case. A form's icon is its sheet's
+# stem unless listed here: Basculin's icons run red, blue, white (_1 = blue, _2 = white-striped;
+# the sheets run base = white-striped, _2 = red, _3 = blue).
+ICON_STEMS = {
+    "BASCULIN_WHITE_STRIPED": "BASCULIN_2",
+    "BASCULEGION_FEMALE": "BASCULEGION_female",
+}
+
+# Pokemon whose female looks different but is the same species here (national_dex_gen3 keeps
+# their stats): female id -> species id. Their sheets are packed under the female id and the
+# runtime picks them by the Pokemon's gender.
+FEMALE_SHEETS = {"MEOWSTIC_FEMALE": "MEOWSTIC", "OINKOLOGNE_FEMALE": "OINKOLOGNE"}
 ICON_CELL = 32            # the engine's own menu icon size
 ICON_FRAMES = 2
 
@@ -324,7 +357,9 @@ def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
     missing = []
     for _dex, sid in species:
         path = stems.get(sid) or by_norm.get(norm(sid))
-        if path is None and dbk and form_ids and sid in form_ids:
+        if sid in ICON_STEMS:
+            path = stems.get(ICON_STEMS[sid])
+        elif path is None and dbk and form_ids and sid in form_ids:
             path = stems.get(dbk.get(sid, ""))      # a form's icon is named by its sprite stem
         if path is None:
             missing.append(sid)
@@ -362,6 +397,8 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
         "-- slot: the engine species slot the entry answers for. A form (WORMADAM_SANDY) has a",
         "-- slot of its own and its base species' dex; it reuses its base's cells where the",
         "-- pack has no sheet or icon of its own.",
+        "-- female_of: instead of a slot, on the female sheets of Meowstic and Oinkologne: the slot",
+        "-- of the species they belong to, shown when the Pokemon is female.",
         "return {",
         "  species = {",
     ]
@@ -384,7 +421,12 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
             c = entry["icon"]
             parts.append(f'icon = {{ page = {c["page"]}, x = {c["x"]}, y = {c["y"]}, '
                          f'cell = {c["cell"]}, frames = {c["frames"]} }}')
-        lines.append(f'    ["{sid}"] = {{ dex = {dex}, slot = {slots[sid]}, ' + ", ".join(parts) + " },")
+        if sid in FEMALE_SHEETS:
+            # not a species of its own: the runtime reaches it from the species' slot
+            owner = f'female_of = {slots[FEMALE_SHEETS[sid]]}'
+        else:
+            owner = f'slot = {slots[sid]}'
+        lines.append(f'    ["{sid}"] = {{ dex = {dex}, {owner}, ' + ", ".join(parts) + " },")
     lines += ["  },", "}", ""]
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -405,6 +447,7 @@ def main() -> None:
     slots.update({fid: slot for _dex, fid, slot, _base in forms})
     form_ids = {fid for _dex, fid, _slot, _base in forms}
     dbk = read_map(args.dbk, "species")
+    dbk.update(STEM_OVERRIDES)
     base_species = list(species)
     species = species + [(dex, fid) for dex, fid, _slot, _base in forms]
     out_atlas = args.out / "assets" / "atlas"
@@ -415,7 +458,9 @@ def main() -> None:
 
     index: dict[str, dict] = {}
     print(f"species #{FIRST_DEX}-{LAST_DEX}: {len(base_species)} + {len(forms)} forms")
-    build_battle(args.sheets, dbk, species, out_atlas, index)
+    dex_of = {sid: dex for dex, sid in species}
+    females = [(dex_of[base], fid) for fid, base in FEMALE_SHEETS.items() if base in dex_of]
+    build_battle(args.sheets, dbk, species + females, out_atlas, index)
     build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
     # a form with no sheet or icon of its own in the pack reuses its base's
     reused = 0
@@ -426,7 +471,7 @@ def main() -> None:
                 reused += 1
     if reused:
         print(f"  {reused} form sprite(s) reuse their base species' art")
-    write_index(index, args.out / "data" / "atlas_index.lua", species, slots)
+    write_index(index, args.out / "data" / "atlas_index.lua", species + females, slots)
     print("wrote", args.out / "data" / "atlas_index.lua")
 
 

@@ -46,10 +46,21 @@ draw a pic as a plain 64×64 image and still get the fit-to-box one.
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
 
-**Alternate forms** (national_dex_gen3's 56 forms: Galarian and Hisuian forms, Wormadam's cloaks,
+**Alternate forms** (national_dex_gen3's 84 forms: Galarian and Hisuian forms, Wormadam's cloaks,
 the Rotom appliances, the Therian and Origin forms and more) have a sheet and an icon of their
-own, found by the form's own engine slot. A form the pack has no icon for (Pumpkaboo and
-Gourgeist sizes) shows its base Pokémon's icon.
+own, found by the form's own engine slot. Coverage:
+
+- 72 of the 84 forms have their own battle sheets, and 64 their own icon (Galarian Darmanitan,
+  Alcremie's nine creams, Flabébé, Floette and Florges in five colours, Shellos and Gastrodon's
+  east-sea looks, the white-striped Basculin and female Basculegion included).
+- The Gen 9 Pack has one party icon for Pumpkaboo and one for Gourgeist, so their sizes share it.
+- The tea set's Antique, Artisan and Masterpiece looks (Sinistea, Polteageist, Poltchageist and
+  Sinistcha) have no art in any of the packs, so they show the normal look.
+- Alcremie's creams use the Strawberry Sweet sheet of their cream; the pack draws one per sweet
+  (63), but the game has one Alcremie per cream.
+ A female Meowstic or Oinkologne shows her own picture as the enemy and in the Pokédex and
+summary (the engine asks for a back view and a menu icon without saying which Pokémon, so those
+stay the male's).
 
 Not in this version: tera crystal, dynamax cloud and battle shadow overlays, female-variant
 sheets, and the 4× party page from the gen1/gen2 mod.
@@ -65,7 +76,7 @@ and the engine shows a red missing-pic box.
   `back_shiny`), several pages each. A page holds blocks of uniform `fs × fs`
   cells; a species' frames sit in consecutive cells of one block, and the index
   records the block's corner (`ox`, `oy`).
-- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 56 forms, one page.
+- `party_icons_0.png`: two-frame 32×32 menu icons for the 639 species and the 84 forms, one page.
   Gender variants are not packed; the Pokédex and summary use the front pic.
 - `data/atlas_index.lua`: maps each species (and form) to its engine `slot` and its cells (and, for back pics, where the Pokémon sits in its frame).
 

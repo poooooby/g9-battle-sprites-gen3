@@ -19,9 +19,20 @@ local function slotOf(atlas, slot)
   return nil
 end
 
--- Pokemon.frontPic(species, form, shiny, personality) / backPic(species, form, shiny)
-local function picFor(atlas, side, slot, shiny, battle)
+-- A female Meowstic or Oinkologne has a sheet of its own, kept under the negative of the
+-- species' slot (src/atlas.lua); every other Pokemon, and a male, has the species' own.
+local function keyFor(atlas, Pokemon, slot, personality)
   local key = slotOf(atlas, slot)
+  if key and personality ~= nil and atlas.hasSlot(-key) and type(Pokemon.gender) == "function"
+      and Pokemon.gender(key, personality) == "F" then
+    return -key
+  end
+  return key
+end
+
+-- Pokemon.frontPic(species, form, shiny, personality) / backPic(species, form, shiny)
+-- `key`: the atlas key, from keyFor
+local function picFor(atlas, side, key, shiny, battle)
   if not key then return nil end
   -- a shiny asks for the shiny sheet, and falls back to the normal one when
   -- the atlas has no shiny for the species
@@ -82,7 +93,7 @@ function Hooks.install(Pokemon, atlas, Battle)
   local origFront = Pokemon.frontPic
   if type(origFront) == "function" and not ours[origFront] then
     Pokemon.frontPic = function(species, form, shiny, personality)
-      local entry = picFor(atlas, "front", species, shiny, inBattle())
+      local entry = picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, inBattle())
       if entry then return entry end
       return origFront(species, form, shiny, personality)
     end
@@ -95,7 +106,7 @@ function Hooks.install(Pokemon, atlas, Battle)
   local origBack = Pokemon.backPic
   if type(origBack) == "function" and not ours[origBack] then
     Pokemon.backPic = function(species, form, shiny)
-      local entry = picFor(atlas, "back", species, shiny)
+      local entry = picFor(atlas, "back", slotOf(atlas, species), shiny)
       if entry then return entry end
       return origBack(species, form, shiny)
     end
