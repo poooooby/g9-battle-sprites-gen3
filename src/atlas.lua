@@ -487,7 +487,7 @@ function Atlas.new(mod, load)
   -- hooks' wrap of the screen's draw): the cart's two-frame front pic, or for a species without
   -- one the battle sheet (whose gen3-hd-sprites tag then follows the frame). The last LIVE_CAP
   -- are kept.
-  local LIVE_CAP = 6
+  local LIVE_CAP = 24          -- a FORMS page shows up to 9 at once (Alcremie)
   self.dexSpecs = setmetatable({}, { __mode = "k" })   -- frame canvas -> its Pokedex HD spec
   self.live, self.liveOrder = {}, {}
 
