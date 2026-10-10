@@ -276,9 +276,42 @@ def trim_window(trims: dict, sid: str, variant: str, frames: int) -> tuple[int, 
     return (start, count) if 0 <= start and count >= 1 and start + count <= frames else None
 
 
+MIN_BACK_SHOWN = 28     # rows of a back pic that always show above the battle text box
+ENGINE_PIC_COORDS = ROOT.parent / "gen1recomp" / "src" / "core" / "game3" / "battle" / "pic_coords.lua"
+
+
+def back_offsets(path: Path) -> dict[int, int]:
+    """The engine's per-species vertical offset of the player's back pic (pic_coords.lua `back`)."""
+    if not path.exists():
+        return {}
+    text = path.read_text(encoding="utf-8")
+    m = re.search(r"^  back = \{(.*?)^  \},", text, re.S | re.M)
+    return {int(a): int(b) for a, b in re.findall(r"\[(\d+)\]\s*=\s*(-?\d+)", m.group(1))} if m else {}
+
+
+def cap_back_tops(index: dict, slots: dict, coords: Path) -> int:
+    """A body whose top, with the engine's own offset, would start below row 64 - MIN_BACK_SHOWN of
+    the pic box leaves a big empty gap above the text box (Wailord, Anorith): raise it to that row.
+    Applies to the plain and the fitted (gen3-hd-sprites) top alike."""
+    yo = back_offsets(coords)
+    limit = 64 - MIN_BACK_SHOWN
+    n = 0
+    for sid, entry in index.items():
+        off = yo.get(slots.get(sid, -1), 0)
+        for key in ("back", "back_shiny"):
+            c = entry.get(key)
+            if not c:
+                continue
+            for field in ("bt", "bzt"):
+                if field in c and c[field] + off > limit:
+                    c[field] = max(0, limit - off)
+                    n += 1
+    return n
+
+
 def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str]],
                  out_dir: Path, index: dict[str, dict], trims: dict | None = None,
-                 framing: dict | None = None) -> None:
+                 framing: dict | None = None, fits: dict | None = None) -> None:
     """Battle frames are grouped by their game-pixel frame size. A group is cut
     into blocks of uniform fs x fs cells (a species' frames stay together in
     one block), and the blocks of every size are shelf-packed onto shared pages
@@ -375,6 +408,13 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                         cell["bx"] = float(ref.get("x", 32))      # the reference body's centre column
                         cell["bv"] = int(ref["v"])      # the reference body's height: the exact zoom with gen3-hd-sprites
                         cell["bs"] = back_scale(int(ref["v"]), box[3] - box[1])
+                        fit = (fits or {}).get(sid)
+                        if fit:
+                            # fitted over the cart's own static back sprite (tools/back_fit.py): the exact
+                            # zoom, row and column that lay our first frame's body on top of it
+                            cell["bz"] = float(fit["s"])
+                            cell["bzt"] = int(fit["t"])
+                            cell["bzx"] = float(fit["x"])
                 if variant not in BACK_VARIANTS and sid in FRONT_DROP:
                     cell["fy"] = FRONT_DROP[sid]
                 index.setdefault(sid, {})[variant] = cell
@@ -467,6 +507,101 @@ def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
         print("  no icon for:", ", ".join(missing))
 
 
+DEX_CELL = 64              # the cart's front pic: two 64x64 frames, one above the other
+DEX_REF = ROOT.parent / "pokeemerald-expansion" / "graphics" / "pokemon"
+
+
+def read_jasc(path: Path) -> list[tuple[int, int, int]] | None:
+    """The colours of a JASC-PAL file, or None when it is not one."""
+    try:
+        lines = path.read_text(encoding="utf-8").split()
+    except OSError:
+        return None
+    if len(lines) < 3 or lines[0] != "JASC-PAL":
+        return None
+    n = int(lines[2])
+    vals = [int(v) for v in lines[3:3 + n * 3]]
+    return [tuple(vals[i:i + 3]) for i in range(0, len(vals), 3)]
+
+
+def dex_front_path(ref: Path, sid: str) -> Path | None:
+    """The cart's two-frame front pic of a species in the expansion: <id>/anim_front_gba.png
+    (the cart's own, Gen 1-3), else <id>/anim_front.png, else <id>/front.png (one frame: the
+    newer species have no second), each also tried as <base>/<form>/... for a form."""
+    name = sid.lower()
+    dirs = [name]
+    parts = name.split("_")
+    for k in range(len(parts) - 1, 0, -1):          # WORMADAM_SANDY -> wormadam/sandy
+        dirs.append("_".join(parts[:k]) + "/" + "_".join(parts[k:]))
+    for d in dirs:
+        for f in ("anim_front_gba.png", "anim_front.png", "front.png"):
+            p = ref / d / f
+            if p.is_file():
+                return p
+    return None
+
+
+def dex_front_image(path: Path) -> Image.Image:
+    """The pic as RGBA: its own palette file applied (normal_gba.pal for an _gba pic, else
+    normal.pal; the PNG's embedded palette when there is none), index 0 transparent."""
+    with Image.open(path) as im:
+        im.load()
+        pal = read_jasc(path.parent / ("normal_gba.pal" if path.stem.endswith("_gba") else "normal.pal"))
+        if im.mode != "P":
+            return im.convert("RGBA")
+        src = im.copy()
+    px = src.load()
+    embedded = src.getpalette() or []
+    out = Image.new("RGBA", src.size, (0, 0, 0, 0))
+    op = out.load()
+    for y in range(src.height):
+        for x in range(src.width):
+            i = px[x, y]
+            if i == 0:
+                continue
+            if pal and i < len(pal):
+                r, g, b = pal[i]
+            else:
+                r, g, b = embedded[i * 3:i * 3 + 3]
+            op[x, y] = (r, g, b, 255)
+    return out
+
+
+def build_dex_fronts(ref: Path, species: list[tuple[int, str]], out_dir: Path,
+                     index: dict[str, dict]) -> None:
+    """Packs each species' cart front pic (two 64x64 frames, side by side) for the Ruby/
+    Sapphire/Emerald Pokedex, which shows the cart's still pic and, on an entry, its two frames.
+    Only species the atlas has battle art for; the rest stay the game's own."""
+    shelf = Shelf()
+    used_w: dict[int, int] = {}
+    used_h: dict[int, int] = {}
+    missing, seen = [], set()
+    for _dex, sid in species:
+        if sid in seen or sid not in index:
+            continue
+        seen.add(sid)
+        path = dex_front_path(ref, sid)
+        if path is None:
+            missing.append(sid)
+            continue
+        img = dex_front_image(path)
+        frames = max(1, min(2, img.height // DEX_CELL))
+        strip = Image.new("RGBA", (DEX_CELL * 2, DEX_CELL), (0, 0, 0, 0))
+        for f in range(2):
+            src = min(f, frames - 1)
+            strip.paste(img.crop((0, src * DEX_CELL, DEX_CELL, (src + 1) * DEX_CELL)), (f * DEX_CELL, 0))
+        page, x, y = shelf.place(DEX_CELL * 2, DEX_CELL)
+        shelf.pages[page]["img"].paste(strip, (x, y))
+        used_w[page] = max(used_w.get(page, 0), x + DEX_CELL * 2)
+        used_h[page] = max(used_h.get(page, 0), y + DEX_CELL)
+        index[sid]["dexpic"] = {"page": page, "x": x, "y": y}
+    names = save(shelf.pages, "dex_fronts", out_dir, used_w, used_h)
+    print(f"  Pokedex front pics (cart, two frames): {len(seen) - len(missing)}/{len(seen)} species "
+          f"on {len(names)} page(s)")
+    if missing:
+        print("  no cart front pic for:", ", ".join(missing[:30]) + (" ..." if len(missing) > 30 else ""))
+
+
 def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str]],
                 slots: dict[str, int]) -> None:
     lines = [
@@ -477,6 +612,7 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
         "-- cy1: the creature's typical box inside its frame (what it is anchored on); ux0, uy0,",
         "-- ux1, uy1: the union of its box over the whole animation (how much room it needs).",
         "-- party_icons_<page>.png: `frames` 32x32 cells side by side from x, y.",
+        "-- dex_fronts_<page>.png (dexpic): the cart's two 64x64 front frames side by side from x, y.",
         "-- slot: the engine species slot the entry answers for. A form (WORMADAM_SANDY) has a",
         "-- slot of its own and its base species' dex; it reuses its base's cells where the",
         "-- pack has no sheet or icon of its own.",
@@ -503,11 +639,16 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
                     text += f', fy = {c["fy"]}'
                 if "bt" in c:
                     text += f', bt = {c["bt"]}, bs = {c["bs"]:g}, bv = {c["bv"]}, bx = {c["bx"]:g}'
+                    if "bz" in c:
+                        text += f', bz = {c["bz"]:g}, bzt = {c["bzt"]}, bzx = {c["bzx"]:g}'
                 parts.append(text + " }")
         if "icon" in entry:
             c = entry["icon"]
             parts.append(f'icon = {{ page = {c["page"]}, x = {c["x"]}, y = {c["y"]}, '
                          f'cell = {c["cell"]}, frames = {c["frames"]} }}')
+        if "dexpic" in entry:
+            c = entry["dexpic"]
+            parts.append(f'dexpic = {{ page = {c["page"]}, x = {c["x"]}, y = {c["y"]} }}')
         if sid in FEMALE_SHEETS:
             # not a species of its own: the runtime reaches it from the species' slot
             owner = f'female_of = {slots[FEMALE_SHEETS[sid]]}'
@@ -551,12 +692,16 @@ def main() -> None:
                     / "Graphics" / "Pokemon" / "Icons")
     ap.add_argument("--trims", type=Path, default=ROOT / "tools" / "loop_trims.json",
                     help="which frames of each long animation to keep (tools/trim_loops.py)")
+    ap.add_argument("--dex-ref", type=Path, default=DEX_REF,
+                    help="pokeemerald-expansion's graphics/pokemon (the cart front pics for the RSE Pokedex)")
     ap.add_argument("--framing", type=Path, default=ROOT / "tools" / "back_framing.json",
                     help="each back sprite's cart reference (tools/back_framing.py)")
     ap.add_argument("--out", type=Path, default=ROOT)
     args = ap.parse_args()
     trims = json.loads(args.trims.read_text(encoding="utf-8")) if args.trims.exists() else {}
     framing = json.loads(args.framing.read_text(encoding="utf-8")) if args.framing.exists() else {}
+    fits_path = ROOT / "tools" / "back_fit.json"
+    fits = json.loads(fits_path.read_text(encoding="utf-8")) if fits_path.exists() else {}
 
     species = read_species_ids(args.payload)
     forms = read_forms(args.payload)
@@ -584,12 +729,16 @@ def main() -> None:
           f"Gen 1-3: {len(classic)}")
     dex_of = {sid: dex for dex, sid in species}
     females = [(dex_of[base], fid) for fid, base in FEMALE_SHEETS.items() if base in dex_of]
-    build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, framing)
+    build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, framing, fits)
     build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
+    build_dex_fronts(args.dex_ref, [(d, s) for d, s in classic + species if s not in FEMALE_SHEETS],
+                     out_atlas, index)
+    capped = cap_back_tops(index, slots, ENGINE_PIC_COORDS)
+    print(f"  back pics raised so {MIN_BACK_SHOWN}+ rows show above the text box: {capped} cells")
     # a form with no sheet or icon of its own in the pack reuses its base's
     reused = 0
     for _dex, fid, _slot, base in forms:
-        for key in ("front", "front_shiny", "back", "back_shiny", "icon"):
+        for key in ("front", "front_shiny", "back", "back_shiny", "icon", "dexpic"):
             if key not in index.get(fid, {}) and key in index.get(base, {}):
                 index.setdefault(fid, {})[key] = index[base][key]
                 reused += 1

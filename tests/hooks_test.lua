@@ -25,7 +25,9 @@ local atlas = {
     return nil
   end,
   frameIndex = function() return 0 end,
-  picFrame = function(dex, variant, _cell, _f, battle) calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; return { fake = variant } end,
+  picFrame = function(dex, variant, _cell, _f, battle, kind)
+    calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; calls.kind = kind; return { fake = variant }
+  end,
   -- Gen 1-3 keep the game's own party icons: the atlas has none for them
   icon = function(slot) return (slot >= 451 and has(slot)) and { fake_icon = slot } or nil end,
 }
@@ -130,6 +132,34 @@ local before = Pokemon.frontPic
 Hooks.install(Pokemon, atlas)
 check(Pokemon.frontPic == before, "second install leaves the wrapper in place")
 check(Pokemon.frontPic(413, 0, false).orig == "front", "still falls through after a second install")
+
+-- the RSE Pokedex wheel gets the party icon, an entry's page keeps the animated sheet
+do
+  atlas.iconPic = function(slot) return (slot >= 451 and has(slot)) and { fake_icon_pic = slot } or nil end
+  local dexState = { page = 0 }
+  Hooks._resetRseDex({ PAGE = { MAIN = 0, INFO = 1, SEARCH_RESULTS = 3 }, active = function() return dexState end })
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake_icon_pic == 500, "the dex list draws the icon pic")
+  check(Pokemon.frontPic(25, 0, false, 0, "dex").orig == "front", "no icon (Gen 1-3): the game's own pic in the list")
+  check(Pokemon.frontPic(500, 0, false, 0).image.fake == "front", "no kind: still the animated sheet")
+  dexState.page = 1
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake == "front", "an entry's page keeps the animated sheet")
+  check(calls.kind == "dex", "...and the atlas is told it is for the Pokedex")
+  Pokemon.frontPic(500, 0, false, 0)
+  check(calls.kind == nil, "a pic for another screen has no kind")
+  dexState.page = 0; dexState.caught = {}
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake == "front", "the caught screen keeps the animated sheet")
+  -- with an atlas that has live pics, an RSE entry page gets the live canvas
+  dexState.caught = nil; dexState.page = 1
+  atlas.livePic = function(key, variant) return { live = key .. ":" .. variant } end
+  atlas.refreshLive = function() end
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.live == "500:front", "an RSE entry page gets the live pic")
+  check(Pokemon.frontPic(500, 0, true, 0, "dex").image.live == "500:front_shiny", "...the shiny one when shiny")
+  dexState.page = 0
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake_icon_pic == 500, "...and the wheel still the icon")
+  atlas.livePic, atlas.refreshLive = nil, nil
+  Hooks._resetRseDex(nil)
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake == "front", "no Pokedex screen: the animated sheet")
+end
 
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 hooks)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)

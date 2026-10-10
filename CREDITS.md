@@ -39,6 +39,22 @@ de Sky**'s DBK "solo sprites", and the underlying sprite and icon art is the
 - **PLZA Icons:** ezerart, camiloveso, Caruban
 - **Special Thanks for Icon Resources:** Axel Loquendo, Carmanekko, Divaruta 666, Okyo, JLauz735, ClaraDragon, and the "Pokemon Icons Act 2.9 - Teracristalizando" Project.
 
+### Ruby/Sapphire/Emerald Pokédex front pics
+
+The cart-style 64×64 front pics on the Ruby/Sapphire/Emerald Pokédex (`assets/atlas/dex_fronts_0.png`)
+come from **pokeemerald-expansion** by the **Rom Hacking Hideout** (rh-hideout) team and its
+contributors (<https://github.com/rh-hideout/pokeemerald-expansion>), `graphics/pokemon/`. The
+Generation 1-3 pics are the original Ruby/Sapphire/Emerald art via **pokeemerald**
+(<https://github.com/pret/pokeemerald>); the later generations' art comes from the community
+projects that pokeemerald-expansion credits in its own `CREDITS.md`:
+
+- **Sugimori Palettes and Sprites** (<https://www.pokecommunity.com/showthread.php?t=336945>)
+- **DS Style Gen VI Sprites** (<https://www.pokecommunity.com/showthread.php?t=314422>)
+- **Gen VII and Beyond Sprites** (<https://www.pokecommunity.com/showthread.php?t=368703>)
+
+The same checkout's 64×64 back sprites are used by the build tools (`tools/back_framing.py`,
+`tools/back_fit.py`) as references for framing the battle back pics; they are not shipped.
+
 ## Graphical effects & backgrounds
 
 - **Transparent Dynamax Clouds:** bearbro123 (DeviantArt)

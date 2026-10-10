@@ -69,11 +69,14 @@ return function(mod)
     if not atlas then return end
     local hd = mod:find("gen3-hd-sprites")
     local ex = hd and hd.exports
-    local ok, active = pcall(function() return ex and ex.isActive and ex.isActive() end)
-    atlas.hd = (ok and active) and ex or nil
-    if atlas.hd and not hdLogged then
+    -- linked as soon as the library is there: its enabled(pass) is false until it has
+    -- installed, so a pic asked for before then is the plain one
+    atlas.hd = (type(ex) == "table" and type(ex.tag) == "function" and type(ex.enabled) == "function")
+      and ex or nil
+    local ok, active = pcall(function() return atlas.hd and atlas.hd.isActive() end)
+    if ok and active and not hdLogged then
       hdLogged = true
-      mod.log:info("gen3-hd-sprites found: battle pics are drawn at window resolution")
+      mod.log:info("gen3-hd-sprites found: battle and Pokedex pics are drawn at window resolution")
     end
   end
 

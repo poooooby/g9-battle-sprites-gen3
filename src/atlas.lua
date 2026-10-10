@@ -17,6 +17,7 @@ local PIC_BOX = 64          -- the engine's battle / summary pic box, in its own
 local PIC_SCALE = 4         -- detail: canvases are PIC_BOX * PIC_SCALE pixels, dpiscale = PIC_SCALE
 local PIC_SCALE_BIG = 2     -- ... for a canvas bigger than the box (a whole frame): bounds its memory
 local PIC_FPS = 8           -- animation rate of the sheets, frames per second
+local DEX_FRAME_TIME = 0.5  -- seconds each of the cart front pic's two frames shows on an RSE entry
 local CANVAS_CAP = 128      -- most rendered pic frames kept at once
 
 -- Back (player-side) pics are a close-up: the creature at full size, not shrunk to
@@ -55,7 +56,7 @@ function Atlas.backLayout(cell, wide, exact, force)
   local x0, y0 = cell.cx0 or 0, cell.cy0 or 0
   local x1, y1 = cell.cx1 or fs, cell.cy1 or fs
   local cw, ch = math.max(1, x1 - x0), math.max(1, y1 - y0)
-  local s, oy, anchorX
+  local s, oy, anchorX, zoomTop
   if cell.bt then
     -- framed like the cart: the body's top on the reference's row, at the reference's size
     s = cell.bs or 1
@@ -65,8 +66,14 @@ function Atlas.backLayout(cell, wide, exact, force)
       s = math.max(BACK_ZOOM_MIN, math.min(BACK_ZOOM_MAX, cell.bv / ch))
       anchorX = cell.bx            -- ... and put where the cart sprite's body is, side to side too
     end
+    if exact and cell.bz then
+      -- fitted over the cart's static back sprite (tools/back_fit.py): its own zoom, any value
+      s = math.max(0.5, math.min(BACK_ZOOM_MAX, cell.bz))
+      anchorX = cell.bzx
+      zoomTop = cell.bzt
+    end
     if force then s = force end    -- a size set by hand (data/sprite_scale.lua)
-    oy = cell.bt - s * y0
+    oy = (zoomTop or cell.bt) - s * y0
   else
     if wide then
       s = 1
@@ -210,7 +217,7 @@ function Atlas.new(mod, load)
       -- linear filtering, which smears pixel art whenever it lands off the pixel
       -- grid (the engine sets nearest on its own icons for this reason). Battle
       -- pages are sampled into canvases by picFrame, which sets its own filters.
-      if name:find("^party_icons") and img.setFilter then img:setFilter("nearest", "nearest") end
+      if (name:find("^party_icons") or name:find("^dex_fronts")) and img.setFilter then img:setFilter("nearest", "nearest") end
       self.pages[name] = img
       return img
     end
@@ -332,13 +339,17 @@ function Atlas.new(mod, load)
   -- its centre on the battler's spot, so the pic may be full size in a canvas bigger
   -- than the box. Every other screen (Pokedex, summary, PC ...) draws the pic as a
   -- plain 64x64 image, so it gets the fit-to-box one.
-  function self.picFrame(dex, variant, cell, f, battle)
+  -- `kind` (front pics only): "dex" for the Pokedex screens, which gen3-hd-sprites draws at
+  -- window resolution too (fitted to the box, the size the plain pic has).
+  function self.picFrame(dex, variant, cell, f, battle, kind)
     local isBack = variant == "back" or variant == "back_shiny"
     local big = isBack or battle == true
     -- gen3-hd-sprites (when installed and on): the pic is drawn from the atlas at the
     -- window's resolution, so the canvas only has to be the low-res stand-in
     local hd = big and self.hd and self.hd.enabled("battle") and self.hd or nil
-    local key = tostring(dex) .. ":" .. variant .. ":" .. f .. (hd and ":hd" or big and ":w" or "")
+    local dexHd = not big and kind == "dex" and self.hd and self.hd.enabled("dex") and self.hd or nil
+    local key = tostring(dex) .. ":" .. variant .. ":" .. f
+      .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "")
     local hit = self.frames[key]
     if hit then return hit end
     local img = page(string.format("battle_%s_%s", variant, cell.sheet))
@@ -426,6 +437,17 @@ function Atlas.new(mod, load)
         pivot = { (lx - ox) / ls, (ly - oy) / ls },
         scale = ls * k * mul,
       })
+    elseif dexHd then
+      -- the Pokedex: the whole frame at window resolution, fitted to the box exactly as the
+      -- plain pic above is (whose canvas stays the stand-in), standing on the box's bottom-centre
+      local spec = {
+        texture = img, quad = quad,
+        lowPivot = { PIC_BOX / 2, PIC_BOX },
+        pivot = { fs / 2, fs },
+        scale = math.min(1, PIC_BOX / fs),
+      }
+      dexHd.tag(canvas, spec)
+      self.dexSpecs[canvas] = spec
     elseif xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
       pivots[canvas] = { PIC_BOX / 2 - xmin, PIC_BOX / 2 - ymin }
     end
@@ -457,6 +479,123 @@ function Atlas.new(mod, load)
     if not entry then self.icons[dex] = false return nil end
     self.icons[dex] = entry
     return entry
+  end
+
+  -- The Ruby/Sapphire/Emerald Pokedex builds an entry's pic ONCE (when the page opens) and
+  -- keeps that image, so a pic for one frame would stand still. It gets a "live" canvas
+  -- instead, redrawn with the current frame each time the screen draws (refreshLive, from the
+  -- hooks' wrap of the screen's draw): the cart's two-frame front pic, or for a species without
+  -- one the battle sheet (whose gen3-hd-sprites tag then follows the frame). The last LIVE_CAP
+  -- are kept.
+  local LIVE_CAP = 6
+  self.dexSpecs = setmetatable({}, { __mode = "k" })   -- frame canvas -> its Pokedex HD spec
+  self.live, self.liveOrder = {}, {}
+
+  -- The cart's front pic (pokeemerald-expansion, built into dex_fronts_<n>.png): frame f (0 or
+  -- 1) as a 64x64 canvas, or nil when the species has none. Cached, two per species.
+  self.dexPics = {}
+  function self.dexPic(key, f)
+    local id = tostring(key) .. ":" .. f
+    local hit = self.dexPics[id]
+    if hit ~= nil then return hit or nil end
+    local c = self.cell(key, "dexpic")
+    local img = c and page(string.format("dex_fronts_%d", c.page))
+    local ok, canvas = false, nil
+    if img then ok, canvas = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX) end
+    if not (img and ok) then self.dexPics[id] = false return nil end
+    canvas:setFilter("nearest", "nearest")
+    local w, h = img:getDimensions()
+    local quad = love.graphics.newQuad(c.x + f * PIC_BOX, c.y, PIC_BOX, PIC_BOX, w, h)
+    drawClean(function()
+      love.graphics.setCanvas(canvas)
+      love.graphics.clear(0, 0, 0, 0)
+      love.graphics.draw(img, quad, 0, 0)
+    end)
+    self.dexPics[id] = canvas
+    return canvas
+  end
+
+  local function refresh(rec)
+    if rec.dex then
+      -- the cart pic: its two frames in turn, as the game's own (never HD: it is 64x64 already)
+      local f = math.floor(love.timer.getTime() / DEX_FRAME_TIME) % 2
+      if f == rec.f then return end
+      local src = self.dexPic(rec.key, f) or self.dexPic(rec.key, 0)
+      if not src then return end
+      drawClean(function()
+        love.graphics.setCanvas(rec.canvas)
+        love.graphics.clear(0, 0, 0, 0)
+        love.graphics.draw(src, 0, 0)
+      end)
+      rec.f = f
+      return
+    end
+    local f = self.frameIndex(rec.cell)
+    local hdOn = self.hd and self.hd.enabled("dex") and true or false
+    if f == rec.f and hdOn == rec.hdOn then return end
+    local src = self.picFrame(rec.key, rec.variant, rec.cell, f, false, "dex")
+    if not src then return end
+    drawClean(function()
+      love.graphics.setCanvas(rec.canvas)
+      love.graphics.clear(0, 0, 0, 0)
+      love.graphics.draw(src, 0, 0)
+    end)
+    rec.f, rec.hdOn = f, hdOn
+    if self.hd then
+      local spec = self.dexSpecs[src]
+      if spec then self.hd.tag(rec.canvas, spec) elseif self.hd.untag then self.hd.untag(rec.canvas) end
+    end
+  end
+
+  --- A live pic for an RSE Pokedex entry: the cart's two-frame front pic when the species has
+  --- one (`variant` is then ignored: the Pokedex never shows a shiny), else the battle sheet.
+  function self.livePic(key, variant, cell)
+    local dex = self.cell(key, "dexpic") ~= nil
+    local id = tostring(key) .. ":" .. (dex and "dexpic" or variant)
+    local rec = self.live[id]
+    if not rec then
+      local ok, c
+      if dex then
+        ok, c = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX)
+      else
+        ok, c = pcall(love.graphics.newCanvas, PIC_BOX * PIC_SCALE, PIC_BOX * PIC_SCALE,
+          { dpiscale = PIC_SCALE })
+      end
+      if not ok then return nil end
+      c:setFilter("nearest", "nearest")
+      rec = { canvas = c, key = key, variant = variant, cell = cell, dex = dex }
+      self.live[id] = rec
+      self.liveOrder[#self.liveOrder + 1] = id
+      if #self.liveOrder > LIVE_CAP then self.live[table.remove(self.liveOrder, 1)] = nil end
+    end
+    refresh(rec)
+    return rec.canvas
+  end
+
+  function self.refreshLive()
+    for _, rec in pairs(self.live) do refresh(rec) end
+  end
+
+  -- A 64x64 pic made of a species' party icon (its first frame at 2x, nearest), for screens that
+  -- list many Pokemon (the RSE Pokedex wheel) and should not play the full animated sheet.
+  -- Cached per slot; nil when the atlas has no icon for it.
+  function self.iconPic(dex)
+    dex = tonumber(dex)
+    self.iconPics = self.iconPics or {}
+    if self.iconPics[dex] ~= nil then return self.iconPics[dex] or nil end
+    local entry = self.icon(dex)
+    local ok, canvas = false, nil
+    if entry then ok, canvas = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX) end
+    if not (entry and ok) then self.iconPics[dex] = false return nil end
+    canvas:setFilter("nearest", "nearest")
+    local k = PIC_BOX / entry.w
+    drawClean(function()
+      love.graphics.setCanvas(canvas)
+      love.graphics.clear(0, 0, 0, 0)
+      love.graphics.draw(entry.image, entry.quads[0], 0, 0, 0, k, k)
+    end)
+    self.iconPics[dex] = canvas
+    return canvas
   end
 
   return self

@@ -45,6 +45,16 @@ artwork, audio, text or other game asset, which remain their owners' property.
   "Crystal Textured Background" designed by rawpixel.com / Freepik, and the
   Dynamax cloud art reference is "Transparent Dynamax Clouds" by bearbro123 --
   both credited in `CREDITS.md`.
+- **pokeemerald-expansion front pics ship with the mod**
+  (`assets/atlas/dex_fronts_0.png`, shown on the Ruby/Sapphire/Emerald Pokédex). They are packed
+  by `tools/build_atlas.py` from the `graphics/pokemon/` folder of **pokeemerald-expansion**
+  (<https://github.com/rh-hideout/pokeemerald-expansion>, the Rom Hacking Hideout team and
+  contributors): the Generation 1-3 pics are the original games' art via **pokeemerald**
+  (<https://github.com/pret/pokeemerald>), and the later ones are the community sprite projects
+  pokeemerald-expansion credits (listed in `CREDITS.md`). pokeemerald-expansion ships no licence
+  file; the art remains its authors' and the Pokemon IP owners' property, and no ownership is
+  claimed. Its back sprites are read by the build tools as framing references only and are not
+  shipped.
 - **La Base de Sky art** -- the `assets/egg.png` picture and the three generic
   contact shadows (`assets/shadow/1.png`, `2.png`, `3.png`) come from
   La Base de Sky's `Graphics/Pokemon/{Eggs,Shadow}` folders.

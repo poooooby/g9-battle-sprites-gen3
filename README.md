@@ -22,8 +22,16 @@ Generations 1–3 are drawn).
 | Battle, enemy front | animated sheet (front, or front shiny) | animated sheet |
 | Battle, player back | animated sheet (back, or back shiny) | animated sheet |
 | Pokédex front pic | animated sheet | animated sheet |
+| Ruby/Sapphire/Emerald Pokédex list (the wheel) | the cart front pic, first frame | the cart front pic, first frame |
+| Ruby/Sapphire/Emerald Pokédex entry | the cart front pic, its two frames in turn | the cart front pic, its two frames in turn |
 | Party summary front pic | animated sheet | animated sheet |
 | Party list icon | two-frame 32×32 icon | the game's own |
+
+The Ruby/Sapphire/Emerald Pokédex uses the cart-style 64×64 front pics of a
+pokeemerald-expansion checkout (`graphics/pokemon/<id>/anim_front_gba.png`, else
+`anim_front.png`, else the one-frame `front.png` of the newer species; packed into
+`dex_fronts_0.png` by `tools/build_atlas.py --dex-ref`). A species with none (27 forms, mostly
+colour variants) uses its base species' pic. FireRed/LeafGreen's Pokédex shows the animated sheet.
 
 Long animations are trimmed to the median length of their kind (58 frames for fronts, 52 for
 backs), cut where the loop closes on a matching frame so it does not jump
@@ -36,7 +44,9 @@ the top of its body on the row the cart sprite's body starts on, at the clean sc
 past the 64 px box is what the battle screen's text box covers. The references are the 64×64
 back sprites of a pokeemerald-expansion checkout (`tools/back_framing.py`, which writes
 `tools/back_framing.json`); the body is measured on the animation's first frame, so a head flung
-up later (Blacephalon) does not set the size. A Pokémon with no reference is shown at full size with its feet on the bottom edge
+up later (Blacephalon) does not set the size. A body that would start so low that fewer than 28
+rows show above the text box (Wailord, Anorith; the engine adds its own per-species drop) is raised
+to show at least that much (`MIN_BACK_SHOWN` in `tools/build_atlas.py`). A Pokémon with no reference is shown at full size with its feet on the bottom edge
 instead, and a back pic is never shrunk to fit. The engine's pic box
 is 64×64, but a wide Pokémon (wings, a long tail) is not cropped to it: its pic is
 rendered into a canvas big enough for its whole animation (up to 96 px past the box
@@ -55,9 +65,14 @@ pic box. That only happens when the battle screen asks for the pic (the code
 checks who is calling), because the Pokédex, party summary, PC and other screens
 draw a pic as a plain 64×64 image and still get the fit-to-box one.
 
-With the Gen 3 HD Sprites mod installed, each Pokémon's battle size can be tuned by hand in
-`data/sprite_scale.lua` (percentages for the front and the back pic, plus pixel nudges; edit and
-restart, no rebuild). Without that mod, sizes are fixed.
+With the Gen 3 HD Sprites mod installed, battle pics are drawn at the window's resolution, and each
+Pokémon's battle size can be tuned by hand in `data/sprite_scale.lua` (percentages for the front
+and the back pic, plus pixel nudges; edit and restart, no rebuild). A Gen 1–3 back pic is then
+zoomed and placed so its first frame lies over the cart's own back sprite (`tools/back_fit.py`,
+which writes `tools/back_fit.json`: the best silhouette overlap, or the bounding boxes when the
+poses differ too much). Pokédex pics from the animated sheets (FireRed/LeafGreen's Pokédex, and an RSE entry with no cart
+pic) are drawn whole at window resolution, fitted to the same 64×64 picture as without the mod. Without that mod, sizes are fixed and nothing
+else changes.
 
 Animation runs at 8 frames per second. Battlers of one species share one
 clock, so they stay in step.
