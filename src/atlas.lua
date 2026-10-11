@@ -445,10 +445,10 @@ function Atlas.new(mod, load)
       s = math.min(1, PIC_BOX / w, PIC_BOX / h)
       ox, oy = (PIC_BOX - w * s) / 2, PIC_BOX - h * s
     end
-    -- px; bigger than the box only for a back pic whose animation needs the room
+    -- Logical units; dpiscale alone supplies the extra texture resolution.
     local dpi = (xmax - xmin > PIC_BOX or ymax - ymin > PIC_BOX) and PIC_SCALE_BIG or PIC_SCALE
-    local okC, canvas = pcall(love.graphics.newCanvas, (xmax - xmin) * dpi,
-      (ymax - ymin) * dpi, { dpiscale = dpi })
+    local okC, canvas = pcall(love.graphics.newCanvas, xmax - xmin,
+      ymax - ymin, { dpiscale = dpi })
     if not okC then
       warnCanvas("picFrame", canvas)
       for _, t in ipairs(temps) do t:release() end
@@ -620,7 +620,7 @@ function Atlas.new(mod, load)
       if dex then
         ok, c = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX)
       else
-        ok, c = pcall(love.graphics.newCanvas, PIC_BOX * PIC_SCALE, PIC_BOX * PIC_SCALE,
+        ok, c = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX,
           { dpiscale = PIC_SCALE })
       end
       if not ok then return nil end

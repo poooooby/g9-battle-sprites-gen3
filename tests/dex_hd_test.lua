@@ -15,8 +15,11 @@ local function image() return { getDimensions = function() return 4096, 4096 end
 love = { graphics = {
   newImage = function() return image() end,
   newQuad = function() return {} end,
-  newCanvas = function(w, h)
-    return { getDimensions = function() return w, h end, setFilter = function() end, release = function() end }
+  newCanvas = function(w, h, settings)
+    local dpi = settings and settings.dpiscale or 1
+    return { getDimensions = function() return w, h end,
+      getPixelDimensions = function() return w * dpi, h * dpi end,
+      setFilter = function() end, release = function() end }
   end,
   getCanvas = function() return state.canvas end,
   setCanvas = function(c) state.canvas = c or "screen" end,
@@ -64,6 +67,10 @@ do
   local hd = fakeHd({ dex = true, battle = true })
   atlas.hd = hd
   local big = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false, "dex")
+  local w, h = big:getDimensions()
+  local pw, ph = big:getPixelDimensions()
+  check(w == 64 and h == 64, "HD Pokedex pic keeps the logical 64x64 box")
+  check(pw == 256 and ph == 256, "HD Pokedex pic retains 4x texture resolution")
   local spec = hd.tags[big]
   check(spec ~= nil, "a Pokedex pic is tagged")
   check(spec and spec.quad ~= nil and spec.texture ~= nil, "...with the atlas page and its frame")
@@ -73,8 +80,24 @@ do
   local small = atlas.picFrame(452, "front", atlas.cell(452, "front"), 0, false, "dex")
   check(hd.tags[small] and hd.tags[small].scale == 1, "a frame smaller than the box is not enlarged")
   local summary = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false)
+  w, h = summary:getDimensions()
+  pw, ph = summary:getPixelDimensions()
+  check(w == 64 and h == 64, "summary pic fits the same logical 64x64 box")
+  check(pw == 256 and ph == 256, "summary pic retains 4x texture resolution")
   check(summary ~= big and hd.tags[summary] == nil, "another screen's pic is a separate canvas, not tagged")
   check(atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false, "dex") == big, "the Pokedex pic is cached")
+end
+
+-- Battle art still gets room for the whole frame, with its own DPI setting.
+do
+  local atlas = newAtlas()
+  local pic = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, true)
+  local w, h = pic:getDimensions()
+  local pw, ph = pic:getPixelDimensions()
+  check(w == 96 and h == 96, "wide battle pic still holds the whole 96x96 frame")
+  check(pw == 192 and ph == 192, "wide battle pic retains 2x texture resolution")
+  local pivot = Atlas._pivots[pic]
+  check(pivot and pivot[1] == 48 and pivot[2] == 64, "wide battle pivot stays on the original anchor")
 end
 
 do
@@ -101,6 +124,10 @@ do
   local cell = atlas.cell(453, "front")
   local live = atlas.livePic(453, "front", cell)
   check(live ~= nil, "a live pic is made")
+  local w, h = live:getDimensions()
+  local pw, ph = live:getPixelDimensions()
+  check(w == 64 and h == 64, "animated entry keeps the logical 64x64 box")
+  check(pw == 256 and ph == 256, "animated entry retains 4x texture resolution")
   local first = hd.tags[live]
   check(first ~= nil, "...tagged for Pokedex HD")
   check(atlas.livePic(453, "front", cell) == live, "...and the same canvas next time")
@@ -128,6 +155,9 @@ do
   NOW = 0
   local live = atlas.livePic(454, "front", atlas.cell(454, "front"))
   check(live ~= nil and hd.tags[live] == nil, "an entry with a cart pic is live, and not HD (it is 64x64 already)")
+  local w, h = live:getDimensions()
+  local pw, ph = live:getPixelDimensions()
+  check(w == 64 and h == 64 and pw == 64 and ph == 64, "cart entry remains an unscaled 64x64 pic")
   local n = #draws
   NOW = 0.1
   atlas.refreshLive()
