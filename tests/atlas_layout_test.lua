@@ -207,5 +207,29 @@ do
   Atlas.backShift = 0
 end
 
+-- each game's own per-species offsets, cancelled against FireRed's (the atlas is placed for
+-- FireRed): Emerald's Pidgey hovers 16 px, its Bulbasaur sits 2 px higher, its backs differ too
+do
+  local frlg = { front = { [1] = 16, [16] = 13, [17] = 7 }, back = { [1] = 10, [16] = 8 }, elev = {} }
+  local em = { front = { [1] = 14, [16] = 13, [17] = 11 }, back = { [1] = 10, [16] = 6 },
+               elev = { [16] = 16 } }
+  local d = Atlas.gameCoordShift(frlg, em)
+  check(d.front[16] == 16, "Emerald's Pidgey is lowered by its 16 px hover (" .. tostring(d.front[16]) .. ")")
+  check(d.front[1] == 2, "a smaller Emerald offset is made up (Bulbasaur +2, " .. tostring(d.front[1]) .. ")")
+  check(d.front[17] == -4, "a larger one is taken back (Pidgeotto -4, " .. tostring(d.front[17]) .. ")")
+  check(d.back[16] == 2 and d.back[1] == nil, "backs by their own offset; equal ones are left alone")
+  check(next(Atlas.gameCoordShift(frlg, frlg).front) == nil, "FireRed itself: nothing moves")
+
+  local cell = { fs = 48, fy = -18 }
+  local _, _, oy0 = Atlas.frontLayout(cell)
+  local _, _, oy1, _, _, ymin, ymax = Atlas.frontLayout(cell, 16)
+  check(oy1 == oy0 + 16, "a front is lowered by its shift")
+  check(ymin <= oy1 and ymax >= oy1 + 48, "... inside a canvas that still holds the whole frame")
+  local back = { fs = 47, cx0 = 1, cy0 = 6, cx1 = 41, cy1 = 46, bfr = 46, bfl = 59 }
+  local _, _, b0 = Atlas.backLayout(back, true)
+  local _, _, b1 = Atlas.backLayout(back, true, nil, nil, 2)
+  check(b1 == b0 + 2, "a back is lowered by its shift")
+end
+
 print(string.format("%d/%d checks passed (atlas back layout)", passed, passed + failed))
 if failed > 0 then os.exit(1) end

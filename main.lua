@@ -91,6 +91,13 @@ return function(mod)
       return ui and ui.battleSpriteLayout == "rs"
     end)
     Atlas.backShift = (ok and rs) and 4 or 0
+    -- the atlas places feet against FireRed's per-species offsets: cancel this game's own
+    -- (Emerald's Pidgey hovers 16 px for its flying-pose art, the Gen 9 one stands)
+    local okC, shift = pcall(function()
+      local PicCoords = require("src.core.game3.battle.pic_coords")
+      return Atlas.gameCoordShift(PicCoords.FRLG, PicCoords.active())
+    end)
+    Atlas.coordShift = (okC and type(shift) == "table") and shift or { front = {}, back = {} }
   end
 
   mod.events:on("game.ready", function(ev)

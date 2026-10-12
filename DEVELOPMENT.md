@@ -48,6 +48,11 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   draw the player's pic 4 px higher; `Atlas.backShift` adds them back at runtime. A tall back is
   left to Gen 3 HD Sprites' Battle Fit. (`tools/back_framing.py` and `tools/back_fit.py`, the old
   cart framing, are no longer used by the build.)
+- Both are placed against FireRed / LeafGreen's per-species offsets (the engine's
+  `pic_coords.lua` FRLG tables). Ruby / Sapphire / Emerald have their own front / back offsets and
+  enemy elevations (Emerald's Pidgey hovers 16 px for its flying-pose art), so on game start
+  `main.lua` sets `Atlas.coordShift` from `Atlas.gameCoordShift(FRLG, active)` and every battle
+  pic is moved by its slot's difference. Empty on FireRed / LeafGreen.
 - Realism scaling (Gen 3 HD Sprites only, `Atlas.realism`, settings in `data/sprite_scale.lua`
   `realism`): each species' height `ht` (dm) is written to the index from the cart's Pokédex
   entries (`pokemon/pokedex/entries.lua`, keyed by engine slot) for Gen 1–3 and national_dex_gen3's

@@ -72,6 +72,35 @@ end
 -- which draw the player's pic 4 px higher than FireRed / LeafGreen / Emerald (set by main.lua)
 Atlas.backShift = 0
 
+-- px each slot's battle pic is lowered by on this game: tools/build_atlas.py places the feet
+-- against FireRed / LeafGreen's per-species offsets (pret gMonFront/BackPicCoords and
+-- gEnemyMonElevation), but Ruby / Sapphire / Emerald carry their own, Emerald's Pidgey hovering
+-- 16 px for its flying-pose art. Empty on FireRed / LeafGreen (set by main.lua)
+Atlas.coordShift = { front = {}, back = {} }
+
+--- The per-slot shifts that cancel the difference between this game's pic offsets and
+--- FireRed's: `frlg` and `active` are { front, back, elev } tables keyed by slot (the engine's
+--- PicCoords). A slot missing from a table counts as 0. Pure.
+function Atlas.gameCoordShift(frlg, active)
+  local out = { front = {}, back = {} }
+  if type(frlg) ~= "table" or type(active) ~= "table" or frlg == active then return out end
+  local function get(t, k, sp) return tonumber(type(t[k]) == "table" and t[k][sp]) or 0 end
+  local slots = {}
+  for _, t in ipairs({ frlg, active }) do
+    for _, k in ipairs({ "front", "back", "elev" }) do
+      for sp in pairs(type(t[k]) == "table" and t[k] or {}) do slots[sp] = true end
+    end
+  end
+  for sp in pairs(slots) do
+    -- the engine centres a front on base + offset - elevation, a back on base + offset
+    local df = (get(frlg, "front", sp) - get(frlg, "elev", sp)) - (get(active, "front", sp) - get(active, "elev", sp))
+    local db = get(frlg, "back", sp) - get(active, "back", sp)
+    if df ~= 0 then out.front[sp] = df end
+    if db ~= 0 then out.back[sp] = db end
+  end
+  return out
+end
+
 --- Where a back pic's frame goes in the PIC_BOX x PIC_BOX box: scale `s` and the
 --- frame's top-left (`ox`, `oy`), in box px, plus the canvas's extent `xmin`, `xmax`,
 --- `ymin`, `ymax` in box px (0 .. PIC_BOX unless `wide`). `cell` carries the
@@ -82,7 +111,7 @@ Atlas.backShift = 0
 --- also has `bt`, the box row its body's top sits on, and `bs`, the scale (1, 1.5 or 2) that
 --- brings its body to the cart's on-screen height: the body is then drawn at that scale with its
 --- top on row `bt`, and whatever runs below the box is what the battle GUI covers. Pure.
-function Atlas.backLayout(cell, wide, exact, force)
+function Atlas.backLayout(cell, wide, exact, force, dy)
   local fs = cell.fs or PIC_BOX
   local x0, y0 = cell.cx0 or 0, cell.cy0 or 0
   local x1, y1 = cell.cx1 or fs, cell.cy1 or fs
@@ -128,6 +157,7 @@ function Atlas.backLayout(cell, wide, exact, force)
     end
     oy = oy - BACK_RAISE
   end
+  oy = oy + (dy or 0)            -- this game's offset against FireRed's (Atlas.coordShift)
   -- centred on the creature
   local ox = (anchorX or PIC_BOX / 2) - s * (x0 + x1) / 2
   local xmin, xmax, ymin, ymax = 0, PIC_BOX, 0, PIC_BOX
@@ -180,9 +210,11 @@ Atlas._pivots, Atlas._installDrawWrap = pivots, installDrawWrap -- for the tests
 --- 1:1, bottom-centred on the pic box exactly as the fit-to-box layout anchors it, in
 --- a canvas that extends past the box (no shrinking, nothing cut off). Returns the same
 --- as backLayout: `s, ox, oy, xmin, xmax, ymin, ymax`. Pure.
-function Atlas.frontLayout(cell)
+function Atlas.frontLayout(cell, dy)
   local fs = cell.fs or PIC_BOX
-  local drop = cell.fy or 0       -- a species drawn lower than its frame's bottom edge puts it
+  -- a species drawn lower than its frame's bottom edge puts it, plus this game's offset
+  -- against FireRed's (Atlas.coordShift)
+  local drop = (cell.fy or 0) + (dy or 0)
   local ox, oy = (PIC_BOX - fs) / 2, PIC_BOX - fs + drop
   local m = BACK_WIDE_MAX
   local xmin = math.max(-m, math.min(0, math.floor(ox)))
@@ -393,8 +425,10 @@ function Atlas.new(mod, load)
     -- window's resolution, so the canvas only has to be the low-res stand-in
     local hd = big and self.hd and self.hd.enabled("battle") and self.hd or nil
     local dexHd = not big and kind == "dex" and self.hd and self.hd.enabled("dex") and self.hd or nil
+    -- battle pics sit by this game's offsets against FireRed's (Atlas.coordShift)
+    local gdy = big and Atlas.coordShift[isBack and "back" or "front"][dex] or nil
     local key = tostring(dex) .. ":" .. variant .. ":" .. f
-      .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "")
+      .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "") .. (gdy and ":" .. gdy or "")
     local hit = self.frames[key]
     if hit then return hit end
     local img = page(string.format("battle_%s_%s", variant, cell.sheet))
@@ -425,21 +459,21 @@ function Atlas.new(mod, load)
         -- brought to its own front art's size, so a Pokemon is the same size from both sides)
         local bn = 1
         if realismCfg.on ~= false and realismCfg.match_backs ~= false then bn = tonumber(cell.bn) or 1 end
-        ls, ox, oy = Atlas.backLayout(cell, true, true, (tonumber(own.back) or 1) * real * bn)
+        ls, ox, oy = Atlas.backLayout(cell, true, true, (tonumber(own.back) or 1) * real * bn, gdy)
       else
-        ls, ox, oy = Atlas.frontLayout(cell)
+        ls, ox, oy = Atlas.frontLayout(cell, gdy)
       end
       s = ls / (w / fw)
     elseif not isBack and battle and BACK_WIDE and installDrawWrap() then
       local ls
-      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout(cell)
+      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.frontLayout(cell, gdy)
       s = ls / (w / fw)
     elseif isBack then
       -- a close-up at full size, cropped at the bottom (Atlas.backLayout); the layout
       -- is in source px, and `src` may be a reduced copy of the frame
       local ls
       wide = BACK_WIDE and installDrawWrap()
-      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(cell, wide)
+      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(cell, wide, nil, nil, gdy)
       s = ls / (w / fw)
     else
       s = math.min(1, PIC_BOX / w, PIC_BOX / h)
