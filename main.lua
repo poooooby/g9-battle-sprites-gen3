@@ -3,8 +3,8 @@
 -- FireRed, LeafGreen, Ruby, Sapphire and Emerald.
 --
 -- Everything is drawn from the atlases in assets/atlas/ (built by
--- tools/build_atlas.py). The game's own party icons for #1-386 are kept, and so are
--- Unown's letters and a Castform in its weather forms.
+-- tools/build_atlas.py). The game's own party icons for #1-386 are kept, and so is a
+-- Castform in its weather forms. Unown's letters have a sheet each, at the cart's letter slots.
 --
 -- Module map:
 --   src/atlas.lua  reads the atlases, renders animation frames, builds icons

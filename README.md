@@ -59,8 +59,8 @@ None. Install it and every battle uses the new sprites.
 
 ## 📌 Good to Know
 
-- Unown's letters and Castform's weather looks keep the game's own sprites, and so do the
-  party icons of #1–386.
+- 🔤 Every one of Unown's 28 letters, A to Z plus ! and ?, has its own animated sprite.
+- Castform's weather looks keep the game's own sprites, and so do the party icons of #1–386.
 - Sinistea's, Polteageist's, Poltchageist's and Sinistcha's rare variants look like the normal
   ones (no art exists for them). Pumpkaboo's and Gourgeist's sizes share one party icon each.
 - Not included: Tera crystals, Dynamax clouds and battle shadows.

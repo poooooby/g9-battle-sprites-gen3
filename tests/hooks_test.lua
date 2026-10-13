@@ -1,6 +1,6 @@
 -- Headless check of the slot gate in src/hooks.lua: the slots the atlas has art for (Gen 1-3
 -- at their internal ids, #387-1025 and the forms above them) reach the atlas, everything else
--- (Unown's letters, the Egg) reaches the engine's own functions untouched, and a second install
+-- (here a fake without Unown's letters, and the Egg) reaches the engine's own functions untouched, and a second install
 -- must not stack wrappers. Run from the mod root:
 --   luajit tests/hooks_test.lua
 local Hooks = dofile("src/hooks.lua")

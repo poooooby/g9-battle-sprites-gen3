@@ -3,7 +3,8 @@
 -- The atlas index (data/atlas_index.lua) says which slots have art: Gen 1-3 (#1-386) at
 -- their own internal slots, the species national_dex_gen3 registers (#387-1025 at slot
 -- dex + 64) and its alternate forms (WORMADAM_SANDY, ...) at slots of their own above
--- that. Every other slot (Unown's letters, the Egg ...) falls through to the engine's own
+-- that, and Unown's letters at the cart's letter slots (B .. ? at 413 .. 439). Every other
+-- slot (the Egg ...) falls through to the engine's own
 -- functions, as does a Castform in one of its weather forms (the pic call carries `form`).
 --
 --   Pokemon.frontPic  battle (enemy), Pokedex front, party summary

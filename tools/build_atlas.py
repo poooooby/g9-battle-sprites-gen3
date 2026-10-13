@@ -131,10 +131,20 @@ def read_heights(payload: Path, gen3_data: Path, slots: dict[str, int]) -> dict[
 # Gen 1-3 (#1-386) are not in national_dex_gen3's payload: they are the game's own species.
 # Their names and the National Dex number of each internal species id come from the engine's
 # extracted pokemon data (names.lua, national.lua), and their atlas slot is the internal id.
-# Unown (#201) is left out: the engine draws its 28 letter forms as separate species and the
-# pack has a single UNOWN sheet, so animating it would turn every letter into the same one.
+# Unown (#201) is drawn by the engine at one slot per letter (Pokemon.monPicSpecies): A at its
+# own slot 201, B .. Z at SPECIES_UNOWN_B 413 .. 437, ! at 438 and ? at 439. national_dex_gen3
+# keeps those cart slots (it only answers Unown's name for them). The pack has a sheet per
+# letter, UNOWN (A) then UNOWN_1 .. UNOWN_27, in the order A .. Z, ?, ! (checked by eye: its
+# _26 is the question mark, _27 the exclamation mark), so the last two swap.
 GEN3_LAST_DEX = 386
-GEN3_SKIP = {201}
+GEN3_SKIP: set[int] = set()
+UNOWN_DEX = 201
+UNOWN_LETTERS = (
+    [(f"UNOWN_{chr(ord('B') + n)}", f"UNOWN_{n + 1}", 413 + n) for n in range(25)]
+    + [("UNOWN_EMARK", "UNOWN_27", 438), ("UNOWN_QMARK", "UNOWN_26", 439)]
+)
+STEM_OVERRIDES.update({sid: stem for sid, stem, _slot in UNOWN_LETTERS})
+UNOWN_LETTER_IDS = {sid for sid, _stem, _slot in UNOWN_LETTERS}
 
 
 def gen3_id(name: str) -> str:
@@ -157,6 +167,8 @@ def read_gen3_species(data: Path) -> list[tuple[int, str, int]]:
     if len({d for d, _i, _s in rows}) != GEN3_LAST_DEX - len(GEN3_SKIP):
         raise SystemExit(f"{data} lists {len(rows)} species in #1-{GEN3_LAST_DEX}, expected "
                          f"{GEN3_LAST_DEX - len(GEN3_SKIP)}")
+    # Unown's other letters, at the cart's letter slots (A is UNOWN itself, at 201)
+    rows += [(UNOWN_DEX, sid, slot) for sid, _stem, slot in UNOWN_LETTERS]
     return rows
 
 
@@ -792,7 +804,9 @@ def main() -> None:
     back_lines = {sid: BACK_FEET_ROW - yo.get(slot, 0) for sid, slot in slot_of.items()}
     build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, back_lines)
     build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
-    build_dex_fronts(args.dex_ref, [(d, s) for d, s in classic + species if s not in FEMALE_SHEETS],
+    # the Pokedex shows Unown as A (slot 201): its other letters have no cart-style Pokedex pic
+    build_dex_fronts(args.dex_ref, [(d, s) for d, s in classic + species
+                                    if s not in FEMALE_SHEETS and s not in UNOWN_LETTER_IDS],
                      out_atlas, index)
     # a form with no sheet or icon of its own in the pack reuses its base's
     reused = 0
@@ -808,6 +822,7 @@ def main() -> None:
     heights = read_heights(args.payload, args.gen3_data, slots)
     base_of = {fid: base for _dex, fid, _slot, base in forms}
     base_of.update(FEMALE_SHEETS)
+    base_of.update({sid: "UNOWN" for sid in UNOWN_LETTER_IDS})
     no_height = []
     for sid, entry in index.items():
         ht = heights.get(sid) or heights.get(base_of.get(sid, ""))
