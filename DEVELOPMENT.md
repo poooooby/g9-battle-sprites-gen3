@@ -4,9 +4,10 @@ For contributors. Players only need the [README](README.md).
 
 ## Assets
 
-Everything ships in `assets/atlas/`. No page is larger than 4096×4096, the texture limit on
-many Android GPUs (a larger image fails to load there and the engine shows a red missing-pic
-box).
+`tools/build_atlas.py` writes the pages in `assets/atlas/`. No page is larger than 4096×4096, the
+texture limit on many Android GPUs (a larger image fails to load there and the engine shows a red
+missing-pic box). The battle pages are build input only: what ships is their colour-number form
+(below), and `tools/build_dist.py` keeps them out of the package.
 
 - `battle_<variant>_<n>.png`: four variants (`front`, `front_shiny`, `back`, `back_shiny`),
   several pages each. A page holds blocks of uniform `fs × fs` cells; a species' frames sit in
@@ -28,6 +29,31 @@ python tools/build_atlas.py --sheets <DBK pack>/assets \
     --payload ../national_dex_gen3/data/species \
     --dbk <dbk_data.lua> --icons <icon_data.lua> --icon-atlas <party_icons.png>
 ```
+
+Then pack the battle pages as colour numbers (what the game draws from):
+
+```bash
+python tools/build_numbers.py           # -> assets/numbers/ + data/numbers_index.lua (~1 min)
+python tools/build_dist.py              # refuses to pack while they are older than the pages
+```
+
+A battle sprite uses few colours (at most ~130 normal/shiny pairs, usually ~15), and its shiny is
+the same animation recoloured. So each species' front (and back) animation, normal and shiny
+together, is stored once as a greyscale strip of colour numbers (`assets/numbers/num_<n>.png`, the
+number in red), each number one (normal, shiny) colour pair; the real colours are one row per
+variant of `assets/numbers/palette.png`. `data/numbers_index.lua` maps each cell of
+`data/atlas_index.lua` (`"<variant>:<sheet>:<start>:<ox>:<oy>"`) to `{ shard, y, w, h, palette row }`
+and records the pages' SHA-256 for `--check`. The tool decodes every block back and compares it with
+its page before writing. ~44 MB shipped instead of ~100 MB of pages.
+
+`src/atlas.lua` rebuilds a species' block the first time it is drawn: the strip is cut from its
+shard, laid out as a grid of frames (`Atlas.blockCols`, about square, so no side passes 4096 px),
+and decoded on the GPU (a palette shader drawn into a canvas, written as-is). Once per session the
+GPU's result is compared with the exact CPU decode (`Atlas._expand`); if they differ the CPU decodes
+from then on. 24 blocks and 3 decoded shards are kept (least recently used dropped). Measured in a
+real Emerald battle: battle start +39 MB of VRAM instead of +151 MB, and 30 more species in 0.3 s
+and +69 MB instead of 8 s and +2.3 GB (each whole page used to stay loaded). Without
+`data/numbers_index.lua` the pages are read as before.
 
 Output is deterministic: the same inputs give identical bytes. Supporting tools:
 

@@ -25,20 +25,32 @@ BEGIN = "# dist/ (managed by tools/build_dist.py; do not edit)"
 END = "# end dist/"
 
 
-def sync_modkitignore() -> None:
-    """Lists every file under dist/ in a managed block of .modkitignore."""
-    text = IGNORE.read_text(encoding="utf-8") if IGNORE.exists() else ""
-    lines = text.splitlines()
-    if BEGIN in lines:
-        start = lines.index(BEGIN)
-        stop = lines.index(END, start) if END in lines[start:] else len(lines) - 1
+# The battle pages are build input only: the game draws battle pics from their colour-number
+# form (assets/numbers/, tools/build_numbers.py), so the package leaves them out.
+PAGES_BEGIN = "# battle pages: shipped as assets/numbers/ (managed by tools/build_dist.py; do not edit)"
+PAGES_END = "# end battle pages"
+
+
+def _replace_block(lines: list[str], begin: str, end: str, files: list[str]) -> list[str]:
+    if begin in lines:
+        start = lines.index(begin)
+        stop = lines.index(end, start) if end in lines[start:] else len(lines) - 1
         lines = lines[:start] + lines[stop + 1:]
     while lines and lines[-1] == "":
         lines.pop()
+    return lines + ["", begin, *files, end]
+
+
+def sync_modkitignore() -> None:
+    """Lists every file under dist/, and every battle page, in managed blocks of .modkitignore."""
+    text = IGNORE.read_text(encoding="utf-8") if IGNORE.exists() else ""
+    lines = text.splitlines()
+    pages = sorted(p.relative_to(ROOT).as_posix() for p in (ROOT / "assets" / "atlas").glob("battle_*.png"))
+    lines = _replace_block(lines, PAGES_BEGIN, PAGES_END, pages)
     files = sorted(p.relative_to(ROOT).as_posix() for p in DIST.rglob("*") if p.is_file()) \
         if DIST.is_dir() else []
-    lines += ["", BEGIN, *files, END, ""]
-    IGNORE.write_text("\n".join(lines), encoding="utf-8")
+    lines = _replace_block(lines, BEGIN, END, files)
+    IGNORE.write_text("\n".join(lines + [""]), encoding="utf-8")
 
 
 def main() -> int:
@@ -49,6 +61,10 @@ def main() -> int:
     if not modkit.exists():
         print(f"modkit not found at {modkit}", file=sys.stderr)
         return 1
+    # the package ships the colour-number form of the pages: it must match them
+    numbers = subprocess.run([sys.executable, str(ROOT / "tools" / "build_numbers.py"), "--check"])
+    if numbers.returncode != 0:
+        return numbers.returncode
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
     version = manifest["version"]
     DIST.mkdir(exist_ok=True)

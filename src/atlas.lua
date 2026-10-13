@@ -224,6 +224,48 @@ function Atlas.frontLayout(cell, dy)
   return 1, ox, oy, xmin, xmax, ymin, ymax
 end
 
+-- ------- colour numbers (tools/build_numbers.py) ------------------------------------------
+-- The battle art ships as colour numbers: each species' animation (normal + shiny) once, as a
+-- greyscale strip of numbers in a shard (assets/numbers/num_<n>.png, the number in red), its real
+-- colours one row of assets/numbers/palette.png. A species' block is rebuilt when it is first
+-- drawn, laid out as a grid of frames (a strip of 100+ frames would pass the texture limit), so
+-- only what is on screen is in memory -- not whole 4032x4032 pages.
+local BLOCK_CAP = 24        -- species blocks kept at once (least recently used dropped first)
+local SHARD_CAP = 3         -- decoded number shards kept at once
+
+--- The exact RGBA bytes of a `count`-pixel image from its decoded number pixels (`numbers`,
+--- RGBA bytes, number in red) and its palette row (`row`, 4 bytes per colour). Pure.
+function Atlas._expand(numbers, count, row)
+  local byte, sub = string.byte, string.sub
+  local colours = {}
+  for i = 0, math.floor(#row / 4) - 1 do colours[i] = sub(row, i * 4 + 1, i * 4 + 4) end
+  local out = {}
+  local transparent = "\0\0\0\0"
+  for i = 1, count do out[i] = colours[byte(numbers, i * 4 - 3)] or transparent end
+  return table.concat(out)
+end
+
+--- Columns of the grid a block of `frames` frames, `fs` px square, is laid out in: about square,
+--- so no side passes the texture limit (182 px x 172 frames -> 14 x 13). Pure.
+function Atlas.blockCols(frames)
+  return math.max(1, math.ceil(math.sqrt(math.max(1, frames or 1))))
+end
+
+--- The key of a cell in the numbers index (tools/build_numbers.py cell_key). Pure.
+function Atlas.blockKey(variant, cell)
+  return string.format("%s:%d:%d:%d:%d", variant, cell.sheet or 0, cell.start or 0, cell.ox or 0, cell.oy or 0)
+end
+
+-- the palette lookup done on the GPU: number (red) -> column of a one-row palette image
+local DECODE_SHADER = [[
+extern Image pal;
+extern number palW;
+vec4 effect(vec4 color, Image tex, vec2 tc, vec2 sc) {
+  number n = floor(Texel(tex, tc).r * 255.0 + 0.5);
+  return Texel(pal, vec2((n + 0.5) / palW, 0.5));
+}
+]]
+
 local function loadIndex(load)
   local index = load("data/atlas_index.lua")
   if type(index) ~= "table" or type(index.species) ~= "table" then return nil end
@@ -307,6 +349,165 @@ function Atlas.new(mod, load)
     end
     return nil
   end
+
+  -- Colour numbers (see the section above Atlas.new). Without the index (an older build, the
+  -- tests) every battle pic is read from the pages as before.
+  local numbers
+  do
+    local ok, t = pcall(load, "data/numbers_index.lua")
+    if ok and type(t) == "table" and type(t.blocks) == "table" and type(t.shards) == "table"
+      and type(t.palette) == "table" then
+      numbers = t
+    end
+  end
+  self.numbers = numbers ~= nil
+  local blocks, blockOrder = {}, {}
+  local shardData, shardOrder = {}, {}
+  local paletteData             -- palette.png as ImageData (false: unusable)
+  local decodeShader            -- nil = not tried, false = unavailable, else the Shader
+  local gpuTrusted              -- nil = not checked yet, true / false after the self-check
+
+  local function numbersPath(name) return mod.path .. "/assets/numbers/" .. name .. ".png" end
+
+  local function shard(n)
+    local hit = shardData[n]
+    if hit then return hit end
+    local meta = numbers.shards[n + 1]
+    if type(meta) ~= "table" then return nil end
+    local ok, data = pcall(love.image.newImageData, numbersPath(meta.file))
+    if not ok or not data then return nil end
+    shardData[n] = data
+    shardOrder[#shardOrder + 1] = n
+    if #shardOrder > SHARD_CAP then shardData[table.remove(shardOrder, 1)] = nil end
+    return data
+  end
+
+  local function paletteRow(row)
+    if paletteData == nil then
+      local ok, data = pcall(love.image.newImageData, numbersPath(numbers.palette.file))
+      paletteData = ok and data or false
+    end
+    if not paletteData then return nil end
+    local w = numbers.palette.w
+    local p = love.image.newImageData(w, 1)
+    p:paste(paletteData, 0, 0, 0, row, w, 1)
+    return p
+  end
+
+  -- the strip (frames stacked) laid out as a grid of `cols` columns
+  local function grid(stripData, fs, frames, cols)
+    local rows = math.ceil(frames / cols)
+    local g = love.image.newImageData(cols * fs, rows * fs)
+    for f = 0, frames - 1 do
+      g:paste(stripData, (f % cols) * fs, math.floor(f / cols) * fs, 0, f * fs, fs, fs)
+    end
+    return g
+  end
+
+  -- CPU decode: the exact colours as ImageData
+  local function decodeCpu(numberGrid, pal)
+    local w, h = numberGrid:getDimensions()
+    return love.image.newImageData(w, h, "rgba8", Atlas._expand(numberGrid:getString(), w * h, pal:getString()))
+  end
+
+  -- GPU decode: the numbers drawn through the palette shader into a canvas (no per-pixel Lua)
+  local function decodeGpu(numberGrid, pal)
+    if decodeShader == nil then
+      local ok, sh = pcall(love.graphics.newShader, DECODE_SHADER)
+      decodeShader = ok and sh or false
+    end
+    if not decodeShader then return nil end
+    local ok, canvas = pcall(function()
+      local nimg = love.graphics.newImage(numberGrid)
+      nimg:setFilter("nearest", "nearest")
+      local pimg = love.graphics.newImage(pal)
+      pimg:setFilter("nearest", "nearest")
+      local c = love.graphics.newCanvas(numberGrid:getWidth(), numberGrid:getHeight())
+      local G = love.graphics
+      G.push("all")
+      local okDraw, err = pcall(function()
+        G.origin()
+        if G.setScissor then G.setScissor() end
+        G.setCanvas(c)
+        G.clear(0, 0, 0, 0)
+        G.setColor(1, 1, 1, 1)
+        G.setBlendMode("replace", "premultiplied")  -- write the palette's bytes as they are
+        G.setShader(decodeShader)
+        decodeShader:send("pal", pimg)
+        decodeShader:send("palW", pal:getWidth())
+        G.draw(nimg, 0, 0)
+      end)
+      G.pop()
+      nimg:release()
+      pimg:release()
+      if not okDraw then error(err, 0) end
+      return c
+    end)
+    return ok and canvas or nil
+  end
+
+  -- The texture holding every frame of the cell (a grid of `cols` columns) and `cols`, or nil.
+  local function block(variant, cell)
+    local key = Atlas.blockKey(variant, cell)
+    local hit = blocks[key]
+    if hit then return hit.tex, hit.cols end
+    local b = numbers.blocks[key]
+    if type(b) ~= "table" then return nil end
+    local data = shard(b[1])
+    if not data then return nil end
+    local fs, frames = cell.fs, cell.frames or 1
+    local ok, tex, cols = pcall(function()
+      local stripData = love.image.newImageData(b[3], b[4])
+      stripData:paste(data, 0, 0, 0, b[2], b[3], b[4])
+      local c = Atlas.blockCols(frames)
+      local numberGrid = grid(stripData, fs, frames, c)
+      local pal = paletteRow(b[5])
+      if not pal then return nil end
+      local t
+      if gpuTrusted ~= false then
+        t = decodeGpu(numberGrid, pal)
+        if t and gpuTrusted == nil then
+          -- once per session: the GPU's result must be the exact colours, else the CPU does it
+          local want = decodeCpu(numberGrid, pal)
+          gpuTrusted = t:newImageData():getString() == want:getString()
+          if not gpuTrusted then
+            if mod.log then mod.log:warn("GPU colour decode is not exact on this device; decoding on the CPU") end
+            t = love.graphics.newImage(want)
+          end
+        elseif not t then
+          gpuTrusted = false
+        end
+      end
+      if not t then t = love.graphics.newImage(decodeCpu(numberGrid, pal)) end
+      return t, c
+    end)
+    if not ok or not tex then
+      if mod.log and not ok then mod.log:warn("could not build the pic block %s: %s", key, tostring(tex)) end
+      return nil
+    end
+    -- dropped, not released, when the cache is full: a pic canvas or an HD tag may still draw it
+    blocks[key] = { tex = tex, cols = cols }
+    blockOrder[#blockOrder + 1] = key
+    if #blockOrder > BLOCK_CAP then blocks[table.remove(blockOrder, 1)] = nil end
+    return tex, cols
+  end
+
+  --- Where frame `f` of the cell is drawn from: the texture and the frame's top-left in it.
+  local function frameSource(variant, cell, f)
+    local fs = cell.fs
+    if numbers then
+      local tex, cols = block(variant, cell)
+      if tex then return tex, (f % cols) * fs, math.floor(f / cols) * fs end
+    end
+    local img = page(string.format("battle_%s_%s", variant, cell.sheet))
+    if not img then return nil end
+    -- frame n of a species is cell start + n; cells are fs x fs, cols per row,
+    -- in a block whose corner is (ox, oy) on the page
+    local idx = (cell.start or 0) + f
+    local cols = cell.cols or 1
+    return img, (cell.ox or 0) + (idx % cols) * fs, (cell.oy or 0) + math.floor(idx / cols) * fs
+  end
+  self._frameSource = frameSource -- for the tests and tools
 
   local function remember(key, canvas)
     self.frames[key] = canvas
@@ -431,16 +632,10 @@ function Atlas.new(mod, load)
       .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "") .. (gdy and ":" .. gdy or "")
     local hit = self.frames[key]
     if hit then return hit end
-    local img = page(string.format("battle_%s_%s", variant, cell.sheet))
+    local img, qx, qy = frameSource(variant, cell, f)
     if not img then return nil end
     local fs = cell.fs
-    -- frame n of a species is cell start + n; cells are fs x fs, cols per row,
-    -- in a block whose corner is (ox, oy) on the page
-    local idx = (cell.start or 0) + f
-    local cols = cell.cols or 1
-    local quad = love.graphics.newQuad((cell.ox or 0) + (idx % cols) * fs,
-      (cell.oy or 0) + math.floor(idx / cols) * fs,
-      fs, fs, img:getDimensions())
+    local quad = love.graphics.newQuad(qx, qy, fs, fs, img:getDimensions())
     local fw, fh = fs, fs
     local src, sq, w, h, temps = reduce(img, quad, fw, fh)
     if not src then return nil end
