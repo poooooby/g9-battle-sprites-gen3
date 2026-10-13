@@ -9,6 +9,7 @@
 --   Pokemon.frontPic  battle (enemy), Pokedex front, party summary
 --   Pokemon.backPic   battle (player)
 --   Pokemon.icon      party list icon (and any other 16x16 icon user)
+--   MonAnim.framePic  the cart's frame-1 art mid entry animation (RSE): ours keep their pic
 
 local Hooks = {}
 
@@ -97,7 +98,8 @@ Hooks._ours = ours
 -- Installs the wrappers over whatever the engine currently has. Safe to call
 -- again after a reload: a function that is already ours is left alone.
 -- Returns the number of functions wrapped.
---- `Battle` is the engine's battle module (looked up when nil).
+--- `Battle` is the engine's battle module and `MonAnim` its entry-animation module (each
+--- looked up when nil).
 --- Wrap the RSE Pokedex's draws (the module's and its stack Host's: national_dex_gen3 swaps in
 --- a copy whose Host.draw calls the copy's own draw) so each frame first redraws the live
 --- entry pics. Safe to call often: a draw already wrapped is left alone.
@@ -160,7 +162,7 @@ function Hooks.fit(entry)
   return { image = hit, w = w, h = h }
 end
 
-function Hooks.install(Pokemon, atlas, Battle)
+function Hooks.install(Pokemon, atlas, Battle, MonAnim)
   if type(Pokemon) ~= "table" then return 0 end
   local wrapped = 0
 
@@ -241,6 +243,24 @@ function Hooks.install(Pokemon, atlas, Battle)
       return origIcon(species)
     end
     ours[Pokemon.icon] = true
+    wrapped = wrapped + 1
+  end
+
+  -- Ruby / Sapphire / Emerald play the cart's entry animation as a Pokemon comes out, and on
+  -- its second frame the battle draws the cart's own frame-1 art (MonAnim.framePic) in place of
+  -- the pic. For a species with atlas art that flashed the old sprite (its palette, size and
+  -- pose) mid-intro; answering nil keeps our animated pic, still moved by the cart's motion.
+  if MonAnim == nil and type(require) == "function" then
+    local ok, mod = pcall(require, "src.core.game3.mon_anim")
+    MonAnim = ok and type(mod) == "table" and mod or nil
+  end
+  local origFrame = type(MonAnim) == "table" and MonAnim.framePic
+  if type(origFrame) == "function" and not ours[origFrame] then
+    MonAnim.framePic = function(species, frame, shiny, ...)
+      if slotOf(atlas, species) then return nil end
+      return origFrame(species, frame, shiny, ...)
+    end
+    ours[MonAnim.framePic] = true
     wrapped = wrapped + 1
   end
 

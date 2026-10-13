@@ -127,6 +127,22 @@ do
   Pokemon = P2
 end
 
+-- the RSE entry animation: on its frame 1 the battle asks MonAnim.framePic for the cart's own
+-- art; a species with atlas art answers nil (its pic stays), the rest keep the cart's frame
+do
+  local function cartFrame(species, frame) return { cart = species, frame = frame } end
+  local MonAnim = { framePic = cartFrame }
+  local P4 = { frontPic = origFront, backPic = origBack, icon = origIcon }
+  local n4 = Hooks.install(P4, atlas, false, MonAnim)
+  check(n4 == 4, "framePic is wrapped too, got " .. tostring(n4))
+  check(MonAnim.framePic(16, 1, false) == nil, "Pidgey (16) mid-intro keeps our pic, not the cart's frame")
+  check(MonAnim.framePic(451, 1, true) == nil, "...a new species too")
+  check(MonAnim.framePic(201, 1, false).cart == 201, "Unown (no atlas art) keeps the cart's frame")
+  local wrappedFrame = MonAnim.framePic
+  Hooks.install(P4, atlas, false, MonAnim)
+  check(MonAnim.framePic == wrappedFrame, "a second install leaves framePic's wrapper alone")
+end
+
 -- a second install (a reload) must not wrap the wrappers
 local before = Pokemon.frontPic
 Hooks.install(Pokemon, atlas)

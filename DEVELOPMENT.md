@@ -53,6 +53,12 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   enemy elevations (Emerald's Pidgey hovers 16 px for its flying-pose art), so on game start
   `main.lua` sets `Atlas.coordShift` from `Atlas.gameCoordShift(FRLG, active)` and every battle
   pic is moved by its slot's difference. Empty on FireRed / LeafGreen.
+- Ruby / Sapphire / Emerald play the cart's entry animation as a Pokémon comes out; on its
+  frame 1 the battle draws the cart's own art (`MonAnim.framePic`) in place of the pic.
+  `src/hooks.lua` answers nil there for every slot with atlas art, so our animated pic stays
+  (the cart's motion and colour flashes still apply to it).
+- Pics are canvases made at the box's own size with `dpiscale` (LÖVE 11 sizes them in
+  DPI-scaled units), so a host that fits a pic by `getDimensions` sees 64×64.
 - Realism scaling (Gen 3 HD Sprites only, `Atlas.realism`, settings in `data/sprite_scale.lua`
   `realism`): each species' height `ht` (dm) is written to the index from the cart's Pokédex
   entries (`pokemon/pokedex/entries.lua`, keyed by engine slot) for Gen 1–3 and national_dex_gen3's
