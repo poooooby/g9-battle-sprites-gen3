@@ -89,6 +89,16 @@ do
   local atlas = newAtlas()                            -- no library
   local c = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false, "dex")
   check(c ~= nil, "no library: the plain pic")
+  -- newCanvas sizes are in DPI-scaled units: a pic reports the 64x64 box (more pixels behind it),
+  -- else a host that fits it by its size (Kanto Gear's party) draws it a quarter size
+  local w, h = c:getDimensions()
+  check(w == 64 and h == 64, "a plain pic reports the 64x64 box (" .. w .. "x" .. h .. ")")
+  local b = atlas.picFrame(452, "front", atlas.cell(452, "front"), 0, true)
+  local bw, bh = b:getDimensions()
+  check(bw == 64 and bh == 64, "a battle pic that fits the box reports it too (" .. bw .. "x" .. bh .. ")")
+  local live = atlas.livePic(451, "front", atlas.cell(451, "front"))
+  local lw = live and live:getDimensions()
+  check(lw == 64, "a live Pokedex canvas reports the box (" .. tostring(lw) .. ")")
 end
 
 -- the RSE entry page keeps the image it is given: a live canvas that follows the frame
