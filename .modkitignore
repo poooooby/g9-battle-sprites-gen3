@@ -34,6 +34,14 @@ tests/realism_test.lua
 
 
 
+
+
+
+
+
+
+
+
 # battle pages: shipped as assets/numbers/ (managed by tools/build_dist.py; do not edit)
 assets/atlas/battle_back_0.png
 assets/atlas/battle_back_1.png
@@ -127,4 +135,6 @@ assets/atlas/battle_front_shiny_9.png
 dist/g9-battle-sprites-gen3-1.4.1.zip
 dist/g9-battle-sprites-gen3-1.5.0.zip
 dist/g9-battle-sprites-gen3-1.5.2.zip
+dist/g9-battle-sprites-gen3-1.5.3-beta.1.zip
+dist/g9-battle-sprites-gen3-1.5.3.zip
 # end dist/
