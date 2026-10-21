@@ -31,6 +31,12 @@ CLAUDE.md
 
 tests/realism_test.lua
 
+.claude/skills/lua-developer/SKILL.md
+
+
+
+
+
 
 
 
@@ -137,4 +143,5 @@ dist/g9-battle-sprites-gen3-1.5.0.zip
 dist/g9-battle-sprites-gen3-1.5.2.zip
 dist/g9-battle-sprites-gen3-1.5.3-beta.1.zip
 dist/g9-battle-sprites-gen3-1.5.3.zip
+dist/g9-battle-sprites-gen3-1.5.4.zip
 # end dist/
