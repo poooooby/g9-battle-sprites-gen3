@@ -143,6 +143,25 @@ do
   check(MonAnim.framePic == wrappedFrame, "a second install leaves framePic's wrapper alone")
 end
 
+-- gen1recomp 0.3.95+ passes more than the old arguments (backPic's `kind`, and the Pokemon to
+-- both): a pic that is not ours hands them on to the engine untouched
+do
+  local got = {}
+  local P5 = {
+    frontPic = function(...) got.front = { n = select("#", ...), ... } return { orig = "front" } end,
+    backPic = function(...) got.back = { n = select("#", ...), ... } return { orig = "back" } end,
+    icon = origIcon,
+  }
+  Hooks.install(P5, atlas, false, false)
+  local mon = { species = 412 }
+  P5.frontPic(412, 0, true, 7, "summary", mon)
+  check(got.front and got.front.n == 6 and got.front[5] == "summary" and got.front[6] == mon,
+    "frontPic falls through with kind and the Pokemon")
+  P5.backPic(412, 0, true, "battle", mon)
+  check(got.back and got.back.n == 5 and got.back[4] == "battle" and got.back[5] == mon,
+    "backPic falls through with kind and the Pokemon")
+end
+
 -- a second install (a reload) must not wrap the wrappers
 local before = Pokemon.frontPic
 Hooks.install(Pokemon, atlas)

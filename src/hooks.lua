@@ -192,7 +192,9 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
 
   local origFront = Pokemon.frontPic
   if type(origFront) == "function" and not ours[origFront] then
-    Pokemon.frontPic = function(species, form, shiny, personality, kind)
+    -- `...`: whatever else the engine passes (gen1recomp 0.3.95+: the Pokemon itself), handed on
+    -- untouched to the engine's own function when a pic is not ours
+    Pokemon.frontPic = function(species, form, shiny, personality, kind, ...)
       local rsePage = kind == "dex" and Hooks._rseDexPage() or nil
       if rsePage == "list" then
         -- the RSE Pokedex wheel: one still frame, the cart's own front pic (else the party icon's)
@@ -200,7 +202,7 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
         local canvas = key and ((atlas.dexPic and atlas.dexPic(key, 0))
           or (atlas.iconPic and atlas.iconPic(key)))
         if canvas then return { image = canvas, w = 64, h = 64 } end
-        return origFront(species, form, shiny, personality, kind)
+        return origFront(species, form, shiny, personality, kind, ...)
       elseif rsePage == "page" and not inForm(form) and atlas.livePic then
         -- an RSE entry keeps the image it is given: a live canvas, so it animates (the cart's
         -- two frames, else the battle sheet)
@@ -216,7 +218,7 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
         and picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, inBattle(), kind)
       if entry and Hooks.inEditor and kind == nil then return Hooks.fit(entry) end
       if entry then return entry end
-      return origFront(species, form, shiny, personality, kind)
+      return origFront(species, form, shiny, personality, kind, ...)
     end
     ours[Pokemon.frontPic] = true
     -- the engine keeps an alias to the same function
@@ -226,10 +228,11 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
 
   local origBack = Pokemon.backPic
   if type(origBack) == "function" and not ours[origBack] then
-    Pokemon.backPic = function(species, form, shiny)
+    -- `...`: the engine's `kind` and the Pokemon (gen1recomp 0.3.95+), handed on untouched
+    Pokemon.backPic = function(species, form, shiny, ...)
       local entry = not inForm(form) and picFor(atlas, "back", slotOf(atlas, species), shiny)
       if entry then return entry end
-      return origBack(species, form, shiny)
+      return origBack(species, form, shiny, ...)
     end
     ours[Pokemon.backPic] = true
     wrapped = wrapped + 1

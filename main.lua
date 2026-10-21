@@ -37,10 +37,15 @@ return function(mod)
   if not (Hooks and Api and Atlas) then return end
 
   -- national_dex_gen3 is optional: without it the species slots are simply
-  -- never asked for, and the hooks answer nothing.
-  local dex = mod:find("national_dex_gen3")
-  if not dex then
-    mod.log:info("national_dex_gen3 is not installed -- only species #1-386 to draw")
+  -- never asked for, and the hooks answer nothing. Checked once every mod has loaded
+  -- (game.ready): national_dex_gen3 lists this mod as optional, so it loads after it.
+  local dexChecked = false
+  local function checkDex()
+    if dexChecked then return end
+    dexChecked = true
+    if not mod:find("national_dex_gen3") then
+      mod.log:info("national_dex_gen3 is not installed -- only species #1-386 to draw")
+    end
   end
   local atlas = nil
   local function install(game)
@@ -101,6 +106,7 @@ return function(mod)
   end
 
   mod.events:on("game.ready", function(ev)
+    checkDex()
     setBackShift()
     install(ev and ev.game or mod.game)
     linkHd()
