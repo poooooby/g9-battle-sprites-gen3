@@ -30,6 +30,7 @@ DEVELOPMENT.md
 CLAUDE.md
 
 tests/realism_test.lua
+tests/frame_cache_test.lua
 
 .claude/skills/lua-developer/SKILL.md
 

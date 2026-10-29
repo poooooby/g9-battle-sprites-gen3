@@ -293,7 +293,7 @@ function Atlas.new(mod, load)
   local bySlot = loadIndex(load)
   if not bySlot then return nil end
 
-  local self = { pages = {}, icons = {}, frames = {}, order = {} }
+  local self = { pages = {}, icons = {}, frames = {} }
 
   -- Hand-tuned sizes (data/sprite_scale.lua), used with gen3-hd-sprites. A missing or broken
   -- file just means the defaults.
@@ -509,16 +509,53 @@ function Atlas.new(mod, load)
   end
   self._frameSource = frameSource -- for the tests and tools
 
+  -- The rendered pic frames, the least recently used dropped past CANVAS_CAP. A battle pic's
+  -- canvas (a back, or a front for the battle: asked for again every frame, which is how it
+  -- animates) is set aside when dropped and rendered into again for a frame of its shape, rather
+  -- than left to the garbage collector: four battlers' animations (a double battle, a mod's raid)
+  -- run through more frames than the cap, and a new canvas for each - ~30 a second - left hundreds
+  -- for the collector to destroy in one frame, a hitch every few seconds. Any other pic is
+  -- dropped, not released: whoever else still holds it (the save editor keeps the ones it has
+  -- drawn) keeps a valid image, and the collector frees it once nothing does.
+  local SPARE_CAP = 8          -- dropped battle canvases kept per shape, to render into again
+  local useTick, count = 0, 0
+  local used = {}              -- key -> its last use
+  local shapeOf = setmetatable({}, { __mode = "k" })   -- a battle pic's canvas -> its shape
+  local spare = {}             -- shape -> canvases to render into again
+  local function touch(key)
+    useTick = useTick + 1
+    used[key] = useTick
+  end
   local function remember(key, canvas)
+    if self.frames[key] == nil then count = count + 1 end
     self.frames[key] = canvas
-    self.order[#self.order + 1] = key
-    if #self.order > CANVAS_CAP then
-      local old = table.remove(self.order, 1)
-      -- dropped, not released: whoever else still holds this picture (the save
-      -- editor keeps the ones it has drawn) keeps a valid image, and the garbage
-      -- collector frees it once nothing does
-      self.frames[old] = nil
+    touch(key)
+    if count <= CANVAS_CAP then return end
+    local old, oldT
+    for k, t in pairs(used) do
+      if k ~= key and (oldT == nil or t < oldT) then old, oldT = k, t end
     end
+    if not old then return end
+    local c = self.frames[old]
+    self.frames[old], used[old] = nil, nil
+    count = count - 1
+    local shape = c and shapeOf[c]
+    if shape then
+      local list = spare[shape]
+      if not list then
+        list = {}
+        spare[shape] = list
+      end
+      if #list < SPARE_CAP then list[#list + 1] = c end
+    end
+  end
+  local function spareFor(shape)
+    local list = spare[shape]
+    local n = list and #list or 0
+    if n == 0 then return nil end
+    local c = list[n]
+    list[n] = nil
+    return c
   end
 
   -- The cell for one species slot and variant ("front", "front_shiny", "back",
@@ -631,7 +668,10 @@ function Atlas.new(mod, load)
     local key = tostring(dex) .. ":" .. variant .. ":" .. f
       .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "") .. (gdy and ":" .. gdy or "")
     local hit = self.frames[key]
-    if hit then return hit end
+    if hit then
+      touch(key)
+      return hit
+    end
     local img, qx, qy = frameSource(variant, cell, f)
     if not img then return nil end
     local fs = cell.fs
@@ -678,12 +718,22 @@ function Atlas.new(mod, load)
     -- takes its size in DPI-scaled units (LOVE 11): the box's own size, `dpi` times the pixels,
     -- so a host that fits the pic by its size (Kanto Gear's party) sees the 64x64 box
     local dpi = (xmax - xmin > PIC_BOX or ymax - ymin > PIC_BOX) and PIC_SCALE_BIG or PIC_SCALE
-    local okC, canvas = pcall(love.graphics.newCanvas, xmax - xmin, ymax - ymin, { dpiscale = dpi })
-    if not okC then
-      warnCanvas("picFrame", canvas)
-      for _, t in ipairs(temps) do t:release() end
-      return nil
+    local cw, ch = xmax - xmin, ymax - ymin
+    -- (a battle pic: a dropped canvas of its shape rendered into again, else a new one)
+    local shape = big and string.format("%s:%s:%s:%s", hd and "hd" or "w", cw, ch, dpi) or nil
+    local canvas = shape and spareFor(shape)
+    if not canvas then
+      local okC, made = pcall(love.graphics.newCanvas, cw, ch, { dpiscale = dpi })
+      if not okC then
+        warnCanvas("picFrame", made)
+        for _, t in ipairs(temps) do t:release() end
+        return nil
+      end
+      canvas = made
+      if shape then shapeOf[canvas] = shape end
     end
+    -- (what a reused canvas was set up with before)
+    pivots[canvas] = nil
     -- nearest, as the game draws its own pics: linear here blurs the sprite
     canvas:setFilter("nearest", "nearest")
     drawClean(function()
