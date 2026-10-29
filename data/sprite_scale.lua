@@ -1,6 +1,6 @@
 -- Fine-tune how big each Pokemon is drawn in battle. Edit and restart the game (no rebuild).
 --
--- Only used when the Gen 3 HD Sprites mod (gen3-hd-sprites) is installed and Battle HD is on:
+-- Only used when the WoobleView mod (gen3-hd-sprites) is installed and Battle HD is on:
 -- it draws these at your screen's full resolution, so ANY value keeps every pixel of the art.
 -- Without it, the sizes are fixed (the game's pixel grid can only do clean steps).
 --
@@ -13,7 +13,7 @@
 --   front_dx, front_dy, back_dx, back_dy
 --            nudge in game pixels (positive = right / down), on top of where the sprite already
 --            stands: feet on the middle of its pad (worked out in the atlas, with or without HD
---            Sprites). These nudges are HD Sprites only; a nudge for everyone goes in the atlas
+--            Sprites). These nudges are WoobleView only; a nudge for everyone goes in the atlas
 --            (FRONT_NUDGE, tools/build_atlas.py).
 --
 -- `all` below scales every Pokemon on top of the above (1 = no change).

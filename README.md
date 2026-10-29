@@ -54,7 +54,7 @@ None. Install it and every battle uses the new sprites.
   are for.
 - [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles.
 - [Wilds of Hoenn](https://github.com/poooooby/wilds-of-hoenn) and
-  [Modern Spawns](https://github.com/poooooby/g1r_modern_spawns): meet all those species in the
+  [WoobleSpawns](https://github.com/poooooby/g1r_modern_spawns): meet all those species in the
   wild.
 
 ## 📌 Good to Know

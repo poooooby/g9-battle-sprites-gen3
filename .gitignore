@@ -3,3 +3,4 @@ __pycache__/
 # test builds (tools/build_dist.py)
 /dist/
 CLAUDE.md
+/.claude/  
