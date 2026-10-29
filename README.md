@@ -1,6 +1,6 @@
 <div align="center">
 
-# G9 Battle Sprites (Gen 3) 🎞️
+# WoobleSpritePack 🎞️
 
 *Every Pokémon, animated. Smooth, true-colour battle sprites for all 1025 species in FireRed,
 LeafGreen, Ruby, Sapphire and Emerald.*
@@ -30,7 +30,7 @@ and 2).
   at a clean size, and big Pokémon are shown in full instead of being squeezed into the box.
 - 📖 **A Pokédex that fits the game:** Ruby, Sapphire and Emerald's Pokédex uses cart-style
   pictures; FireRed and LeafGreen's shows the animated art.
-- 🖥️ **HD battles** (with [Gen 3 HD Sprites](https://github.com/poooooby/gen3-hd-sprites)): battle
+- 🖥️ **HD battles** (with [WoobleView](https://github.com/poooooby/gen3-hd-sprites)): battle
   sprites are drawn crisply at your screen's resolution, and each Pokémon is sized by its real
   height: giants like Wailord and Rayquaza stand a bit taller, tiny ones a bit smaller, and the
   foe is drawn a little smaller for depth. Every Pokémon keeps its feet on its pad.
@@ -43,16 +43,16 @@ None. Install it and every battle uses the new sprites.
 
 ## 💾 Installation
 
-1. Install [National Dex Gen 3](https://github.com/poooooby/national_dex_gen3) (required).
+1. Install [WoobleDex](https://github.com/poooooby/national_dex_gen3) (required).
 2. Download the latest release from the
    [Releases](https://github.com/poooooby/g9-battle-sprites-gen3/releases) page.
 3. Import it with the Gen1Recomp Mod Manager, or drop it in your mods folder, and enable it.
 
 ## 🔗 Works With
 
-- [National Dex Gen 3](https://github.com/poooooby/national_dex_gen3): the species these sprites
+- [WoobleDex](https://github.com/poooooby/national_dex_gen3): the species these sprites
   are for.
-- [Gen 3 HD Sprites](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles.
+- [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles.
 - [Wilds of Hoenn](https://github.com/poooooby/wilds-of-hoenn) and
   [Modern Spawns](https://github.com/poooooby/g1r_modern_spawns): meet all those species in the
   wild.

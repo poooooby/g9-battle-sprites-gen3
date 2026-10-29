@@ -1,4 +1,4 @@
--- G9 Battle Sprites (gen 3): animated true-colour battle pics, Pokedex and
+-- WoobleSpritePack (g9-battle-sprites-gen3): animated true-colour battle pics, Pokedex and
 -- summary front pics for every species, #1-1025, and party icons for #387-1025, on
 -- FireRed, LeafGreen, Ruby, Sapphire and Emerald.
 --

@@ -1,4 +1,4 @@
-# G9 Battle Sprites (Gen 3): developer guide
+# WoobleSpritePack: developer guide
 
 For contributors. Players only need the [README](README.md).
 
@@ -66,13 +66,13 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   `tools/front_drop.json` (grounded species floating 8 px or more are lowered), then
   `tools/front_anchor.py write` -> `tools/front_anchor.json` (those resting too low are raised);
   `FRONT_NUDGE` in `tools/build_atlas.py` holds hand nudges. All of it is baked into the front
-  cell's drop `fy`, so it holds with and without Gen 3 HD Sprites. `front_feet.py --dips` /
+  cell's drop `fy`, so it holds with and without WoobleView. `front_feet.py --dips` /
   `--tops` list sprites dipping into the player's HP box or going above the window.
 - Backs stand on the player pad's middle (y 119, partly under the text box as on the cart), at
   their own size: the build writes each back cell's resting feet row `bfr` and its feet line in
   the pic box `bfl` (`BACK_FEET_ROW` less the engine's per-species back offset). Ruby / Sapphire
   draw the player's pic 4 px higher; `Atlas.backShift` adds them back at runtime. A tall back is
-  left to Gen 3 HD Sprites' Battle Fit. (`tools/back_framing.py` and `tools/back_fit.py`, the old
+  left to WoobleView's Battle Fit. (`tools/back_framing.py` and `tools/back_fit.py`, the old
   cart framing, are no longer used by the build.)
 - Both are placed against FireRed / LeafGreen's per-species offsets (the engine's
   `pic_coords.lua` FRLG tables). Ruby / Sapphire / Emerald have their own front / back offsets and
@@ -85,7 +85,7 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   (the cart's motion and colour flashes still apply to it).
 - Pics are canvases made at the box's own size with `dpiscale` (LÖVE 11 sizes them in
   DPI-scaled units), so a host that fits a pic by `getDimensions` sees 64×64.
-- Realism scaling (Gen 3 HD Sprites only, `Atlas.realism`, settings in `data/sprite_scale.lua`
+- Realism scaling (WoobleView only, `Atlas.realism`, settings in `data/sprite_scale.lua`
   `realism`): each species' height `ht` (dm) is written to the index from the cart's Pokédex
   entries (`pokemon/pokedex/entries.lua`, keyed by engine slot) for Gen 1–3 and national_dex_gen3's
   `dexEntry.height` (PokeAPI) for #387+; forms and female sheets take their base's. The scale is a
@@ -118,11 +118,11 @@ canvas's centre. If the wrap can't be installed (or `BACK_WIDE = false`), a gian
 far enough to keep 70% of its width in view. Other screens (Pokédex, summary, PC) get the
 fit-to-box pic. Animation runs at 8 frames per second; battlers of one species share one clock.
 
-With Gen 3 HD Sprites, battle pics are drawn at window resolution and `data/sprite_scale.lua`
+With WoobleView, battle pics are drawn at window resolution and `data/sprite_scale.lua`
 tunes each Pokémon's front and back size and offset by hand (edit and restart, no rebuild).
 Each battle tag also passes `top`: the cell's `uy0` in `data/atlas_index.lua`, which is the
 first row of art over the whole animation, written by `tools/build_atlas.py`. With that,
-Gen 3 HD Sprites' Battle Fit pulls the camera back to fit the art, not the frame's empty
+WoobleView's Battle Fit pulls the camera back to fit the art, not the frame's empty
 margin. Each tag also passes `side`, `"enemy"` or `"player"`. A back adds `body`, its resting
 body box (`cx0`…`cy1`). Battle Fit keeps that body's top at or below the tallest cart back sprite's (y 52). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
