@@ -49,6 +49,10 @@ tests/frame_cache_test.lua
 
 
 
+
+
+
+
 # battle pages: shipped as assets/numbers/ (managed by tools/build_dist.py; do not edit)
 assets/atlas/battle_back_0.png
 assets/atlas/battle_back_1.png
@@ -145,4 +149,5 @@ dist/g9-battle-sprites-gen3-1.5.2.zip
 dist/g9-battle-sprites-gen3-1.5.3-beta.1.zip
 dist/g9-battle-sprites-gen3-1.5.3.zip
 dist/g9-battle-sprites-gen3-1.5.4.zip
+dist/g9-battle-sprites-gen3-1.5.6.zip
 # end dist/
