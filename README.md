@@ -33,7 +33,8 @@ and 2).
 - 🖥️ **HD battles** (with [WoobleView](https://github.com/poooooby/gen3-hd-sprites)): battle
   sprites are drawn crisply at your screen's resolution, and each Pokémon is sized by its real
   height: giants like Wailord and Rayquaza stand a bit taller, tiny ones a bit smaller, and the
-  foe is drawn a little smaller for depth. Every Pokémon keeps its feet on its pad.
+  foe is drawn a little smaller for depth. Every Pokémon keeps its feet on its pad. The
+  Pokédex and the summary screen show their Pokémon crisply too.
 - 📱 **Phone-friendly:** Everything is packed into a handful of images small enough for Android
   devices.
 
@@ -52,7 +53,8 @@ None. Install it and every battle uses the new sprites.
 
 - [WoobleDex](https://github.com/poooooby/national_dex_gen3): the species these sprites
   are for.
-- [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles.
+- [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles, Pokédex
+  and summary screen.
 - [Wilds of Hoenn](https://github.com/poooooby/wilds-of-hoenn) and
   [WoobleSpawns](https://github.com/poooooby/g1r_modern_spawns): meet all those species in the
   wild.

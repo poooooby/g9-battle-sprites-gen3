@@ -1,8 +1,7 @@
 -- Run from the mod root: luajit tests/dex_hd_test.lua
--- The Pokedex pics with gen3-hd-sprites: a front pic asked for with kind "dex" is the plain
--- fit-to-box pic, tagged so the library draws the whole frame at window resolution, fitted
--- to the same box. Without the library, or with its Pokedex option off, and for every other
--- screen, nothing is tagged.
+-- The Pokedex and summary pics with gen3-hd-sprites: a front pic off the battle screen is the
+-- plain fit-to-box pic, tagged so the library draws the whole frame at window resolution, fitted
+-- to the same box. Without the library, or with its Pokedex option off, nothing is tagged.
 local passed, failed = 0, 0
 local function check(cond, msg)
   if cond then passed = passed + 1 else failed = failed + 1; print("FAIL: " .. msg) end
@@ -72,8 +71,12 @@ do
   check(spec and math.abs(spec.scale - 64 / 96) < 1e-9, "...fitted to the box (" .. tostring(spec and spec.scale) .. ")")
   local small = atlas.picFrame(452, "front", atlas.cell(452, "front"), 0, false, "dex")
   check(hd.tags[small] and hd.tags[small].scale == 1, "a frame smaller than the box is not enlarged")
-  local summary = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false)
-  check(summary ~= big and hd.tags[summary] == nil, "another screen's pic is a separate canvas, not tagged")
+  local summary = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false, "summary")
+  check(hd.tags[summary] and hd.tags[summary].scale == spec.scale, "a summary pic is tagged the same way")
+  local rse = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false)
+  check(hd.tags[rse] ~= nil, "...and one asked for with no kind (Emerald's summary)")
+  local battle = atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, true)
+  check(battle ~= big and hd.tags[battle] ~= spec, "the battle pic is its own canvas")
   check(atlas.picFrame(451, "front", atlas.cell(451, "front"), 0, false, "dex") == big, "the Pokedex pic is cached")
 end
 

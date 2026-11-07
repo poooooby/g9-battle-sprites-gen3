@@ -654,15 +654,17 @@ function Atlas.new(mod, load)
   -- its centre on the battler's spot, so the pic may be full size in a canvas bigger
   -- than the box. Every other screen (Pokedex, summary, PC ...) draws the pic as a
   -- plain 64x64 image, so it gets the fit-to-box one.
-  -- `kind` (front pics only): "dex" for the Pokedex screens, which gen3-hd-sprites draws at
-  -- window resolution too (fitted to the box, the size the plain pic has).
+  -- `kind` (front pics only): what the screen is ("dex" for the Pokedex screens). Every front pic
+  -- off the battle screen is tagged for WoobleView (gen3-hd-sprites), which draws the ones its
+  -- Pokedex and summary screens draw at window resolution (fitted to the box, the size the plain
+  -- pic has); on any other screen the tagged canvas is simply drawn, as the plain pic.
   function self.picFrame(dex, variant, cell, f, battle, kind)
     local isBack = variant == "back" or variant == "back_shiny"
     local big = isBack or battle == true
     -- gen3-hd-sprites (when installed and on): the pic is drawn from the atlas at the
     -- window's resolution, so the canvas only has to be the low-res stand-in
     local hd = big and self.hd and self.hd.enabled("battle") and self.hd or nil
-    local dexHd = not big and kind == "dex" and self.hd and self.hd.enabled("dex") and self.hd or nil
+    local dexHd = not big and self.hd and self.hd.enabled("dex") and self.hd or nil
     -- battle pics sit by this game's offsets against FireRed's (Atlas.coordShift)
     local gdy = big and Atlas.coordShift[isBack and "back" or "front"][dex] or nil
     local key = tostring(dex) .. ":" .. variant .. ":" .. f
@@ -780,7 +782,7 @@ function Atlas.new(mod, load)
         body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
       })
     elseif dexHd then
-      -- the Pokedex: the whole frame at window resolution, fitted to the box exactly as the
+      -- the Pokedex and the summary: the whole frame at window resolution, fitted to the box exactly as the
       -- plain pic above is (whose canvas stays the stand-in), standing on the box's bottom-centre
       local spec = {
         texture = img, quad = quad,
