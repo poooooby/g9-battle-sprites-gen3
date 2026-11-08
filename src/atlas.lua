@@ -829,20 +829,31 @@ function Atlas.new(mod, load)
   -- keeps that image, so a pic for one frame would stand still. It gets a "live" canvas
   -- instead, redrawn with the current frame each time the screen draws (refreshLive, from the
   -- hooks' wrap of the screen's draw): the cart's two-frame front pic, or for a species without
-  -- one the battle sheet (whose gen3-hd-sprites tag then follows the frame). The last LIVE_CAP
-  -- are kept.
+  -- one the battle sheet (whose gen3-hd-sprites tag then follows the frame). The wheel's
+  -- sprites are live too: opening an entry slides the wheel's sprite over and keeps its image.
+  -- The last LIVE_CAP asked for are kept.
   local LIVE_CAP = 24          -- a FORMS page shows up to 9 at once (Alcremie)
   self.dexSpecs = setmetatable({}, { __mode = "k" })   -- frame canvas -> its Pokedex HD spec
   self.live, self.liveOrder = {}, {}
 
-  -- The cart's front pic (pokeemerald-expansion, built into dex_fronts_<n>.png): frame f (0 or
-  -- 1) as a 64x64 canvas, or nil when the species has none. Cached, two per species.
+  -- The game's own front pic for a Gen 1-3 slot: function(key, f, personality) -> frame f's
+  -- 64x64 image, or nil (not a Gen 1-3 slot, or no such frame). Set by the hooks: these pics
+  -- are not packed, the game already has them.
+  self.cartFrame = nil
+
+  -- The cart's front pic: frame f (0 or 1) as a 64x64 image, or nil when the species has none.
+  -- #387+ come from dex_fronts_<n>.png (pokeemerald-expansion), cached two per species;
+  -- Gen 1-3 from cartFrame (the game caches its own).
   self.dexPics = {}
-  function self.dexPic(key, f)
+  function self.dexPic(key, f, personality)
+    local c = self.cell(key, "dexpic")
+    if not c and self.cartFrame then
+      local ok, img = pcall(self.cartFrame, key, f, personality)
+      if ok and img then return img end
+    end
     local id = tostring(key) .. ":" .. f
     local hit = self.dexPics[id]
     if hit ~= nil then return hit or nil end
-    local c = self.cell(key, "dexpic")
     local img = c and page(string.format("dex_fronts_%d", c.page))
     local ok, canvas = false, nil
     if img then ok, canvas = pcall(love.graphics.newCanvas, PIC_BOX, PIC_BOX) end
@@ -859,12 +870,18 @@ function Atlas.new(mod, load)
     return canvas
   end
 
+  -- function() -> true while the cart pics hold their first frame (the RSE Pokedex wheel: its
+  -- sprites become the entry's when one opens, so they are live, but still until then). Set by
+  -- the hooks.
+  self.holdLive = nil
+
   local function refresh(rec)
     if rec.dex then
-      -- the cart pic: its two frames in turn, as the game's own (never HD: it is 64x64 already)
+      -- the cart pic: its two frames in turn (never HD: it is 64x64 already)
       local f = math.floor(love.timer.getTime() / DEX_FRAME_TIME) % 2
+      if self.holdLive and self.holdLive() then f = 0 end
       if f == rec.f then return end
-      local src = self.dexPic(rec.key, f) or self.dexPic(rec.key, 0)
+      local src = self.dexPic(rec.key, f, rec.personality) or self.dexPic(rec.key, 0, rec.personality)
       if not src then return end
       drawClean(function()
         love.graphics.setCanvas(rec.canvas)
@@ -893,9 +910,10 @@ function Atlas.new(mod, load)
 
   --- A live pic for an RSE Pokedex entry: the cart's two-frame front pic when the species has
   --- one (`variant` is then ignored: the Pokedex never shows a shiny), else the battle sheet.
-  function self.livePic(key, variant, cell)
-    local dex = self.cell(key, "dexpic") ~= nil
-    local id = tostring(key) .. ":" .. (dex and "dexpic" or variant)
+  --- `personality`: handed to the game's own pic (Spinda's spots), one live canvas each.
+  function self.livePic(key, variant, cell, personality)
+    local dex = self.dexPic(key, 0, personality) ~= nil
+    local id = tostring(key) .. ":" .. (dex and ("dexpic:" .. tostring(personality or 0)) or variant)
     local rec = self.live[id]
     if not rec then
       local ok, c
@@ -906,10 +924,16 @@ function Atlas.new(mod, load)
       end
       if not ok then return nil end
       c:setFilter("nearest", "nearest")
-      rec = { canvas = c, key = key, variant = variant, cell = cell, dex = dex }
+      rec = { canvas = c, key = key, variant = variant, cell = cell, dex = dex, personality = personality }
       self.live[id] = rec
       self.liveOrder[#self.liveOrder + 1] = id
       if #self.liveOrder > LIVE_CAP then self.live[table.remove(self.liveOrder, 1)] = nil end
+    else
+      -- asked for again: the last to be dropped (the wheel asks for each row as it scrolls in)
+      for i, v in ipairs(self.liveOrder) do
+        if v == id then table.remove(self.liveOrder, i) break end
+      end
+      self.liveOrder[#self.liveOrder + 1] = id
     end
     refresh(rec)
     return rec.canvas

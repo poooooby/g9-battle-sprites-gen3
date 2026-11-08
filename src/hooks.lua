@@ -14,6 +14,17 @@
 
 local Hooks = {}
 
+-- the first slot past Gen 1-3 and Unown's letters: national_dex_gen3's #387 (dex + 64)
+local FIRST_NEW_SLOT = 451
+
+-- the engine's own MonAnim.framePic, once wrapped (the RSE Pokedex's Gen 1-3 cart pics use it)
+local engineFramePic = nil
+
+-- Above 0 while the RSE Pokedex's Gen 1-3 cart pic is fetched from the game: every wrapper of
+-- ours then hands the call straight on. A reload that wraps the functions again can capture a
+-- chain (another mod's wrapper) that leads back into an earlier wrapper of ours.
+local passThrough = 0
+
 -- the slot, when the atlas has art for it
 local function slotOf(atlas, slot)
   slot = tonumber(slot)
@@ -195,12 +206,19 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
     -- `...`: whatever else the engine passes (gen1recomp 0.3.95+: the Pokemon itself), handed on
     -- untouched to the engine's own function when a pic is not ours
     Pokemon.frontPic = function(species, form, shiny, personality, kind, ...)
+      if passThrough > 0 then return origFront(species, form, shiny, personality, kind, ...) end
       local rsePage = kind == "dex" and Hooks._rseDexPage() or nil
       if rsePage == "list" then
-        -- the RSE Pokedex wheel: one still frame, the cart's own front pic (else the party icon's)
+        -- the RSE Pokedex wheel: the cart's own front pic (else the party icon's), held on its
+        -- first frame. Live, as opening an entry keeps the wheel sprite's image: it then animates.
         local key = keyFor(atlas, Pokemon, species, personality)
-        local canvas = key and ((atlas.dexPic and atlas.dexPic(key, 0))
-          or (atlas.iconPic and atlas.iconPic(key)))
+        local canvas
+        if key and atlas.livePic and atlas.dexPic and atlas.dexPic(key, 0, personality) then
+          Hooks.tickRseDex(atlas)
+          canvas = atlas.livePic(key, "front", atlas.cell(key, "front"), personality)
+        end
+        canvas = canvas or (key and ((atlas.dexPic and atlas.dexPic(key, 0, personality))
+          or (atlas.iconPic and atlas.iconPic(key))))
         if canvas then return { image = canvas, w = 64, h = 64 } end
         return origFront(species, form, shiny, personality, kind, ...)
       elseif rsePage == "page" and not inForm(form) and atlas.livePic then
@@ -211,7 +229,7 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
         local variant = "front"
         if key and shiny and atlas.cell(key, "front_shiny") then variant = "front_shiny" end
         local cell = key and atlas.cell(key, variant)
-        local canvas = cell and atlas.livePic(key, variant, cell)
+        local canvas = cell and atlas.livePic(key, variant, cell, personality)
         if canvas then return { image = canvas, w = 64, h = 64 } end
       end
       local entry = not inForm(form)
@@ -260,13 +278,39 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
   end
   local origFrame = type(MonAnim) == "table" and MonAnim.framePic
   if type(origFrame) == "function" and not ours[origFrame] then
+    engineFramePic = origFrame
     MonAnim.framePic = function(species, frame, shiny, ...)
-      if slotOf(atlas, species) then return nil end
+      if passThrough == 0 and slotOf(atlas, species) then return nil end
       return origFrame(species, frame, shiny, ...)
     end
     ours[MonAnim.framePic] = true
     wrapped = wrapped + 1
   end
+
+  -- The RSE Pokedex's cart pics for Gen 1-3 are the game's own (the pack has only #387+'s):
+  -- its front pic, and its entry animation's frame-1 art. Spinda keeps the front pic alone, the
+  -- only one drawn with its spots. Left as it is on a reload that wrapped nothing new.
+  if type(origFront) == "function" and not ours[origFront] then
+    local spinda = tonumber(Pokemon.SPECIES_SPINDA) or 308
+    atlas.cartFrame = function(key, f, personality)
+      key = tonumber(key)
+      if not (key and key > 0 and key < FIRST_NEW_SLOT) then return nil end
+      local fetch
+      if f == 0 then
+        fetch = function() return origFront(key, nil, false, personality, "dex") end
+      elseif key ~= spinda and engineFramePic then
+        fetch = function() return engineFramePic(key, f, false) end
+      end
+      if not fetch then return nil end
+      passThrough = passThrough + 1
+      local ok, entry = pcall(fetch)
+      passThrough = passThrough - 1
+      return ok and type(entry) == "table" and entry.image or nil
+    end
+  end
+
+  -- the wheel's live pics hold still until an entry opens
+  atlas.holdLive = function() return Hooks._rseDexPage() == "list" end
 
   pcall(Hooks.tickRseDex, atlas)
   return wrapped

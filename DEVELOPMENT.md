@@ -13,9 +13,15 @@ missing-pic box). The battle pages are build input only: what ships is their col
   several pages each. A page holds blocks of uniform `fs × fs` cells; a species' frames sit in
   consecutive cells of one block, and the index records the block's corner (`ox`, `oy`).
 - `party_icons_0.png`: two-frame 32×32 menu icons for #387–1025 and the forms, one page.
-- `dex_fronts_0.png`: the cart-style 64×64 Ruby / Sapphire / Emerald Pokédex pics, from a
-  pokeemerald-expansion checkout (`graphics/pokemon/<id>/anim_front_gba.png`, else
-  `anim_front.png`, else `front.png`); a species with none uses its base species' pic.
+- `dex_fronts_0.png`: the cart-style 64×64 Ruby / Sapphire / Emerald Pokédex pics for #387+
+  and the forms, from a pokeemerald-expansion checkout (`graphics/pokemon/<id>/anim_front.png`,
+  else `front.png`). A form found under another folder name is listed in `DEX_FRONT_DIRS`;
+  one the expansion draws as a recolour (Flabébé's line, Alcremie's creams on the Strawberry
+  Sweet pic) in `DEX_FRONT_RECOLOURS`, with its palette. All 763 have one
+  (`tests/forms_coverage_test.lua` checks it). Generations 1–3 (and Unown's
+  letters) are not packed: `src/hooks.lua` sets `atlas.cartFrame` to the game's own front pic
+  (frame 0) and `MonAnim.framePic` (frame 1; Spinda keeps frame 0, the one with its spots),
+  fetched with every wrapper of ours stepping aside (`passThrough`).
 - `data/atlas_index.lua`: each species (and form) to its engine `slot` (for Generations 1–3
   the game's own internal species id, read with the names from the engine's extracted data,
   `--gen3-data`), its cells, and for back pics where the Pokémon sits in its frame
@@ -83,6 +89,10 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   frame 1 the battle draws the cart's own art (`MonAnim.framePic`) in place of the pic.
   `src/hooks.lua` answers nil there for every slot with atlas art, so our animated pic stays
   (the cart's motion and colour flashes still apply to it).
+- The RSE Pokédex keeps the image it is given, and opening an entry slides the wheel's sprite
+  over with its image. So the wheel and the entry pages get live canvases (`atlas.livePic`,
+  redrawn from the hooks' wrap of the screen's draw): on the wheel they hold frame 0
+  (`atlas.holdLive`), on an entry they alternate the cart pic's two frames every 0.5 s.
 - Pics are canvases made at the box's own size with `dpiscale` (LÖVE 11 sizes them in
   DPI-scaled units), so a host that fits a pic by `getDimensions` sees 64×64.
 - Realism scaling (WoobleView only, `Atlas.realism`, settings in `data/sprite_scale.lua`

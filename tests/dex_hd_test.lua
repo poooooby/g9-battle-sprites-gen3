@@ -43,6 +43,7 @@ local index = { species = {
     dexpic = { page = 0, x = 128, y = 0 } },
   MOVER = { dex = 389, slot = 453, front = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 4, ox = 0, oy = 0 } },
   SMALL = { dex = 388, slot = 452, front = { sheet = 0, start = 0, fs = 48, cols = 10, frames = 1, ox = 0, oy = 0 } },
+  PIKACHU = { dex = 25, slot = 25, front = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 4, ox = 0, oy = 0 } },
 } }
 local function newAtlas()
   return Atlas.new({ path = "x", log = { warn = function() end } },
@@ -148,6 +149,33 @@ do
   NOW = 0.6
   atlas.refreshLive()
   check(#draws > n, "then shows the other frame")
+  NOW = nil
+end
+
+-- Gen 1-3 are not packed: their cart pic is the game's own (cartFrame, set by the hooks)
+do
+  local atlas = newAtlas()
+  local hd = fakeHd({ dex = true })
+  hd.untag = function(image) hd.tags[image] = nil end
+  atlas.hd = hd
+  check(atlas.dexPic(25, 0) == nil, "no game pic source: no cart pic for a Gen 1-3 slot")
+  local asked = {}
+  local game = { [0] = { game = 0 }, [1] = { game = 1 } }
+  atlas.cartFrame = function(key, f, personality)
+    asked[#asked + 1] = personality
+    return key == 25 and game[f] or nil
+  end
+  check(atlas.dexPic(25, 0, 7) == game[0] and asked[#asked] == 7, "the game's frame 0, with the personality")
+  check(atlas.dexPic(25, 1) == game[1], "...and its frame 1")
+  check(atlas.dexPic(454, 0) ~= game[0] and atlas.dexPic(454, 0) ~= nil, "a packed pic still comes from the page")
+  NOW = 0
+  local live = atlas.livePic(25, "front", atlas.cell(25, "front"), 7)
+  check(live ~= nil and hd.tags[live] == nil, "a Gen 1-3 entry is live on the game's pic, not HD")
+  check(atlas.livePic(25, "front", atlas.cell(25, "front"), 8) ~= live, "...one canvas per personality (Spinda)")
+  local n = #draws
+  NOW = 0.6
+  atlas.refreshLive()
+  check(#draws > n, "...and alternates its frames")
   NOW = nil
 end
 

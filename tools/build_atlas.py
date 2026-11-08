@@ -573,6 +573,32 @@ def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
 
 DEX_CELL = 64              # the cart's front pic: two 64x64 frames, one above the other
 DEX_REF = ROOT.parent / "pokeemerald-expansion" / "graphics" / "pokemon"
+# Forms whose pic the expansion keeps under another name than <base>/<form>
+DEX_FRONT_DIRS = {
+    "TAUROS_PALDEA_COMBAT_BREED": "tauros/paldea_combat",
+    "TAUROS_PALDEA_BLAZE_BREED": "tauros/paldea_blaze",
+    "TAUROS_PALDEA_AQUA_BREED": "tauros/paldea_aqua",
+    "NECROZMA_DUSK": "necrozma/dusk_mane",
+    "NECROZMA_DAWN": "necrozma/dawn_wings",
+    "ZACIAN_CROWNED": "zacian/crowned_sword",
+    "ZAMAZENTA_CROWNED": "zamazenta/crowned_shield",
+    "OGERPON_WELLSPRING_MASK": "ogerpon/wellspring",
+    "OGERPON_HEARTHFLAME_MASK": "ogerpon/hearthflame",
+    "OGERPON_CORNERSTONE_MASK": "ogerpon/cornerstone",
+    "ZYGARDE_10": "zygarde/10_percent",
+    "BASCULEGION_FEMALE": "basculegion/f",
+}
+# Forms the expansion draws as another pic in a palette of their own: (the pic's folder, the
+# palette). Flabebe's line recolours the species' own pic; Alcremie's creams are the Strawberry
+# Sweet pic in each cream's palette, as the expansion's species table pairs them.
+DEX_FRONT_RECOLOURS = {
+    f"{sp}_{c}": (sp.lower(), f"{sp.lower()}/{c.lower()}/normal.pal")
+    for sp in ("FLABEBE", "FLOETTE", "FLORGES") for c in ("YELLOW", "ORANGE", "BLUE", "WHITE")
+}
+DEX_FRONT_RECOLOURS.update({
+    f"ALCREMIE_{c}": ("alcremie/strawberry", f"alcremie/strawberry/strawberry_{c.lower()}.pal")
+    for c in ("RUBY_CREAM", "MATCHA_CREAM", "MINT_CREAM", "LEMON_CREAM", "SALTED_CREAM", "RUBY_SWIRL")
+})
 
 
 def read_jasc(path: Path) -> list[tuple[int, int, int]] | None:
@@ -588,29 +614,40 @@ def read_jasc(path: Path) -> list[tuple[int, int, int]] | None:
     return [tuple(vals[i:i + 3]) for i in range(0, len(vals), 3)]
 
 
-def dex_front_path(ref: Path, sid: str) -> Path | None:
-    """The cart's two-frame front pic of a species in the expansion: <id>/anim_front_gba.png
-    (the cart's own, Gen 1-3), else <id>/anim_front.png, else <id>/front.png (one frame: the
-    newer species have no second), each also tried as <base>/<form>/... for a form."""
+def dex_front_path(ref: Path, sid: str) -> tuple[Path, Path | None] | None:
+    """The cart's two-frame front pic of a species in the expansion, and the palette to draw it
+    in when it is not the pic's own (None): <id>/anim_front_gba.png (the cart's own, Gen 1-3),
+    else <id>/anim_front.png, else <id>/front.png (one frame: the newer species have no second),
+    each also tried as <base>/<form>/... for a form, and DEX_FRONT_DIRS / DEX_FRONT_RECOLOURS
+    first."""
     name = sid.lower()
-    dirs = [name]
-    parts = name.split("_")
-    for k in range(len(parts) - 1, 0, -1):          # WORMADAM_SANDY -> wormadam/sandy
-        dirs.append("_".join(parts[:k]) + "/" + "_".join(parts[k:]))
+    pal = None
+    if sid in DEX_FRONT_RECOLOURS:
+        folder, pal_rel = DEX_FRONT_RECOLOURS[sid]
+        dirs = [folder]
+        pal = ref / pal_rel
+        if not pal.is_file():
+            return None
+    else:
+        dirs = [DEX_FRONT_DIRS[sid]] if sid in DEX_FRONT_DIRS else []
+        dirs.append(name)
+        parts = name.split("_")
+        for k in range(len(parts) - 1, 0, -1):          # WORMADAM_SANDY -> wormadam/sandy
+            dirs.append("_".join(parts[:k]) + "/" + "_".join(parts[k:]))
     for d in dirs:
         for f in ("anim_front_gba.png", "anim_front.png", "front.png"):
             p = ref / d / f
             if p.is_file():
-                return p
+                return p, pal
     return None
 
 
-def dex_front_image(path: Path) -> Image.Image:
-    """The pic as RGBA: its own palette file applied (normal_gba.pal for an _gba pic, else
-    normal.pal; the PNG's embedded palette when there is none), index 0 transparent."""
+def dex_front_image(path: Path, pal_path: Path | None = None) -> Image.Image:
+    """The pic as RGBA: `pal_path` applied, else its own palette file (normal_gba.pal for an _gba
+    pic, else normal.pal; the PNG's embedded palette when there is none), index 0 transparent."""
     with Image.open(path) as im:
         im.load()
-        pal = read_jasc(path.parent / ("normal_gba.pal" if path.stem.endswith("_gba") else "normal.pal"))
+        pal = read_jasc(pal_path or path.parent / ("normal_gba.pal" if path.stem.endswith("_gba") else "normal.pal"))
         if im.mode != "P":
             return im.convert("RGBA")
         src = im.copy()
@@ -635,7 +672,7 @@ def build_dex_fronts(ref: Path, species: list[tuple[int, str]], out_dir: Path,
                      index: dict[str, dict]) -> None:
     """Packs each species' cart front pic (two 64x64 frames, side by side) for the Ruby/
     Sapphire/Emerald Pokedex, which shows the cart's still pic and, on an entry, its two frames.
-    Only species the atlas has battle art for; the rest stay the game's own."""
+    Only #387+ and the forms the atlas has battle art for: Gen 1-3 come from the game itself."""
     shelf = Shelf()
     used_w: dict[int, int] = {}
     used_h: dict[int, int] = {}
@@ -644,11 +681,11 @@ def build_dex_fronts(ref: Path, species: list[tuple[int, str]], out_dir: Path,
         if sid in seen or sid not in index:
             continue
         seen.add(sid)
-        path = dex_front_path(ref, sid)
-        if path is None:
+        found = dex_front_path(ref, sid)
+        if found is None:
             missing.append(sid)
             continue
-        img = dex_front_image(path)
+        img = dex_front_image(*found)
         frames = max(1, min(2, img.height // DEX_CELL))
         strip = Image.new("RGBA", (DEX_CELL * 2, DEX_CELL), (0, 0, 0, 0))
         for f in range(2):
@@ -804,9 +841,9 @@ def main() -> None:
     back_lines = {sid: BACK_FEET_ROW - yo.get(slot, 0) for sid, slot in slot_of.items()}
     build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, back_lines)
     build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
-    # the Pokedex shows Unown as A (slot 201): its other letters have no cart-style Pokedex pic
-    build_dex_fronts(args.dex_ref, [(d, s) for d, s in classic + species
-                                    if s not in FEMALE_SHEETS and s not in UNOWN_LETTER_IDS],
+    # Gen 1-3 (and Unown's letters) are not packed: the RSE Pokedex draws them from the
+    # game's own front pic and entry-animation frame (src/hooks.lua)
+    build_dex_fronts(args.dex_ref, [(d, s) for d, s in species if s not in FEMALE_SHEETS],
                      out_atlas, index)
     # a form with no sheet or icon of its own in the pack reuses its base's
     reused = 0

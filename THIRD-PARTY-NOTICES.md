@@ -49,9 +49,9 @@ artwork, audio, text or other game asset, which remain their owners' property.
   (`assets/atlas/dex_fronts_0.png`, shown on the Ruby/Sapphire/Emerald Pokédex). They are packed
   by `tools/build_atlas.py` from the `graphics/pokemon/` folder of **pokeemerald-expansion**
   (<https://github.com/rh-hideout/pokeemerald-expansion>, the Rom Hacking Hideout team and
-  contributors): the Generation 1-3 pics are the original games' art via **pokeemerald**
-  (<https://github.com/pret/pokeemerald>), and the later ones are the community sprite projects
-  pokeemerald-expansion credits (listed in `CREDITS.md`). pokeemerald-expansion ships no licence
+  contributors): only #387 onwards and their forms, the community sprite projects
+  pokeemerald-expansion credits (listed in `CREDITS.md`). Generations 1-3 are not shipped: the
+  Pokédex shows the game's own pics for them. pokeemerald-expansion ships no licence
   file; the art remains its authors' and the Pokemon IP owners' property, and no ownership is
   claimed. Its back sprites are read by the build tools as framing references only and are not
   shipped.

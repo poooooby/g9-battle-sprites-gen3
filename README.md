@@ -29,7 +29,7 @@ and 2).
 - 📐 **Framed like the originals:** Your Pokémon's back sprite sits where the game's own would,
   at a clean size, and big Pokémon are shown in full instead of being squeezed into the box.
 - 📖 **A Pokédex that fits the game:** Ruby, Sapphire and Emerald's Pokédex uses cart-style
-  pictures; FireRed and LeafGreen's shows the animated art.
+  pictures that move on each entry; FireRed and LeafGreen's shows the animated art.
 - 🖥️ **HD battles** (with [WoobleView](https://github.com/poooooby/gen3-hd-sprites)): battle
   sprites are drawn crisply at your screen's resolution, and each Pokémon is sized by its real
   height: giants like Wailord and Rayquaza stand a bit taller, tiny ones a bit smaller, and the

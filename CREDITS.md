@@ -43,10 +43,9 @@ de Sky**'s DBK "solo sprites", and the underlying sprite and icon art is the
 
 The cart-style 64×64 front pics on the Ruby/Sapphire/Emerald Pokédex (`assets/atlas/dex_fronts_0.png`)
 come from **pokeemerald-expansion** by the **Rom Hacking Hideout** (rh-hideout) team and its
-contributors (<https://github.com/rh-hideout/pokeemerald-expansion>), `graphics/pokemon/`. The
-Generation 1-3 pics are the original Ruby/Sapphire/Emerald art via **pokeemerald**
-(<https://github.com/pret/pokeemerald>); the later generations' art comes from the community
-projects that pokeemerald-expansion credits in its own `CREDITS.md`:
+contributors (<https://github.com/rh-hideout/pokeemerald-expansion>), `graphics/pokemon/`. Only
+the later generations' pics are packed (Generation 1-3 show the game's own), and their art comes
+from the community projects that pokeemerald-expansion credits in its own `CREDITS.md`:
 
 - **Sugimori Palettes and Sprites** (<https://www.pokecommunity.com/showthread.php?t=336945>)
 - **DS Style Gen VI Sprites** (<https://www.pokecommunity.com/showthread.php?t=314422>)

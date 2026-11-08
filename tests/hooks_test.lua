@@ -143,6 +143,34 @@ do
   check(MonAnim.framePic == wrappedFrame, "a second install leaves framePic's wrapper alone")
 end
 
+-- the RSE Pokedex's Gen 1-3 cart pics are the game's own (not packed): its front pic, and the
+-- entry animation's frame-1 art
+do
+  local MonAnim = { framePic = function(species, frame) return { image = { cart = species, frame = frame } } end }
+  local P6 = { backPic = origBack, icon = origIcon,
+    frontPic = function(species, _form, _shiny, personality, kind)
+      return { image = { front = species, p = personality, kind = kind } }
+    end }
+  Hooks.install(P6, atlas, false, MonAnim)
+  local f0 = atlas.cartFrame(25, 0, 9)
+  check(f0 and f0.front == 25 and f0.p == 9 and f0.kind == "dex", "a Gen 1-3 cart pic's frame 0 is the game's front pic")
+  local f1 = atlas.cartFrame(25, 1)
+  check(f1 and f1.cart == 25 and f1.frame == 1, "...its frame 1 the engine's entry-animation art, not our wrapper's nil")
+  check(atlas.cartFrame(308, 0, 5).front == 308 and atlas.cartFrame(308, 1) == nil,
+    "Spinda keeps its spotted front pic alone")
+  check(atlas.cartFrame(451, 0) == nil and atlas.cartFrame(-742, 0) == nil, "#387+ have no game pic to take")
+  -- a reload after another mod wrapped ours: the chain we capture leads back into our first
+  -- wrapper, which must hand the call on, not answer with the atlas's pic
+  local first = P6.frontPic
+  P6.frontPic = function(...) return first(...) end
+  Hooks.install(P6, atlas, false, MonAnim)
+  local again = atlas.cartFrame(25, 0, 9)
+  check(again and again.front == 25, "after a reload through another mod's wrapper: still the game's pic")
+  check(atlas.cartFrame(25, 1) and atlas.cartFrame(25, 1).cart == 25, "...and the game's frame 1")
+  check(P6.frontPic(25, 0, false).image.fake == "front", "...while a plain call still gets the atlas's")
+  atlas.cartFrame = nil
+end
+
 -- gen1recomp 0.3.95+ passes more than the old arguments (backPic's `kind`, and the Pokemon to
 -- both): a pic that is not ours hands them on to the engine untouched
 do
@@ -191,6 +219,15 @@ do
   check(Pokemon.frontPic(500, 0, true, 0, "dex").image.live == "500:front_shiny", "...the shiny one when shiny")
   dexState.page = 0
   check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake_icon_pic == 500, "...and the wheel still the icon")
+  -- a species with a cart pic gets a live canvas on the wheel too (opening an entry keeps the
+  -- wheel sprite's image), held still there by holdLive
+  atlas.dexPic = function(key) return key == 25 and { cart = 25 } or nil end
+  check(Pokemon.frontPic(25, 0, false, 7, "dex").image.live == "25:front", "a cart pic on the wheel is live")
+  check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake_icon_pic == 500, "...one without keeps the icon pic")
+  check(atlas.holdLive() == true, "...held still on the wheel")
+  dexState.page = 1
+  check(atlas.holdLive() == false, "...and moving on an entry")
+  atlas.dexPic = nil
   atlas.livePic, atlas.refreshLive = nil, nil
   Hooks._resetRseDex(nil)
   check(Pokemon.frontPic(500, 0, false, 0, "dex").image.fake == "front", "no Pokedex screen: the animated sheet")

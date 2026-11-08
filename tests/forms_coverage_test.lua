@@ -48,5 +48,15 @@ for _, form in ipairs(forms) do
   end
 end
 
+-- every species from #387 and every form has a cart-style Pokedex pic (the RSE Pokedex);
+-- Generations 1-3 have none, they show the game's own
+for id, rec in pairs(index) do
+  if rec.slot and rec.slot >= 451 then
+    check(rec.dexpic ~= nil, id .. " has a cart Pokedex pic")
+  elseif rec.slot and rec.slot > 0 then
+    check(rec.dexpic == nil, id .. " (Gen 1-3) has no packed Pokedex pic")
+  end
+end
+
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 forms coverage)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)
