@@ -268,8 +268,12 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
 - **Colour:** `GbcPalette` draws a true-colour pic as it is only in the GEN 2 colour mode
   (`Gen2.keepsColour`); in DMG, CLASSIC and a custom palette it maps the pic's shades to the
   palette, so the frame is drawn through `shadesShader` and answered as not true colour. The
-  battle's own colour effects (the intro's blackout, `animPicState().shade`) and the
-  evolution's blackout take the shaded frame too.
+  battle's own colour effects and the evolution's blackout take the shaded frame too: the
+  intro's blackout, a pic's shade (`animPicState().shade`: Giga Drain, Growl ...) and the BG
+  palette register (`GbcPalette.bgp`, set while the battle is drawn: the flashes and inverts of
+  61 of the 251 moves, Thunder, Psychic, Night Shade ...). Both rest on the identity `0xE4`
+  (never nil during an animation), which is not an effect: every other move keeps the art in
+  its own colours.
 - **Crystal's animated pics:** `MonAnimView.start` notes each view's scene and atlas key (from
   the species record it starts with), and `MonAnimView:frame` answers nil while that scene's
   screen shows ours (`serves[scene]`: `menu` the summary, `hatch`, `evolve`, `hof`, `trade`).

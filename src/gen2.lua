@@ -33,6 +33,7 @@ local Gen2 = {}
 local DPI = 4                -- frame canvases: this many pixels per Game Boy pixel
 local FRONT_BOX = 56         -- the 7x7-tile front pic box
 local BACK_BOX = 48          -- the player's 6x6-tile back pic box
+local BGP_IDENTITY = 0xE4    -- rBGP / a pic's shade at rest: shade n is shade n
 
 -- src/gen1.lua: the shared frame, options and helpers (set by Gen2.install)
 local Gen1 = nil
@@ -136,12 +137,19 @@ function Gen2.installBattle(atlas, BattleState)
       -- 3DB FRONTAL / 3DB FLIP: the player's Pokemon shows its front, optionally facing the foe
       local frontal = back and opt("battle_frontal", false) == true
       -- the screen's own colour effects (the intro's blackout, a move's flash) recolour the
-      -- pic, so it goes in the four shades for them as it does in the mono colour modes
+      -- pic, so it goes in the four shades for them as it does in the mono colour modes. A
+      -- move recolours through the pic's shade or the BG palette register (a flash, an invert:
+      -- set on GbcPalette while the battle is drawn); both rest on the identity, 0xE4, which
+      -- recolours nothing, so a move that leaves them there keeps the art in its own colours
       local effect = false
       pcall(function()
         if self:introGrayscale() then effect = true end
         local anim = self:animPicState(back and "player" or "enemy")
-        if anim and anim.shade then effect = true end
+        local shade = anim and tonumber(anim.shade)
+        if shade and shade ~= BGP_IDENTITY then effect = true end
+        local P = gbc()
+        local bgp = P and tonumber(P.bgp)
+        if bgp and bgp ~= BGP_IDENTITY then effect = true end
       end)
       local shaded = effect or not Gen2.keepsColour()
       local f = Gen2.frame(atlas, self.game and self.game.data, Gen2.speciesOf(mon),

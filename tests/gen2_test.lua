@@ -66,7 +66,9 @@ local BattleState = class({
   picScale = function() return 2 end,
   frontAnimFrame = function() return "SHEET", "QUAD", 56 end,
   introGrayscale = function(self) return self.intro == true end,
-  animPicState = function(self, side) return self.shade and { shade = 1 } or nil end,
+  animPicState = function(self, side)
+    return self.shade and { shade = self.shade == true and 1 or self.shade } or nil
+  end,
 })
 local Summary = class({ picFor = function() return "VANILLA", false end })
 local Dex = class({ picFor = function() return "VANILLA", false end, drawUnownPic = function() return "VANILLA" end })
@@ -140,6 +142,13 @@ do
   b.shade = true
   check(select(2, b:pic(mon, false)) == false, "and a move's flash")
   b.shade = nil
+  -- a move that recolours nothing: its pic shade rests on the identity
+  b.shade = 0xE4
+  check(select(2, b:pic(mon, false)) == true, "a move with its shade at rest (0xE4): true colour")
+  b.shade = nil
+  gbc.bgp = 0x1B
+  check(select(2, b:pic(mon, false)) == false, "a move changing the BG palette (a flash): shaded")
+  gbc.bgp = nil
   opts.enable_battle_sprites = false
   check(b:pic(mon, false) == "VANILLA", "BATTLE SPRITES off: the game's own")
   opts.enable_battle_sprites = nil
