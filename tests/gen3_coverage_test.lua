@@ -1,6 +1,6 @@
 -- Run from the mod root: luajit tests/gen3_coverage_test.lua
 -- Generations 1-3 (#1-386) are in the atlas at their internal slots, with a front, back and
--- both shiny sheets each, and no party icon (the game's own are kept). Unown is drawn at one
+-- both shiny sheets each, and a party icon (Red / Blue / Yellow's; Gen 3 keeps its own). Unown is drawn at one
 -- slot per letter: A at 201, B .. Z at 413 .. 437, ! at 438, ? at 439, each with its own sheet.
 local index = dofile("data/atlas_index.lua").species
 
@@ -29,7 +29,7 @@ for _, e in ipairs(classic) do
     check(r[v] ~= nil, e.id .. " has a " .. v .. " sheet")
   end
   check(r.back and r.back.cx0 ~= nil and r.back.ux1 ~= nil, e.id .. " has its back pic's boxes")
-  check(r.icon == nil, e.id .. " has no party icon (the game's own is kept)")
+  check(r.icon ~= nil, e.id .. " has a party icon (for Red / Blue / Yellow)")
   -- the internal id: #1-251 are their own; Hoenn's (#252-386) are scattered over 277-411
   if r.dex <= 251 then
     check(r.slot == r.dex, e.id .. " (#" .. r.dex .. ") is at its own slot, got " .. tostring(r.slot))

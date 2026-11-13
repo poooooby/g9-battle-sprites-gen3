@@ -79,6 +79,8 @@ STEM_OVERRIDES = {
 ICON_STEMS = {
     "BASCULIN_WHITE_STRIPED": "BASCULIN_2",
     "BASCULEGION_FEMALE": "BASCULEGION_female",
+    "NIDORAN_F": "NIDORANfE",
+    "NIDORAN_M": "NIDORANmA",
 }
 
 # Pokemon whose female looks different but is the same species here (national_dex_gen3 keeps
@@ -465,9 +467,10 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                         lo, hi = BACK_NORM_LIMITS
                         cell["bn"] = round(min(hi, max(lo, front_h[sid] / bh)), 3)
                 if variant not in BACK_VARIANTS and extent:
-                    # the first row of art over the whole animation: gen3-hd-sprites' Battle Fit
-                    # fits the art under the top of the screen, not the frame's empty margin
-                    cell["uy0"] = extent[1]
+                    # the union of the art over the whole animation: its first row is what
+                    # gen3-hd-sprites' Battle Fit fits under the top of the screen (not the frame's
+                    # empty margin), and the whole box is what Gen 1 / 2 fit to their pic box
+                    cell.update({"ux0": extent[0], "uy0": extent[1], "ux1": extent[2], "uy1": extent[3]})
                 if variant not in BACK_VARIANTS and front_fy(sid):
                     cell["fy"] = front_fy(sid)
                 if variant not in BACK_VARIANTS:
@@ -546,7 +549,7 @@ def build_icons(icon_dir: Path, species: list[tuple[int, str]], out_dir: Path,
         path = stems.get(sid) or by_norm.get(norm(sid))
         if sid in ICON_STEMS:
             path = stems.get(ICON_STEMS[sid])
-        elif path is None and dbk and form_ids and sid in form_ids:
+        elif path is None and dbk and ((form_ids and sid in form_ids) or sid in UNOWN_LETTER_IDS):
             path = stems.get(dbk.get(sid, ""))      # a form's icon is named by its sprite stem
         if path is None:
             missing.append(sid)
@@ -703,6 +706,26 @@ def build_dex_fronts(ref: Path, species: list[tuple[int, str]], out_dir: Path,
         print("  no cart front pic for:", ", ".join(missing[:30]) + (" ..." if len(missing) > 30 else ""))
 
 
+def read_dbk_metrics(path: Path) -> dict[str, dict[str, int]]:
+    """dbk_metrics.lua: stem -> its SpeciesMetrics fields (fx, fy, bx, by, sx, sz), {} when absent."""
+    if not path.is_file():
+        return {}
+    out = {}
+    for m in re.finditer(r'\["([^"]+)"\]=\{([^}]*)\}', path.read_text(encoding="utf-8")):
+        out[m.group(1)] = {k: int(v) for k, v in re.findall(r"(\w+)=(-?\d+)", m.group(2))}
+    return out
+
+
+def read_dbk_float(path: Path) -> set[str]:
+    """dbk_float.lua: the stems whose art floats, empty when absent."""
+    if not path.is_file():
+        return set()
+    return set(re.findall(r'\["([^"]+)"\]=true', path.read_text(encoding="utf-8")))
+
+
+METRIC_KEYS = ("fx", "fy", "bx", "by", "sx", "sz")
+
+
 def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str]],
                 slots: dict[str, int]) -> None:
     lines = [
@@ -712,9 +735,10 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
         "-- row; frame n of a species is cell start + n. Back cells also carry cx0, cy0, cx1,",
         "-- cy1: the creature's typical box inside its frame (what it is anchored on); ux0, uy0,",
         "-- ux1, uy1: the union of its box over the whole animation (how much room it needs).",
-        "-- Front cells carry uy0: the first row of art over the whole animation.",
+        "-- Front cells carry ux0, uy0, ux1, uy1: the union of the art over the whole animation.",
         "-- party_icons_<page>.png: `frames` 32x32 cells side by side from x, y.",
         "-- dex_fronts_<page>.png (dexpic): the cart's two 64x64 front frames side by side from x, y.",
+        "-- fl: the art floats; pm: the pack's SpeciesMetrics (front fx, fy, back bx, by, shadow sx, sz).",
         "-- slot: the engine species slot the entry answers for. A form (WORMADAM_SANDY) has a",
         "-- slot of its own and its base species' dex; it reuses its base's cells where the",
         "-- pack has no sheet or icon of its own.",
@@ -737,8 +761,8 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
                 if "cx0" in c:
                     text += f', cx0 = {c["cx0"]}, cy0 = {c["cy0"]}, cx1 = {c["cx1"]}, cy1 = {c["cy1"]}'
                     text += f', ux0 = {c["ux0"]}, uy0 = {c["uy0"]}, ux1 = {c["ux1"]}, uy1 = {c["uy1"]}'
-                elif "uy0" in c:
-                    text += f', uy0 = {c["uy0"]}'
+                elif "ux0" in c:
+                    text += f', ux0 = {c["ux0"]}, uy0 = {c["uy0"]}, ux1 = {c["ux1"]}, uy1 = {c["uy1"]}'
                 if "fy" in c:
                     text += f', fy = {c["fy"]}'
                 if "ffr" in c:
@@ -762,6 +786,11 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
             owner = f'slot = {slots[sid]}'
         if entry.get("ht"):
             owner += f', ht = {entry["ht"]}'      # height, dm (realism scaling)
+        if entry.get("fl"):
+            owner += ", fl = true"                 # the art floats (Gen 1 / 2 FLOATERS)
+        if entry.get("pm"):
+            pm = entry["pm"]
+            owner += ", pm = { " + ", ".join(f"{k} = {pm[k]}" for k in METRIC_KEYS if k in pm) + " }"
         lines.append(f'    ["{sid}"] = {{ dex = {dex}, {owner}, ' + ", ".join(parts) + " },")
     lines += ["  },", "}", ""]
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -775,6 +804,12 @@ def add_source_args(ap: argparse.ArgumentParser) -> None:
                     / "generated" / "gba" / "pokemon", help="the engine's extracted pokemon data "
                     "(names.lua, national.lua): where Gen 1-3's names and slots come from")
     ap.add_argument("--dbk", type=Path, default=ROOT.parent / "g9-battle-sprites" / "data" / "dbk_data.lua")
+    ap.add_argument("--dbk-metrics", type=Path,
+                    default=ROOT.parent / "g9-battle-sprites" / "data" / "dbk_metrics.lua",
+                    help="the pack's SpeciesMetrics per sheet stem (GROUND ANCHOR PACK, BATTLE SHADOWS)")
+    ap.add_argument("--dbk-float", type=Path,
+                    default=ROOT.parent / "g9-battle-sprites" / "data" / "dbk_float.lua",
+                    help="the sheet stems whose art floats or flies (FLOATERS)")
 
 
 def battle_species(args) -> tuple[dict[str, str], list[tuple[int, str]]]:
@@ -840,7 +875,9 @@ def main() -> None:
             slot_of[fid] = slots[base]
     back_lines = {sid: BACK_FEET_ROW - yo.get(slot, 0) for sid, slot in slot_of.items()}
     build_battle(args.sheets, dbk, classic + species + females, out_atlas, index, trims, back_lines)
-    build_icons(args.icons_dir, species, out_atlas, index, dbk, form_ids)
+    # Gen 1-3 too: Gen 3 keeps its own icons for them (src/hooks.lua), Red / Blue / Yellow
+    # have none past #151 and draw these on their party page (src/gen1.lua)
+    build_icons(args.icons_dir, classic + species, out_atlas, index, dbk, form_ids)
     # Gen 1-3 (and Unown's letters) are not packed: the RSE Pokedex draws them from the
     # game's own front pic and entry-animation frame (src/hooks.lua)
     build_dex_fronts(args.dex_ref, [(d, s) for d, s in species if s not in FEMALE_SHEETS],
@@ -869,6 +906,20 @@ def main() -> None:
             no_height.append(sid)
     print(f"  heights: {len(index) - len(no_height)}/{len(index)} species"
           + (f" (none for {', '.join(sorted(no_height))})" if no_height else ""))
+    # the pack's own data for each sheet, for Gen 1 / 2's options: whether its art floats
+    # (FLOATERS), and its SpeciesMetrics offsets and shadow (GROUND ANCHOR PACK, BATTLE SHADOWS)
+    metrics = read_dbk_metrics(args.dbk_metrics)
+    floats = read_dbk_float(args.dbk_float)
+    with_pm = 0
+    for sid, entry in index.items():
+        stem = dbk.get(sid)
+        if stem in floats:
+            entry["fl"] = True
+        if stem in metrics and metrics[stem]:
+            entry["pm"] = metrics[stem]
+            with_pm += 1
+    print(f"  pack data: {sum(1 for e in index.values() if e.get('fl'))} floating, "
+          f"{with_pm}/{len(index)} with metrics")
     write_index(index, args.out / "data" / "atlas_index.lua", classic + species + females, slots)
     print("wrote", args.out / "data" / "atlas_index.lua")
 

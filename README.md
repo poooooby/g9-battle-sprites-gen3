@@ -2,14 +2,14 @@
 
 # WoobleSpritePack 🎞️
 
-*Every Pokémon, animated. Smooth, true-colour battle sprites for all 1025 species in FireRed,
-LeafGreen, Ruby, Sapphire and Emerald.*
+*Every Pokémon, animated. Smooth, true-colour battle sprites for all 1025 species in Red, Blue,
+Yellow, Gold, Silver, Crystal, FireRed, LeafGreen, Ruby, Sapphire and Emerald.*
 
 </div>
 
-A mod for [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp)'s Generation 3 games, and a
-Gen 3 rewrite of [g9-battle-sprites](https://github.com/tectorifter/g9-battle-sprites) (Gen 1
-and 2).
+A mod for [Gen1Recomp](https://github.com/bryanthaboi/gen1recomp)'s Generation 1, 2 and 3
+games, built on [g9-battle-sprites](https://github.com/tectorifter/g9-battle-sprites) and taking
+its place on Red, Blue, Yellow, Gold, Silver and Crystal.
 
 ## ✨ Features
 
@@ -19,7 +19,15 @@ and 2).
   animated front and back sprites, normal and shiny, in battle, in the Pokédex and on the
   summary screen. Generation 1–3 Pokémon get the same animated art, so every battle looks
   alike.
-- 🎒 **Party icons** for every species from #387 on, with their two-frame wiggle.
+- 🎒 **Party icons** for every species the game has none of, with their two-frame wiggle: from
+  #387 on FireRed to Emerald, #252 on Gold to Crystal and #152 on Red to Yellow (and for every
+  Pokémon on the G9 party screen).
+- 🎮 **Red, Blue and Yellow too:** the same art in battle, the Pokédex and the summary screen,
+  and on the title screen, in Prof. Oak's speech, evolutions, trades, the Hall of Fame and its
+  PC, and the credits.
+- 🌟 **And Gold, Silver and Crystal:** in battle, the Pokédex and the summary screen, and in the
+  PC, Prof. Oak's speech, evolutions, egg hatching, trades, the Hall of Fame, the photo studio
+  and the Unown printer. Crystal's animated sprites give way to the animated art.
 - 🌍 **Alternate forms:** Alolan, Galarian, Hisuian and Paldean forms, Rotom's appliances, Wormadam's cloaks,
   the Therian and Origin forms, Flabébé's colours and more each have their own sprites. A female
   Meowstic or Oinkologne shows her own picture in battle, the Pokédex and the summary.
@@ -35,16 +43,48 @@ and 2).
   height: giants like Wailord and Rayquaza stand a bit taller, tiny ones a bit smaller, and the
   foe is drawn a little smaller for depth. Every Pokémon keeps its feet on its pad. The
   Pokédex and the summary screen show their Pokémon crisply too.
+  On Red to Crystal, a WoobleView that supports those games draws the original battle screen's
+  Pokémon crisply too and pulls back so tall ones fit (in the colour modes that keep their
+  colours: not OG, OG INV or CLASSIC on Red/Blue/Yellow, only GEN 2 on Gold/Silver/Crystal),
+  and the Pokédex and summary screens' Pokémon as well.
+- 🌗 **Shadows and floaters** (Red to Crystal): every Pokémon in battle casts a soft shadow,
+  and the ones that fly or float hover above the ground.
+- 🔍 **Sharp on Gold, Silver and Crystal:** their screens are drawn at your window's
+  resolution, so even a big Pokémon shrunk into its picture box keeps every detail.
 - 📱 **Phone-friendly:** Everything is packed into a handful of images small enough for Android
   devices.
 
 ## ⚙️ Options
 
-None. Install it and every battle uses the new sprites.
+FireRed, LeafGreen, Ruby, Sapphire and Emerald need none: their sprites follow the games' own
+layout. These are for Red, Blue, Yellow, Gold, Silver and Crystal.
+
+| Option | Choices | Default |
+|---|---|---|
+| BATTLE SPRITES | on / off | on |
+| ANIMATE | on / off | on |
+| SPRITE SPEED | slow / normal / fast / very fast | normal |
+| SHINY ART | on / off | on |
+| FEMALE ART | on / off | on |
+| SPRITE SIZE | max detail / small / normal / big | max detail |
+| GROUND ANCHOR | feet / pack / box | feet |
+| FLOATERS | on / off | on |
+| BATTLE SHADOWS | on / off | on |
+| 3DB FRONTAL (your Pokémon faces you) | on / off | off |
+| 3DB FLIP (...and faces the foe) | on / off | off |
+| DEX SPRITES | on / off | on |
+| SUMMARY SPRITES | on / off | on |
+| SUMMARY SIZE | real size / 75% / 50% / 25% | real size |
+| OTHER SCREENS (Oak, evolution, trades, Hall of Fame, and more) | on / off | on |
+| PARTY ICONS | on / off | on |
+| G9 PARTY SCREEN (the party list filling your window, every icon in full detail) | on / off | off |
 
 ## 💾 Installation
 
-1. Install [WoobleDex](https://github.com/poooooby/national_dex_gen3) (required).
+1. On FireRed, LeafGreen, Ruby, Sapphire and Emerald, install
+   [WoobleDex](https://github.com/poooooby/national_dex_gen3) (required). On Red, Blue, Yellow,
+   Gold, Silver and Crystal nothing else is needed; turn off G9 Battle Sprites, which this
+   replaces.
 2. Download the latest release from the
    [Releases](https://github.com/poooooby/g9-battle-sprites-gen3/releases) page.
 3. Import it with the Gen1Recomp Mod Manager, or drop it in your mods folder, and enable it.
@@ -53,6 +93,8 @@ None. Install it and every battle uses the new sprites.
 
 - [WoobleDex](https://github.com/poooooby/national_dex_gen3): the species these sprites
   are for.
+- [National Dex](https://github.com/sanjinpepic/gen1recomp-national-dex): all 1025 species on Red,
+  Blue, Yellow, Gold, Silver and Crystal, with their sprites, forms and party icons.
 - [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles, Pokédex
   and summary screen.
 - [Wilds of Hoenn](https://github.com/poooooby/wilds-of-hoenn) and
@@ -62,10 +104,22 @@ None. Install it and every battle uses the new sprites.
 ## 📌 Good to Know
 
 - 🔤 Every one of Unown's 28 letters, A to Z plus ! and ?, has its own animated sprite.
-- Castform's weather looks keep the game's own sprites, and so do the party icons of #1–386.
+- On FireRed to Emerald, Castform's weather looks keep the game's own sprites, and so do the
+  party icons of #1–386.
+- Replaces G9 Battle Sprites on Red, Blue, Yellow, Gold, Silver and Crystal: the two can't be
+  on together.
+- On Red, Blue and Yellow, the full colours show everywhere with the ADVANCED colours. With the
+  other colour modes, battles stay in full colour and the other screens show the sprites in the
+  game's own shades and palette, like its original sprites (the black-and-white modes in
+  battle too).
+- On Gold, Silver and Crystal, the full colours show with the GEN 2 colours. DMG, CLASSIC and
+  custom palettes show the sprites in the palette's shades, like the game's own.
+- Mega and Gigantamax forms show their normal sprites. Yellow's printed Pokémon stats keep the
+  game's own picture.
 - Sinistea's, Polteageist's, Poltchageist's and Sinistcha's rare variants look like the normal
   ones (no art exists for them). Pumpkaboo's and Gourgeist's sizes share one party icon each.
-- Not included: Tera crystals, Dynamax clouds and battle shadows.
+- Not included: Tera crystals and Dynamax effects, and shadows on FireRed, LeafGreen, Ruby,
+  Sapphire and Emerald.
 
 ## 🪪 Credits
 

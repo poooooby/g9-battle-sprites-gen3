@@ -136,11 +136,158 @@ WoobleView's Battle Fit pulls the camera back to fit the art, not the frame's em
 margin. Each tag also passes `side`, `"enemy"` or `"player"`. A back adds `body`, its resting
 body box (`cx0`…`cy1`). Battle Fit keeps that body's top at or below the tallest cart back sprite's (y 52). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
+**A window mode change empties canvases.** `love.window.setMode` (and `updateMode`) can
+recreate the graphics context, which leaves every Canvas blank; an Image is reloaded by LOVE.
+The colour-number blocks are decoded into canvases and every rendered frame is one, so
+`Atlas.watchWindow` wraps `setMode`, `updateMode` and `setFullscreen` (once, a counter on
+`love.window.__woobleGfx`), and each atlas checks it where a pic is asked for (`fresh`): on a
+new count it drops its blocks, frames, Pokédex and icon pics and redraws its live pics. A
+screen that keeps a pic it was handed earlier shows it blank until it asks again. Gen 2's
+party-icon canvases check `atlas.epoch()` the same way.
+
+## Red, Blue and Yellow
+
+`main.lua` picks the game from `src.core.GameVersion.generation()` before it requires any engine
+module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always Gen 3. Gen 3 runs
+`src/hooks.lua` as above. Gen 1 runs `src/gen1.lua` on the same atlas; Gen 2 runs
+`src/gen2.lua`, which builds on it (see the next section).
+
+- **Species:** Gen 1 names a species by id (`"ABRA"`). `atlas.keyFor(id, dex, base)` finds it
+  by the index's own ids (the National Dex mods use the same ones), then by the record's
+  `baseSpecies` (a Mega shows its base), then by dex number.
+- **Frames:** `atlas.boxFrame` fits a frame to the screen's pic box in Game Boy pixels:
+  - the art's union over the animation (front cells now carry `ux0`…`uy1` too) is placed, so
+    the Pokémon stays still while it animates;
+  - 1:1 when it fits, else shrunk; nearest-neighbour;
+  - none of Gen 3's placement data is used.
+
+  The options decide the rest:
+  - `sprite_size`: a divisor;
+  - `sprite_anchor`: feet / pack / box;
+  - `sprite_float`: lifts records with `fl`;
+  - PACK reads `pm`, the pack's SpeciesMetrics;
+  - `battle_shadows`: draws `assets/shadow/1..3.png` behind the Pokémon, sized by `pm.sz`.
+
+  `fl` and `pm` come from the pack's `dbk_float.lua` and `dbk_metrics.lua` at build time.
+- **Battle** (`src/battle/BattleState.lua`):
+  - `makeBattler` is local, so `drawPicsLayer` puts the current frame in each battler's
+    `sprite`: front 56×56, back 64×64.
+  - `resolveBattleScale` answers 1 for those species.
+  - `drawBattlerPic` marks the pic true colour.
+  - `speciesSprite` notes whom a Transform copies.
+  - The Pokémon Tower ghost's disguise (`battle.ghost` / `scopeReveal` / `ghostReveal`) is left
+    alone.
+  - WoobleView (its Gen 1 support): each frame is tagged as Gen 3's battle pics are
+    (`boxFrame`'s `hdSide`: `texture` / `quad` the full frame, `pivot` the feet (`ffr`; a back's
+    body-centre x and `bfr`), `lowPivot` where they sit in the box, `scale` the fit factor,
+    `top`, `side`, a back's `body`), so its capture of the original battle screen redraws it at
+    window resolution and Battle Fit pulls back for tall Pokémon. Not in the mono COLORS (the
+    pics are drawn after the colour pass there). A mirrored 3DB FLIP frame adds `flip = true`
+    (its `lowPivot` mirrored about the box, the rest as in the atlas), only where WoobleView
+    has `features.flip`; with an older one it stays untagged. The contact shadow is in the
+    stand-in only.
+- **Other screens:** each `draw` (or the method that answers the pic) is wrapped to put the
+  current frame where the screen keeps its pic:
+
+  | Screen | Wrapped |
+  |---|---|
+  | Summary | `SummaryMenu.draw` |
+  | Pokédex | `DexEntryMenu.draw` (the National Dex's form browsing sets `formId`), `.render` (the printer) |
+  | Evolution | `EvolutionState.draw` |
+  | Trade | `TradeAnim.draw` |
+  | Hall of Fame | `HallOfFame:spriteFor` / `:backPicFor` (a 28×28 frame at `dpi` 2, drawn 2×) |
+  | League PC | `LeaguePC.draw` |
+  | Title | `TitleState:currentSprite` |
+  | Oak's speech | `OakSpeech.resolvePic` |
+  | Credits | `Credits:monSprite` (a silhouette) |
+  | Party icons | `PartyMenu.drawIcon` |
+
+  `wrap` remembers its own function per name, so a reinstall leaves it alone and wraps again a
+  function another mod put there since. `main.lua` reinstalls on `screen.pushed` (and links
+  WoobleView there too, for a Pokédex opened before any battle).
+
+  The summary's and the Pokédex entry's frames (draw and render) pass `boxFrame`'s `hdDex`:
+  with WoobleView's "dex" pass on they are tagged as the battle's are, without `side` / `top` /
+  `body` (the screens' own mirrored draw is WoobleView's to handle, so no `flip`). A shaded
+  frame is tagged only where WoobleView has `features.shades`, and then carries the shader as
+  `shades`, which WoobleView draws the full frame through before the colour pass colours it.
+  Never with the shadow (in the stand-in only) or a silhouette. The key gets `:dex`.
+- **Exports:** `mod.exports.frontArt`, `iconArtHD`, `iconArt16` and `drawSummaryFrame` keep
+  g9-battle-sprites' signatures. The icon ones return `({ full = quad }, image, cell px[, box])`.
+- **Colour:** the engine's colour pass recolours a pic by its shade (the red channel) unless it
+  keeps its colours: in battle except the og, og_inv and classic COLORS (`Gen1.monoBattle`), and
+  elsewhere only in ADVANCED (`Gen1.keepsColour`, `PaletteFX.honorsTrueColor`). Where it
+  recolours, `boxFrame`'s `shades` draws the art through `atlas.shadesShader()` (brightness to
+  the Game Boy's four shades), and the pic is not marked true colour, so the pass colours it
+  with the species' palette as it does the game's own.
+- **Party icons:** the icon page holds every species' icon, #1–386 included (Gen 3's
+  `Pokemon.icon` wrap leaves keys below 451 to the game). The icon sources are 2× pixel art, so
+  the 32 px cells hold every art pixel. On the game's list, keys 1–151 (the cart's species)
+  keep the game's icons.
+- **G9 party screen** (`g9_party_screen`, `Gen1.installPartyScreen`): `PartyMenu.uiSize`
+  answers 640×576, `isWideBattleLayout` / `wantsFillScale` true, and its draw runs under
+  `scale(4)`, with `markTrueColor` rects and `sgbPalettes` zones scaled to match.
+  `holdsUIAnchors`, a field the engine reads off the stack, is set from `uiSize`. A classic
+  screen pushed over the page (`StateStack.push`) is dressed the same way. Every icon is ours
+  there.
+
+## Gold, Silver and Crystal
+
+`src/gen2.lua` reuses Gen 1's frame (`Gen1.frame`: the options, `keyOf`, shiny, female), its
+`wrap` and its exports; `Gen2.install(atlas, Gen1)` hands it over. What differs:
+
+- **Every screen asks a method for its pic**, answered as `(image, trueColor)`. The engine's
+  `pokemon.sprite` seam only substitutes a path, so each method is wrapped:
+
+  | Screen | Wrapped |
+  |---|---|
+  | Battle | `BattleState:pic` (front 56×56, back 48×48), `:picScale` → 1, `:frontAnimFrame` → nil |
+  | Summary | `SummaryMenu:picFor` |
+  | Pokédex | `PokedexMenu:picFor` (the National Dex's `formId` / `formBase`; Unown as `save.firstUnownSeen`), `:drawUnownPic` |
+  | PC box | `BoxMenu:picFor` |
+  | Hatching | `EggHatchAnim:pic` (once `showMon`) |
+  | Evolution | `EvolutionAnim:pic` (shaded while `blackout`) |
+  | Hall of Fame | `HallOfFame:monPic` (front and back) |
+  | Trade | `TradeAnimView:pic`, `:drawIcon` |
+  | Oak's speech | `OakSpeech:drawPic` (the demo's `marillPic`, or a `{ type = "pokemon" }` pic noted by `:resolvePic`) |
+  | Photo studio | `PhotoStudio:picFor` |
+  | Unown printer | `UnownPrinter:picFor` |
+  | Party icons | `PartyMenu:drawIcon` |
+
+  The battle's pic answers a path of its own (`wooble-sprite:front`), so `frontPicReplaced`
+  keeps Crystal's battle animation from starting.
+  With WoobleView (its Gen 2 support) the battle frames are tagged as Gen 1's are (`lowPivot`
+  in the box's units, 56 / 48, not the canvas's DPI pixels), for its capture of the original
+  white-background battle; only while they keep their own colours (GEN 2 colours, not during
+  the intro's blackout or a move's flash). The summary's, the Pokédex's and the Unown page's
+  frames pass `hdDex`, as Gen 1's do (shaded ones under `features.shades`, which WoobleView
+  then draws under the GbcPalette shader set at the time).
+- **Window resolution:** Gold draws its 160×144 panel scaled up on a window-sized canvas, so
+  frames are `boxFrame`s at `dpi` 4 and keep their detail however far the art is shrunk.
+- **Unown:** `Unown.monLetter` picks `UNOWN` (A) or `UNOWN_B` … `UNOWN_Z` (`Gen2.unownId`).
+- **Colour:** `GbcPalette` draws a true-colour pic as it is only in the GEN 2 colour mode
+  (`Gen2.keepsColour`); in DMG, CLASSIC and a custom palette it maps the pic's shades to the
+  palette, so the frame is drawn through `shadesShader` and answered as not true colour. The
+  battle's own colour effects (the intro's blackout, `animPicState().shade`) and the
+  evolution's blackout take the shaded frame too.
+- **Crystal's animated pics:** `MonAnimView.start` notes each view's scene and atlas key (from
+  the species record it starts with), and `MonAnimView:frame` answers nil while that scene's
+  screen shows ours (`serves[scene]`: `menu` the summary, `hatch`, `evolve`, `hof`, `trade`).
+- **Party icons:** a Pokémon the game has an icon for (`PartyMenu:iconIdFor`, `gen2Icons`)
+  keeps it; others get ours, drawn into a small canvas (shaded where the palette recolours)
+  so the game's held-item marker can replace its bottom-left quarter as the game does. On the
+  G9 party screen every icon is ours, `battlePanelScale` answers the window's fill scale
+  (`panelBlit` draws a screen pushed over it at the same scale), and `drawWidescreen` draws
+  the panel at it.
+- **Exports:** as Gen 1's, with `drawSummaryFrame` unmirrored in the 7×7 block at the top left.
+
 ## Tests
 
 ```sh
 luajit tests/hooks_test.lua            # the gate test
 luajit tests/forms_coverage_test.lua   # forms coverage
+luajit tests/gen1_test.lua             # Red / Blue / Yellow: keys, box frames, options, hooks
+luajit tests/gen2_test.lua             # Gold / Silver / Crystal: pics, colour, anims, icons, exports
 # plus the atlas layout, back framing, clean state, dex HD and gen3 coverage suites in tests/
 ```
 

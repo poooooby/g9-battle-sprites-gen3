@@ -288,10 +288,42 @@ local function loadIndex(load)
   return bySlot
 end
 
+-- A window mode change (love.window.setMode / updateMode / setFullscreen) may recreate the
+-- graphics context, which empties every Canvas: the decoded colour-number blocks and every
+-- rendered frame would draw as nothing from then on (an Image is reloaded by LOVE itself). Each
+-- change is counted (`love.window.__woobleGfx.n`, shared by every copy of this module, so a
+-- reload of the mod still sees it), and an atlas that sees a new count drops its canvases.
+function Atlas.watchWindow()
+  local W = type(love) == "table" and love.window or nil
+  if type(W) ~= "table" then return nil end
+  if type(W.__woobleGfx) == "table" then return W.__woobleGfx end
+  local gfx = { n = 0 }
+  W.__woobleGfx = gfx
+  local function after(...)
+    gfx.n = gfx.n + 1
+    return ...
+  end
+  for _, name in ipairs({ "setMode", "updateMode", "setFullscreen" }) do
+    local orig = W[name]
+    if type(orig) == "function" then
+      W[name] = function(...) return after(orig(...)) end
+    end
+  end
+  return gfx
+end
+
+--- How many window mode changes there have been: a canvas made before the last one may be empty.
+function Atlas.gfxEpoch()
+  local W = type(love) == "table" and love.window or nil
+  local gfx = type(W) == "table" and W.__woobleGfx or nil
+  return type(gfx) == "table" and gfx.n or 0
+end
+
 -- mod: the mod table (for mod.path and mod.log); load: loadSibling-style reader
 function Atlas.new(mod, load)
   local bySlot = loadIndex(load)
   if not bySlot then return nil end
+  Atlas.watchWindow()
 
   local self = { pages = {}, icons = {}, frames = {} }
 
@@ -558,6 +590,25 @@ function Atlas.new(mod, load)
     return c
   end
 
+  -- After a window mode change (Atlas.watchWindow) every canvas made before it may be empty:
+  -- the decoded blocks and the cached frames are dropped and made again when next asked for
+  -- (a spare is cleared before it is drawn into, so it is kept), and a live pic redraws its
+  -- canvas. Checked where a pic is asked for.
+  local seenEpoch = Atlas.gfxEpoch()
+  local function fresh()
+    local n = Atlas.gfxEpoch()
+    if n == seenEpoch then return end
+    seenEpoch = n
+    blocks, blockOrder = {}, {}
+    for k in pairs(self.frames) do self.frames[k] = nil end
+    used, count = {}, 0
+    if self.dexPics then self.dexPics = {} end
+    if self.iconPics then self.iconPics = {} end
+    for _, rec in pairs(self.live or {}) do rec.f = nil end
+  end
+  self.fresh = fresh
+  self.epoch = Atlas.gfxEpoch
+
   -- The cell for one species slot and variant ("front", "front_shiny", "back",
   -- "back_shiny"), or nil when the atlas has none. (The first argument is just
   -- a key: picFrame and icon cache by it.)
@@ -568,6 +619,32 @@ function Atlas.new(mod, load)
 
   function self.hasSlot(slot)
     return bySlot[tonumber(slot)] ~= nil
+  end
+
+  -- Species ids to atlas keys, for the games that name a species by its id (Gen 1 / 2). The
+  -- index's ids are the National Dex mods' own (NIDORAN_F, MR_MIME, RATTATA_ALOLA ...); a dex
+  -- number finds its base species, the lowest slot with that number (forms and Unown's letters
+  -- sit above it).
+  local byId, byDex = {}, {}
+  for key, rec in pairs(bySlot) do
+    if key > 0 then
+      byId[rec.id] = key
+      local dex = tonumber(rec.cells.dex)
+      if dex and (byDex[dex] == nil or key < byDex[dex]) then byDex[dex] = key end
+    end
+  end
+
+  --- The atlas key for a species `id`, else for `base` (a form the atlas has no art for, a
+  --- Mega say, shows its base species), else for its dex number; nil when it has none.
+  function self.keyFor(id, dex, base)
+    return (id ~= nil and byId[id]) or (base ~= nil and byId[base])
+      or (tonumber(dex) and byDex[tonumber(dex)]) or nil
+  end
+
+  --- The key of a species' female sheet (Meowstic, Oinkologne ...), or nil.
+  function self.femaleKey(key)
+    local k = tonumber(key)
+    return k and k > 0 and bySlot[-k] and -k or nil
   end
 
   -- Which frame plays now. Each cell has `frames`; the clock is shared, so
@@ -659,6 +736,7 @@ function Atlas.new(mod, load)
   -- Pokedex and summary screens draw at window resolution (fitted to the box, the size the plain
   -- pic has); on any other screen the tagged canvas is simply drawn, as the plain pic.
   function self.picFrame(dex, variant, cell, f, battle, kind)
+    fresh()
     local isBack = variant == "back" or variant == "back_shiny"
     local big = isBack or battle == true
     -- gen3-hd-sprites (when installed and on): the pic is drawn from the atlas at the
@@ -799,6 +877,280 @@ function Atlas.new(mod, load)
     return canvas
   end
 
+  --- A species' own record in the index (its dex, height, `fl` floats, `pm` pack metrics ...).
+  function self.info(key)
+    local rec = bySlot[tonumber(key)]
+    return rec and rec.cells or nil
+  end
+
+  -- The pack's contact shadows (assets/shadow/1..3.png: small, medium, large), each with the
+  -- box of its opaque pixels. Loaded once; false when one cannot be.
+  local shadows = {}
+  local function shadowArt(n)
+    local hit = shadows[n]
+    if hit ~= nil then return hit or nil end
+    shadows[n] = false
+    local ok, data = pcall(love.image.newImageData, mod.path .. "/assets/shadow/" .. n .. ".png")
+    if not (ok and data) then return nil end
+    local w, h = data:getDimensions()
+    local x0, y0, x1, y1 = w, h, -1, -1
+    for y = 0, h - 1 do
+      for x = 0, w - 1 do
+        local _, _, _, a = data:getPixel(x, y)
+        if a > 0 then
+          if x < x0 then x0 = x end
+          if x > x1 then x1 = x end
+          if y < y0 then y0 = y end
+          if y > y1 then y1 = y end
+        end
+      end
+    end
+    if x1 < x0 then return nil end
+    local okI, img = pcall(love.graphics.newImage, data)
+    if not okI then return nil end
+    img:setFilter("nearest", "nearest")
+    shadows[n] = { image = img, quad = love.graphics.newQuad(x0, y0, x1 - x0 + 1, y1 - y0 + 1, w, h),
+                   cw = x1 - x0 + 1, ch = y1 - y0 + 1 }
+    return shadows[n]
+  end
+
+  local FLOAT_LIFT, FLOAT_LIFT_MIN = 0.35, 2        -- a floater's lift: share of its height, px
+  local PACK_FRONT, PACK_BACK = 2, 3                -- the pack's own render scale (its metrics)
+  local SHADOW_W = { base = 0.55, step = 0.10, neg = 0.05, min = 0.15, max = 1 }
+
+  -- The Game Boy's four shades, by brightness: Gen 1's colour pass recolours a pic by its
+  -- shade (the red channel: above 0.83, 0.5, 0.17), so full-colour art it does not keep as it
+  -- is would come out in blotches. Drawn through this, the art is the cart's kind of pic, and
+  -- the pass colours it with the species' palette as it does the game's own.
+  local shadesShader = nil
+  function self.shadesShader()
+    if shadesShader == nil then
+      shadesShader = false
+      if love.graphics.newShader then
+        local ok, sh = pcall(love.graphics.newShader, [[
+          vec4 effect(vec4 color, Image tex, vec2 tc, vec2 sc) {
+            vec4 p = Texel(tex, tc) * color;
+            float y = dot(p.rgb, vec3(0.299, 0.587, 0.114));
+            float q = y > 0.75 ? 1.0 : (y > 0.5 ? 0.6667 : (y > 0.25 ? 0.3333 : 0.0));
+            return vec4(q, q, q, p.a);
+          }
+        ]])
+        if ok then shadesShader = sh end
+      end
+    end
+    return shadesShader or nil
+  end
+
+  --- Frame `f` of a cell fitted to a bw x bh box, for the games whose screens draw a pic as a
+  --- plain image of the box's size (Gen 1 / 2): none of Gen 3's placement data is used. The
+  --- art's union over the whole animation (ux0..uy1) is what is placed, so the Pokemon stays
+  --- still in its box while it animates; it is drawn as tectorifter's g9-battle-sprites drew it.
+  ---   opts.divisor  0 (default): 1:1, shrunk only to fit; n: the art divided by n, still fitted
+  ---   opts.anchor   "feet" (default) or "box": the art bottom-centred in the box; "pack": moved
+  ---                 by the pack's own SpeciesMetrics (the record's `pm`)
+  ---   opts.float    "feet" only: a floating species (`fl`) is lifted by a share of its height
+  ---   opts.shadow   the pack's contact shadow behind it, on the box's bottom (a battle pic)
+  ---   opts.shrink   a further factor (the summary's size option), 1 by default
+  ---   opts.mirror   flipped left to right
+  ---   opts.dpi      the canvas's dpiscale (1: the game's own pixels)
+  ---   opts.silhouette  all black (Gen 1's credits show each Pokemon as a silhouette)
+  ---   opts.shades   in the Game Boy's four shades (shadesShader), for the game's colour pass
+  ---   opts.reuse    a battle pic (asked for every frame): its canvas is rendered into again
+  ---                 once dropped, as picFrame's battle canvases are
+  ---   opts.hdSide   a battle pic in its own colours: "enemy" / "player". With WoobleView
+  ---                 (gen3-hd-sprites) on for battles, the canvas is tagged so WoobleView draws
+  ---                 the full frame at window resolution where the canvas is drawn (the canvas
+  ---                 stays the stand-in it shows when it cannot). Not for a shaded frame or a
+  ---                 silhouette (the tag has no shade of its own), and a mirrored one only
+  ---                 where WoobleView has `features.flip`.
+  ---   opts.hdDex    a Pokedex / summary pic: tagged the same way (no side) when WoobleView is
+  ---                 on for its "dex" pass; a shaded one too where it has `features.shades`
+  ---                 (the tag carries the shades shader). Not with the shadow or a silhouette.
+  --- Nearest-neighbour throughout, as the game draws its own pics. nil when the atlas has no
+  --- such frame or a canvas cannot be made.
+  function self.boxFrame(key, variant, f, bw, bh, opts)
+    fresh()
+    opts = opts or {}
+    local cell = self.cell(key, variant)
+    if not cell then return nil end
+    local info = self.info(key) or {}
+    local isBack = variant == "back" or variant == "back_shiny"
+    local anchor = (opts.anchor == "pack" or opts.anchor == "box") and opts.anchor or "feet"
+    local div = tonumber(opts.divisor) or 0
+    local shrink = tonumber(opts.shrink) or 1
+    local float = anchor == "feet" and opts.float and info.fl and true or false
+    local pm = anchor == "pack" and type(info.pm) == "table" and info.pm or nil
+    local shadowSize = type(info.pm) == "table" and tonumber(info.pm.sz) or 1
+    local shadow = opts.shadow and shadowSize ~= 0
+      and shadowArt(math.max(1, math.min(3, shadowSize))) or nil
+    local mirror = opts.mirror and true or false
+    local dpi = tonumber(opts.dpi) or 1
+    local black = opts.silhouette and true or false
+    local shades = not black and opts.shades and self.shadesShader() or nil
+    -- WoobleView: a battle pic (hdSide) in its own colours, or a Pokedex / summary pic (hdDex),
+    -- shaded too where WoobleView can draw through the shades shader (`features.shades`).
+    -- Never a silhouette. (The shadow is in the stand-in only: a battle pic is tagged with it
+    -- all the same, a Pokedex / summary pic is not)
+    local hd, hdPass = nil, opts.hdSide and "battle" or opts.hdDex and "dex" or nil
+    if hdPass and self.hd and not black and not (shadow and hdPass == "dex") then
+      local okH, live = pcall(function()
+        local feats = type(self.hd.features) == "table" and self.hd.features or {}
+        if shades and not (hdPass == "dex" and feats.shades == true) then return false end
+        if opts.shades and not shades then return false end
+        -- (a mirrored frame only where WoobleView can mirror it: its `flip` spec field)
+        return (self.hd.isActive == nil or self.hd.isActive()) and self.hd.enabled(hdPass)
+          and (not mirror or feats.flip == true)
+      end)
+      if okH and live then hd = self.hd end
+    end
+    local ckey = string.format("box:%s:%s:%d:%dx%d:%s:%g:%g:%s:%s:%s:%g:%s%s%s", tostring(key), variant, f,
+      bw, bh, anchor, div, shrink, float and "f" or "", shadow and "s" or "", mirror and "m" or "",
+      dpi, black and "k" or "", shades and "g" or "",
+      hd and (opts.hdSide and ":hd:" .. opts.hdSide or ":dex") or "")
+    local hit = self.frames[ckey]
+    if hit then
+      touch(ckey)
+      return hit
+    end
+    local img, qx, qy = frameSource(variant, cell, f)
+    if not img then return nil end
+    local fs = cell.fs
+    local x0, y0, x1, y1 = 0, 0, fs, fs
+    if cell.ux0 then x0, y0, x1, y1 = cell.ux0, cell.uy0, cell.ux1, cell.uy1 end
+    local cw, ch = math.max(1, x1 - x0), math.max(1, y1 - y0)
+    -- the size: 1:1 when it fits (never larger), else shrunk to fit; or divided by `div`
+    local s = math.min(div > 0 and 1 / div or 1, bw / cw, bh / ch) * shrink
+    local dw, dh = math.max(1, math.floor(cw * s + 0.5)), math.max(1, math.floor(ch * s + 0.5))
+    -- the place: bottom-centred, then moved by the pack's metrics (in the pack's own units,
+    -- `offset * 2 / its render scale` sheet px, with the margins the union trimmed put back)
+    -- or lifted off the bottom when it floats; kept inside the box
+    local offX, offY = 0, 0
+    if pm then
+      local d = isBack and PACK_BACK or PACK_FRONT
+      local mx, my = tonumber(isBack and pm.bx or pm.fx), tonumber(isBack and pm.by or pm.fy)
+      if mx then offX = mx * 2 / d - ((fs - x1) - x0) / 2 end
+      if my then offY = my * 2 / d - (fs - y1) end
+    elseif float then
+      offY = -math.max(FLOAT_LIFT_MIN, math.floor(ch * FLOAT_LIFT + 0.5))
+    end
+    local ox = math.floor((bw - dw) / 2 + offX * s)
+    local oy = math.floor(bh - dh + offY * s)
+    ox = math.max(0, math.min(bw - dw, ox))
+    oy = math.max(0, math.min(bh - dh, oy))
+    local shape = opts.reuse and string.format("box:%dx%d:%g", bw, bh, dpi) or nil
+    local canvas = shape and spareFor(shape)
+    if not canvas then
+      local okC, made = pcall(love.graphics.newCanvas, bw, bh, { dpiscale = dpi })
+      if not okC then
+        warnCanvas("boxFrame", made)
+        return nil
+      end
+      canvas = made
+      if shape then shapeOf[canvas] = shape end
+    end
+    canvas:setFilter("nearest", "nearest")
+    local quad = love.graphics.newQuad(qx, qy, fs, fs, img:getDimensions())
+    -- the page is sampled nearest for this draw only (it keeps its own filter for picFrame)
+    local fmin, fmag = img:getFilter()
+    img:setFilter("nearest", "nearest")
+    drawClean(function()
+      local G = love.graphics
+      G.setCanvas(canvas)
+      G.clear(0, 0, 0, 0)
+      if mirror then
+        G.translate(bw, 0)
+        G.scale(-1, 1)
+      end
+      if shades then G.setShader(shades) end
+      if shadow and not black then
+        -- the shadow first, so the Pokemon is drawn over it: a share of its width (by the
+        -- pack's ShadowSize), on the box's bottom, under its middle plus the pack's x offset
+        local frac = shadowSize >= 1 and SHADOW_W.base + (shadowSize - 1) * SHADOW_W.step
+          or SHADOW_W.base + shadowSize * SHADOW_W.neg
+        frac = math.max(SHADOW_W.min, math.min(SHADOW_W.max, frac))
+        local sW = math.max(3, math.floor(dw * frac + 0.5))
+        local k = sW / shadow.cw
+        local sH = math.max(1, math.floor(shadow.ch * k + 0.5))
+        local d = isBack and PACK_BACK or PACK_FRONT
+        local shX = (tonumber(type(info.pm) == "table" and info.pm.sx) or 0) * 2 / d * s
+        G.draw(shadow.image, shadow.quad, math.floor(ox + dw / 2 + shX - sW / 2 + 0.5), bh - sH, 0, k, k)
+      end
+      if black then G.setColor(0, 0, 0, 1) end
+      G.draw(img, quad, ox - x0 * s, oy - y0 * s, 0, s, s)
+    end)
+    img:setFilter(fmin, fmag)
+    if hd then
+      -- anchored on the FEET (the resting pose's bottom row, `ffr` / `bfr`; a back's x is its
+      -- body's centre), where they sit in the stand-in, in its own units (the box's px)
+      local px, py
+      if isBack then
+        px, py = ((cell.cx0 or 0) + (cell.cx1 or fs)) / 2, tonumber(cell.bfr) or fs / 2
+      else
+        px, py = fs / 2, tonumber(cell.ffr) or fs
+      end
+      local bx, by = ox - x0 * s, oy - y0 * s
+      local lx = bx + px * s
+      local spec = {
+        texture = img, quad = quad,
+        pivot = { px, py },
+        -- (a mirrored stand-in: its feet mirrored about the box; WoobleView mirrors the frame
+        -- about its pivot)
+        lowPivot = { mirror and bw - lx or lx, by + py * s },
+        flip = mirror or nil,
+        scale = s,
+        -- (the four shades: WoobleView draws the frame through the same shader)
+        shades = shades or nil,
+      }
+      if opts.hdSide then
+        spec.top = tonumber(cell.uy0)
+        spec.side = opts.hdSide
+        spec.body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
+      end
+      pcall(hd.tag, canvas, spec)
+    elseif self.hd and type(self.hd.untag) == "function" then
+      -- (a reused canvas may carry an earlier frame's tag)
+      pcall(self.hd.untag, canvas)
+    end
+    remember(ckey, canvas)
+    return canvas
+  end
+
+  -- The box of an icon frame's opaque pixels in its cell, { x, y, w, h } (cached), or nil when
+  -- the page cannot be read: other mods crop a portrait from the icon by it.
+  local iconData, iconBoxes = {}, {}
+  function self.iconBox(key, f)
+    local cell = self.cell(key, "icon")
+    if not cell then return nil end
+    local id = tostring(key) .. ":" .. tostring(f)
+    if iconBoxes[id] ~= nil then return iconBoxes[id] or nil end
+    iconBoxes[id] = false
+    local data = iconData[cell.page]
+    if data == nil then
+      local ok, d = pcall(love.image.newImageData,
+        mod.path .. "/assets/atlas/party_icons_" .. tostring(cell.page) .. ".png")
+      data = ok and d or false
+      iconData[cell.page] = data
+    end
+    if not data then return nil end
+    local size = cell.cell or 32
+    local cx, cy = cell.x + (f or 0) * size, cell.y
+    local x0, y0, x1, y1 = size, size, -1, -1
+    for y = 0, size - 1 do
+      for x = 0, size - 1 do
+        local _, _, _, a = data:getPixel(cx + x, cy + y)
+        if a > 0 then
+          if x < x0 then x0 = x end
+          if x > x1 then x1 = x end
+          if y < y0 then y0 = y end
+          if y > y1 then y1 = y end
+        end
+      end
+    end
+    if x1 < x0 then return nil end
+    iconBoxes[id] = { x = x0, y = y0, w = x1 - x0 + 1, h = y1 - y0 + 1 }
+    return iconBoxes[id]
+  end
+
   -- The engine's icon entry for an atlas icon cell: two frames side by side in
   -- the icon page, each a cell x cell quad.
   local function iconEntry(cell)
@@ -846,6 +1198,7 @@ function Atlas.new(mod, load)
   -- Gen 1-3 from cartFrame (the game caches its own).
   self.dexPics = {}
   function self.dexPic(key, f, personality)
+    fresh()
     local c = self.cell(key, "dexpic")
     if not c and self.cartFrame then
       local ok, img = pcall(self.cartFrame, key, f, personality)
@@ -912,6 +1265,7 @@ function Atlas.new(mod, load)
   --- one (`variant` is then ignored: the Pokedex never shows a shiny), else the battle sheet.
   --- `personality`: handed to the game's own pic (Spinda's spots), one live canvas each.
   function self.livePic(key, variant, cell, personality)
+    fresh()
     local dex = self.dexPic(key, 0, personality) ~= nil
     local id = tostring(key) .. ":" .. (dex and ("dexpic:" .. tostring(personality or 0)) or variant)
     local rec = self.live[id]
@@ -940,6 +1294,7 @@ function Atlas.new(mod, load)
   end
 
   function self.refreshLive()
+    fresh()
     for _, rec in pairs(self.live) do refresh(rec) end
   end
 
@@ -947,6 +1302,7 @@ function Atlas.new(mod, load)
   -- list many Pokemon (the RSE Pokedex wheel) and should not play the full animated sheet.
   -- Cached per slot; nil when the atlas has no icon for it.
   function self.iconPic(dex)
+    fresh()
     dex = tonumber(dex)
     self.iconPics = self.iconPics or {}
     if self.iconPics[dex] ~= nil then return self.iconPics[dex] or nil end

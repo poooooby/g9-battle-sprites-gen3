@@ -13,7 +13,9 @@ return function(mod, state)
   -- ("front", "front_shiny", "back", "back_shiny", "icon")
   exports.hasSprite = function(dex, variant)
     local atlas = state.atlas and state.atlas()
-    return atlas ~= nil and atlas.cell(dex, variant or "front") ~= nil
+    -- (the atlas is keyed by its own slots: a dex number finds its base species)
+    local key = atlas and atlas.keyFor(nil, dex)
+    return key ~= nil and atlas.cell(key, variant or "front") ~= nil
   end
 
   mod.exports = exports

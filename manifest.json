@@ -4,8 +4,11 @@
   "version": "1.5.8",
   "api": 2,
   "entry": "main.lua",
+  "options_schema": "options.lua",
   "profile": "content",
   "games": [
+    "gen1",
+    "gen2",
     "gen3"
   ],
   "category": "OTHER",
@@ -14,18 +17,26 @@
     "engine_internals"
   ],
   "dependencies": [
-    "national_dex_gen3"
+    {
+      "id": "national_dex_gen3",
+      "games": [
+        "gen3"
+      ]
+    }
   ],
   "optional_dependencies": [
-    "gen3-hd-sprites"
+    "gen3-hd-sprites",
+    "national_dex"
   ],
   "conflicts": [
-    "1025Dex"
+    "1025Dex",
+    "g9-battle-sprites"
   ],
   "incompatible": [],
-  "description": "Animated, true-colour battle, Pokedex and summary pics for every National Dex species (#1-1025) and party icons for #387-1025 on FireRed, LeafGreen, Ruby, Sapphire and Emerald. Drawn from packed atlases.",
+  "description": "Animated, true-colour battle, Pokedex and summary pics for every National Dex species (#1-1025) on Red, Blue, Yellow, Gold, Silver, Crystal, FireRed, LeafGreen, Ruby, Sapphire and Emerald, and party icons for the species each game has none of. Drawn from packed atlases.",
   "github": "poooooby/g9-battle-sprites-gen3",
   "dependency_sources": {
-    "national_dex_gen3": "https://github.com/poooooby/national_dex_gen3"
+    "national_dex_gen3": "https://github.com/poooooby/national_dex_gen3",
+    "national_dex": "https://github.com/sanjinpepic/gen1recomp-national-dex"
   }
 }

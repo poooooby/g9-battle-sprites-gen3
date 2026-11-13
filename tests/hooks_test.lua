@@ -28,8 +28,8 @@ local atlas = {
   picFrame = function(dex, variant, _cell, _f, battle, kind)
     calls[#calls + 1] = dex .. ":" .. variant; calls.battle = battle; calls.kind = kind; return { fake = variant }
   end,
-  -- Gen 1-3 keep the game's own party icons: the atlas has none for them
-  icon = function(slot) return (slot >= 451 and has(slot)) and { fake_icon = slot } or nil end,
+  -- the atlas has icons for Gen 1-3 too (Red / Blue / Yellow's); Gen 3 keeps its own
+  icon = function(slot) return has(slot) and { fake_icon = slot } or nil end,
 }
 
 local function origFront(species) return { orig = "front", species = species } end

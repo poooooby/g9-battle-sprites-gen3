@@ -30,11 +30,102 @@ local function loadSibling(mod, name)
   return result
 end
 
+-- The generation being played: 1 or 2 from the engine's version, else 3. The save editor is a
+-- Gen 3 host whatever the version module says (its default version is Red's).
+local function generation()
+  local okE, Gen = pcall(require, "Gen")
+  if okE and type(Gen) == "table" and type(Gen.bindGame3Data) == "function" then return 3 end
+  local ok, GameVersion = pcall(require, "src.core.GameVersion")
+  if not (ok and type(GameVersion) == "table" and type(GameVersion.generation) == "function") then
+    return 3
+  end
+  local okG, gen = pcall(GameVersion.generation)
+  gen = okG and tonumber(gen) or 3
+  return (gen == 1 or gen == 2) and gen or 3
+end
+
+-- Gen 1 / 2: the same atlas, fitted to those games' pic boxes (src/gen1.lua, and src/gen2.lua
+-- on top of it for Gold / Silver / Crystal).
+local function classic(mod, gen, Api, Atlas)
+  local Gen1 = loadSibling(mod, "src/gen1.lua")
+  local Gen2 = gen == 2 and loadSibling(mod, "src/gen2.lua") or nil
+  if gen == 2 and not Gen2 then Gen1 = nil end
+  local atlas, logged = nil, nil
+  local function install()
+    if not Gen1 then return end
+    if not atlas then
+      atlas = Atlas.new(mod, function(path) return loadSibling(mod, path) end)
+      if not atlas then
+        mod.log:error("data/atlas_index.lua is missing -- reinstall the mod")
+        Gen1 = nil
+        return
+      end
+    end
+    Gen1.options = function(key) return mod.options:get(key) end
+    local list = Gen2 and Gen2.install(atlas, Gen1) or Gen1.install(atlas, mod.log)
+    local done = table.concat(list, ", ")
+    if done ~= "" and done ~= logged then
+      logged = done
+      mod.log:info("Gen %d: hooked %s", gen, done)
+    end
+  end
+  -- WoobleView (gen3-hd-sprites, optional): the battle frames are tagged for it (Atlas
+  -- boxFrame's hdSide), and it redraws them at window resolution in the original battle screen
+  local function linkHd()
+    if not atlas then return end
+    local hd = mod:find("gen3-hd-sprites")
+    local ex = hd and hd.exports
+    atlas.hd = (type(ex) == "table" and type(ex.tag) == "function" and type(ex.enabled) == "function")
+      and ex or nil
+  end
+  local game = nil
+  mod.events:on("game.ready", function(ev)
+    game = ev and ev.game or game
+    install()
+    linkHd()
+  end, 0)
+  -- (the library may finish installing after this mod's game.ready ran)
+  mod.events:on("battle.started", function() pcall(linkHd) end)
+  -- (a screen another mod replaces after this one loaded is wrapped once it is pushed)
+  -- (and WoobleView linked for the Pokedex / summary, which may be opened before any battle)
+  mod.events:on("screen.pushed", function()
+    pcall(install)
+    pcall(linkHd)
+  end)
+  pcall(install)
+  Api(mod, { active = Gen1 ~= nil, atlas = function() return atlas end })
+  -- the exports g9-battle-sprites gave other mods (src/gen1.lua Gen1.exports, Gen2.exports)
+  if Gen1 then
+    local function dataOf()
+      local g = game or mod.game
+      return type(g) == "table" and g.data or nil
+    end
+    local ex = nil
+    for _, name in ipairs({ "frontArt", "iconArtHD", "iconArt16", "drawSummaryFrame" }) do
+      mod.exports[name] = function(...)
+        if not atlas then return nil end
+        ex = ex or (Gen2 and Gen2.exports(atlas, dataOf) or Gen1.exports(atlas, dataOf))
+        return ex[name](...)
+      end
+    end
+  end
+end
+
 return function(mod)
   local Hooks = loadSibling(mod, "src/hooks.lua")
   local Api = loadSibling(mod, "src/api.lua")
   local Atlas = loadSibling(mod, "src/atlas.lua")
   if not (Hooks and Api and Atlas) then return end
+
+  -- the options (options.lua, also the manifest's options_schema): Red / Blue / Yellow's
+  local schema = loadSibling(mod, "options.lua")
+  if type(schema) == "table" and mod.options and mod.options.define then
+    local ok, err = pcall(mod.options.define, mod.options, schema)
+    if not ok then mod.log:warn("options could not be defined: %s", tostring(err)) end
+  end
+
+  local gen = generation()
+  if gen ~= 3 then return classic(mod, gen, Api, Atlas) end
 
   -- national_dex_gen3 is optional: without it the species slots are simply
   -- never asked for, and the hooks answer nothing. Checked once every mod has loaded

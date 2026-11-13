@@ -260,6 +260,9 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
   if type(origIcon) == "function" and not ours[origIcon] then
     Pokemon.icon = function(species)
       local key = slotOf(atlas, species)
+      -- Gen 1-3 (and Unown's letters) keep the game's own icons: the atlas has theirs for
+      -- Red / Blue / Yellow only
+      if key and key > 0 and key < FIRST_NEW_SLOT then key = nil end
       local entry = key and atlas.icon(key)
       if entry then return entry end
       return origIcon(species)

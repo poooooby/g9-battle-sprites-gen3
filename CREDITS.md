@@ -6,7 +6,9 @@ This is a gen3 rewrite of **g9-battle-sprites** by **tectorifter**
 (<https://github.com/tectorifter/g9-battle-sprites>), licensed GPL-3.0-or-later.
 The gen1/gen2 mod it came from is the original work this project builds on;
 its licence text ships unchanged as [LICENSE](LICENSE). The artwork credits
-below carry over from that project.
+below carry over from that project. On Red, Blue, Yellow, Gold, Silver and Crystal this mod takes its place: the way it
+hooks those games' screens, its options, its exports, and the pack data behind GROUND ANCHOR,
+FLOATERS and BATTLE SHADOWS (`dbk_metrics.lua`, `dbk_float.lua`) are tectorifter's.
 
 This mod ships **full-colour animated battle sprites** for the national dex,
 **party / UI icons**, and the effect art it composites over them. Nearly all of
