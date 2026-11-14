@@ -140,13 +140,13 @@ return {
     label = "PARTY ICONS",
     type = "toggle",
     default = true,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): a National Dex species or form, which the game has no icon for, gets its own animated true-colour party icon. The game's own species (#1-151 on Red/Blue/Yellow, #1-251 on Gold/Silver/Crystal) keep the game's icons (on the G9 PARTY SCREEN every Pokemon shows its own). OFF: the game's own for all.",
+    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): a National Dex species or form, which the game has no icon for, gets its own animated true-colour party icon. The game's own species (#1-151 on Red/Blue/Yellow, #1-251 on Gold/Silver/Crystal) keep the game's icons (with HD PARTY SCREEN on, every Pokemon gets ours). OFF: the game's own for all.",
   },
   {
     key = "g9_party_screen",
-    label = "G9 PARTY SCREEN",
+    label = "HD PARTY SCREEN",
     type = "toggle",
     default = false,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. OFF (default): the party list is the game's own screen. ON: the same party list, from the game's own parts, fills your window, and every Pokemon's icon (the game's own species too) shows in its own true-colour art at full detail. The summary and message boxes opened from it are drawn on the same page.",
+    description = "Red/Blue/Yellow and Gold/Silver/Crystal. Shows our party icons big and sharp. OFF (default): the normal party list, where icons are shrunk to the game's tiny 16x16 size. ON: the party list is drawn as large as your window, so every icon shows in full detail, and the game's own Pokemon (#1-151 / #1-251) get our icons too. Needs PARTY ICONS on. Anything opened from it (the summary, a message box) is drawn just as large.",
   },
 }

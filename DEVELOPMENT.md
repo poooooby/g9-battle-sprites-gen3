@@ -224,7 +224,7 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
   `Pokemon.icon` wrap leaves keys below 451 to the game). The icon sources are 2× pixel art, so
   the 32 px cells hold every art pixel. On the game's list, keys 1–151 (the cart's species)
   keep the game's icons.
-- **G9 party screen** (`g9_party_screen`, `Gen1.installPartyScreen`): `PartyMenu.uiSize`
+- **HD party screen** (option HD PARTY SCREEN, key `g9_party_screen`, `Gen1.installPartyScreen`): `PartyMenu.uiSize`
   answers 640×576, `isWideBattleLayout` / `wantsFillScale` true, and its draw runs under
   `scale(4)`, with `markTrueColor` rects and `sgbPalettes` zones scaled to match.
   `holdsUIAnchors`, a field the engine reads off the stack, is set from `uiSize`. A classic
@@ -280,7 +280,7 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
 - **Party icons:** a Pokémon the game has an icon for (`PartyMenu:iconIdFor`, `gen2Icons`)
   keeps it; others get ours, drawn into a small canvas (shaded where the palette recolours)
   so the game's held-item marker can replace its bottom-left quarter as the game does. On the
-  G9 party screen every icon is ours, `battlePanelScale` answers the window's fill scale
+  HD party screen every icon is ours, `battlePanelScale` answers the window's fill scale
   (`panelBlit` draws a screen pushed over it at the same scale), and `drawWidescreen` draws
   the panel at it.
 - **Exports:** as Gen 1's, with `drawSummaryFrame` unmirrored in the 7×7 block at the top left.

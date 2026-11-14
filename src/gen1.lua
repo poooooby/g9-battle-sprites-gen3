@@ -480,9 +480,11 @@ end
 --- species' dex number and base species; nil before a game is up).
 function Gen1.exports(atlas, dataOf)
   local ex = {}
+  -- (the species to look the art up by: Gen2.exports swaps in Gen2.speciesOf for Unown's letters)
+  ex.speciesOf = function(mon) return mon.species end
   local function keyOfMon(mon)
     if type(mon) ~= "table" or mon.isEgg == true then return nil end
-    local key = Gen1.keyOf(atlas, dataOf(), mon.species)
+    local key = Gen1.keyOf(atlas, dataOf(), ex.speciesOf(mon))
     if key and on("sprite_female") and Gen1.femaleOf(mon) then key = atlas.femaleKey(key) or key end
     return key
   end
@@ -505,6 +507,27 @@ function Gen1.exports(atlas, dataOf)
     local img = atlas.boxFrame(key, variant, 0, w, h, {})
     if not img then return nil end
     return img, w, h, { x = 0, y = 0, w = w, h = h }, 0
+  end
+
+  --- The engine's battle.mon_pic hook, asked at the art's natural size (ctx.natural: NaviPlay's
+  --- MODDED pictures for Pokemon-Amie and Super Training): the frame of ctx.mon's front or back
+  --- art playing now, at 1:1 and cut to the whole animation's box, so a caller sampling the clock
+  --- (NaviPlay's stillPic) finds the resting pose. nil (the caller's own picture) when BATTLE
+  --- SPRITES is off, the request is not a natural-size one, or there is no art.
+  ex.monPic = function(ctx)
+    if type(ctx) ~= "table" or ctx.natural ~= true or not on("enable_battle_sprites") then return nil end
+    local mon = type(ctx.mon) == "table" and ctx.mon or { species = ctx.species }
+    local key = keyOfMon(mon)
+    if not key then return nil end
+    local side = ctx.side == "back" and "back" or "front"
+    local shiny = ctx.shiny
+    if type(shiny) ~= "boolean" then shiny = Gen1.shinyOf(mon) end
+    local variant = variantFor(atlas, key, side, on("sprite_shiny") and shiny)
+    local cell = atlas.cell(key, variant)
+    if not cell then return nil end
+    local w = (tonumber(cell.ux1) or cell.fs) - (tonumber(cell.ux0) or 0)
+    local h = (tonumber(cell.uy1) or cell.fs) - (tonumber(cell.uy0) or 0)
+    return atlas.boxFrame(key, variant, frameNo(cell), w, h, {})
   end
 
   --- The party icon at its own detail: (quads = { full = quad }, image, cell pixels, box of its

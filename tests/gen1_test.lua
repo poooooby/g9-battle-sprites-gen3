@@ -411,5 +411,34 @@ do
   package.loaded["src.ui.DexEntryMenu"] = nil
 end
 
+-- the battle.mon_pic answer (NaviPlay's MODDED pictures): the art at its natural size, the frame
+-- playing now, front or back, shiny; nothing for any other request or with BATTLE SPRITES off
+do
+  local opts = {}
+  Gen1.options = function(key) return opts[key] end
+  local ex = Gen1.exports(atlas, function() return data end)
+  local mon = { species = "BULBASAUR" }
+  local cell = atlas.cell(1, "front")
+  NOW = 0
+  local pic = ex.monPic({ natural = true, side = "front", mon = mon, scale = 1 })
+  check(pic and pic:getWidth() == cell.ux1 - cell.ux0 and pic:getHeight() == cell.uy1 - cell.uy0,
+    "monPic: the front art at its own size")
+  check(pic == atlas.boxFrame(1, "front", 0, cell.ux1 - cell.ux0, cell.uy1 - cell.uy0, {}), "...its first frame at 0 s")
+  NOW = 0.5
+  check(ex.monPic({ natural = true, side = "front", mon = mon }) ~= pic, "...a later frame later (NaviPlay samples the loop)")
+  NOW = 0
+  local back = atlas.cell(1, "back")
+  local b = ex.monPic({ natural = true, side = "back", mon = mon })
+  check(b and b:getWidth() == back.ux1 - back.ux0, "monPic: the back art")
+  check(ex.monPic({ natural = true, side = "front", mon = mon, shiny = true }) ~= pic, "monPic: shiny art when asked")
+  check(ex.monPic({ natural = true, side = "front", species = "BULBASAUR" }) == pic, "monPic: a species alone")
+  check(ex.monPic({ side = "front", mon = mon }) == nil, "monPic: a request not at natural size is the caller's")
+  check(ex.monPic({ natural = true, side = "front", mon = { species = "NOT_A_SPECIES" } }) == nil, "monPic: no art, nil")
+  check(ex.monPic({ natural = true, side = "front", mon = { species = "BULBASAUR", isEgg = true } }) == nil, "monPic: an egg, nil")
+  opts.enable_battle_sprites = false
+  check(ex.monPic({ natural = true, side = "front", mon = mon }) == nil, "monPic: BATTLE SPRITES off, nil")
+  Gen1.options = nil
+end
+
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 gen 1)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)

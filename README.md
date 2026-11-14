@@ -20,8 +20,8 @@ its place on Red, Blue, Yellow, Gold, Silver and Crystal.
   summary screen. Generation 1–3 Pokémon get the same animated art, so every battle looks
   alike.
 - 🎒 **Party icons** for every species the game has none of, with their two-frame wiggle: from
-  #387 on FireRed to Emerald, #252 on Gold to Crystal and #152 on Red to Yellow (and for every
-  Pokémon on the G9 party screen).
+  #387 on FireRed to Emerald, #252 on Gold to Crystal and #152 on Red to Yellow. On Red to
+  Crystal, the HD party screen shows them big and sharp, for every Pokémon in your party.
 - 🎮 **Red, Blue and Yellow too:** the same art in battle, the Pokédex and the summary screen,
   and on the title screen, in Prof. Oak's speech, evolutions, trades, the Hall of Fame and its
   PC, and the credits.
@@ -77,7 +77,7 @@ layout. These are for Red, Blue, Yellow, Gold, Silver and Crystal.
 | SUMMARY SIZE | real size / 75% / 50% / 25% | real size |
 | OTHER SCREENS (Oak, evolution, trades, Hall of Fame, and more) | on / off | on |
 | PARTY ICONS | on / off | on |
-| G9 PARTY SCREEN (the party list filling your window, every icon in full detail) | on / off | off |
+| HD PARTY SCREEN (the party list as large as your window, every icon big and sharp; needs PARTY ICONS) | on / off | off |
 
 ## 💾 Installation
 
@@ -97,6 +97,9 @@ layout. These are for Red, Blue, Yellow, Gold, Silver and Crystal.
   Blue, Yellow, Gold, Silver and Crystal, with their sprites, forms and party icons.
 - [WoobleView](https://github.com/poooooby/gen3-hd-sprites): high-resolution battles, Pokédex
   and summary screen.
+- [NaviPlay](https://github.com/poooooby/PlayNav): your Pokémon in Pokémon-Amie and Super
+  Training show these party icons and this art. On Red to Crystal the art needs NaviPlay's
+  GEN 1/2 SPRITES set to MODDED; the icons show either way.
 - [Wilds of Hoenn](https://github.com/poooooby/wilds-of-hoenn) and
   [WoobleSpawns](https://github.com/poooooby/g1r_modern_spawns): meet all those species in the
   wild.

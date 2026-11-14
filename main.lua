@@ -101,12 +101,27 @@ local function classic(mod, gen, Api, Atlas)
       return type(g) == "table" and g.data or nil
     end
     local ex = nil
+    local function exports()
+      if not atlas then return nil end
+      ex = ex or (Gen2 and Gen2.exports(atlas, dataOf) or Gen1.exports(atlas, dataOf))
+      return ex
+    end
     for _, name in ipairs({ "frontArt", "iconArtHD", "iconArt16", "drawSummaryFrame" }) do
       mod.exports[name] = function(...)
-        if not atlas then return nil end
-        ex = ex or (Gen2 and Gen2.exports(atlas, dataOf) or Gen1.exports(atlas, dataOf))
-        return ex[name](...)
+        local e = exports()
+        if not e then return nil end
+        return e[name](...)
       end
+    end
+    -- the engine's seam for a sprite mod's pictures outside the game's own screens: answered at
+    -- natural size (NaviPlay's MODDED pictures); any other request gets the caller's own
+    if mod.hooks and mod.hooks.wrap then
+      mod.hooks:wrap("battle.mon_pic", function(nxt, img, ctx)
+        local e = exports()
+        local ok, pic = pcall(function() return e and e.monPic(ctx) end)
+        if ok and pic then return pic end
+        return nxt(img, ctx)
+      end)
     end
   end
 end

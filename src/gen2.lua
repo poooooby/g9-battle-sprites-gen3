@@ -527,6 +527,7 @@ end
 --- mode recolours.
 function Gen2.exports(atlas, dataOf)
   local ex = Gen1.exports(atlas, dataOf)
+  ex.speciesOf = Gen2.speciesOf
   ex.drawSummaryFrame = function(mon, box)
     box = type(box) == "table" and box or { x = 0, w = FRONT_BOX, bottom = FRONT_BOX }
     if not on("summary_sprites") or type(mon) ~= "table" or mon.isEgg == true then return false end
