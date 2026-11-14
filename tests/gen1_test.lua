@@ -225,8 +225,18 @@ do
   local fd
   for _, d in ipairs(draws) do if d.quad == foe.quad then fd = d break end end
   check(fd and math.abs(foe.lowPivot[1] - (fd.x + foe.pivot[1] * fd.kx)) < 1e-9
-        and math.abs(foe.lowPivot[2] - (fd.y + foe.pivot[2] * fd.kx)) < 1e-9 and foe.scale == fd.kx,
-        "lowPivot: where the feet sit in the stand-in, at its scale")
+        and math.abs(foe.lowPivot[2] - (fd.y + foe.pivot[2] * fd.kx)) < 1e-9,
+        "lowPivot: where the feet sit in the stand-in")
+  -- its size: the species' own, as on Gen 3 (hand-set, realism, perspective), in Game Boy px -
+  -- not the stand-in's box-fitted one
+  local want = atlas.battleSize(16, pcell, false) * Atlas.GB_UNIT
+  check(foe and math.abs(foe.scale - want) < 1e-9 and math.abs(foe.scale - fd.kx) > 1e-3,
+        "the foe's size is its species', not the box's")
+  -- (the species it shows: a Transform above left it copying another)
+  local mineKey = Gen1.keyOf(atlas, battle.data, battle.player.__woobleAs or battle.player.mon.species)
+  local bcell = mineKey and atlas.cell(mineKey, "back")
+  local mineWant = bcell and atlas.battleSize(mineKey, bcell, true) * Atlas.GB_UNIT
+  check(mine and mineWant and math.abs(mine.scale - mineWant) < 1e-9, "and the player's back's")
   hd.on = false
   battle:drawPicsLayer()
   check(hd.tags[layerSprites[1]] == nil, "WoobleView off for battles: not tagged")

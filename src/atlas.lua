@@ -68,6 +68,11 @@ function Atlas.realism(htDm, cfg)
   return 1
 end
 
+-- Gen 1 / 2 with gen3-hd-sprites: the species' battle size (hand-set, realism, perspective, as
+-- on Gen 3) in the Game Boy's pixels. The atlas is in the GBA's; the Game Boy's screen is 144 px
+-- tall to the GBA's 160, so this keeps each Pokemon the same share of the screen as on Gen 3.
+Atlas.GB_UNIT = 144 / 160
+
 -- px the player's back pic is lowered on top of its cell's feet line: 4 on Ruby / Sapphire,
 -- which draw the player's pic 4 px higher than FireRed / LeafGreen / Emerald (set by main.lua)
 Atlas.backShift = 0
@@ -351,6 +356,24 @@ function Atlas.new(mod, load)
     local real = rec and Atlas.realism(rec.cells.ht, realismCfg) or 1
     return type(own) == "table" and own or {}, all, real
   end
+
+  -- A battle pic's size on Gen 3's terms, in the atlas's own px (1 = the sprite's own size):
+  -- hand-set x realism x (front) perspective or (back) its own front's size, x `all`; and the
+  -- hand-set nudge (game px): what picFrame's HD tag works out (Gen 3), for boxFrame's battle
+  -- tag (Gen 1 / 2, times GB_UNIT).
+  local function battleSize(slot, cell, isBack)
+    local own, all, real = tuned(slot)
+    if isBack then
+      local bn = 1
+      if realismCfg.on ~= false and realismCfg.match_backs ~= false then bn = tonumber(cell.bn) or 1 end
+      return (tonumber(own.back) or 1) * real * bn * (tonumber(all.back) or 1),
+        tonumber(own.back_dx) or 0, tonumber(own.back_dy) or 0
+    end
+    local persp = realismCfg.on == false and 1 or (tonumber(realismCfg.front) or 1)
+    return (tonumber(own.front) or 1) * real * persp * (tonumber(all.front) or 1),
+      tonumber(own.front_dx) or 0, tonumber(own.front_dy) or 0
+  end
+  self.battleSize = battleSize
 
   -- A page is loaded once and kept. A failed load is NOT kept: assets:path()
   -- answers nil until the mod service is ready, so the next draw retries. The
@@ -1090,14 +1113,23 @@ function Atlas.new(mod, load)
       end
       local bx, by = ox - x0 * s, oy - y0 * s
       local lx = bx + px * s
+      -- a battle pic at its species' size, as on Gen 3 (hand-set, realism, perspective), about
+      -- where the stand-in's feet are: not the box-fitted size, so a Diglett stays far smaller
+      -- than a Typhlosion and a Lugia is not squeezed into the box (Battle Fit frames it). A
+      -- Pokedex / summary pic keeps the box's size.
+      local size, ndx, ndy = s, 0, 0
+      if opts.hdSide then
+        size, ndx, ndy = battleSize(key, cell, isBack)
+        size = size * Atlas.GB_UNIT
+      end
       local spec = {
         texture = img, quad = quad,
         pivot = { px, py },
         -- (a mirrored stand-in: its feet mirrored about the box; WoobleView mirrors the frame
         -- about its pivot)
-        lowPivot = { mirror and bw - lx or lx, by + py * s },
+        lowPivot = { (mirror and bw - lx or lx) + ndx, by + py * s + ndy },
         flip = mirror or nil,
-        scale = s,
+        scale = size,
         -- (the four shades: WoobleView draws the frame through the same shader)
         shades = shades or nil,
       }

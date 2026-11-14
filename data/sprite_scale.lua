@@ -1,6 +1,7 @@
 -- Fine-tune how big each Pokemon is drawn in battle. Edit and restart the game (no rebuild).
 --
--- Only used when the WoobleView mod (gen3-hd-sprites) is installed and Battle HD is on:
+-- Only used when the WoobleView mod (gen3-hd-sprites) is installed and Battle HD is on (on every
+-- game: Red to Crystal's battles use the same sizes, in the Game Boy's pixels):
 -- it draws these at your screen's full resolution, so ANY value keeps every pixel of the art.
 -- Without it, the sizes are fixed (the game's pixel grid can only do clean steps).
 --

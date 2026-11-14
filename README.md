@@ -44,7 +44,8 @@ its place on Red, Blue, Yellow, Gold, Silver and Crystal.
   foe is drawn a little smaller for depth. Every Pokémon keeps its feet on its pad. The
   Pokédex and the summary screen show their Pokémon crisply too.
   On Red to Crystal, a WoobleView that supports those games draws the original battle screen's
-  Pokémon crisply too and pulls back so tall ones fit (in the colour modes that keep their
+  Pokémon crisply too, at the same real-height sizes (a Diglett is tiny next to a Typhlosion,
+  an Onix towers over a Pikachu), and pulls back so tall ones fit (in the colour modes that keep their
   colours: not OG, OG INV or CLASSIC on Red/Blue/Yellow, only GEN 2 on Gold/Silver/Crystal),
   and the Pokédex and summary screens' Pokémon as well.
 - 🌗 **Shadows and floaters** (Red to Crystal): every Pokémon in battle casts a soft shadow,

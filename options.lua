@@ -59,7 +59,7 @@ return {
       { "NORMAL", 2 },
       { "BIG", 1 },
     },
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. MAX DETAIL (default): every Pokemon as detailed as it can be: at its own size when it fits its picture box, shrunk only as far as it must when it does not. SMALL / NORMAL / BIG: every Pokemon divided by 3 / 2 / 1, so their sizes stay in proportion (still shrunk to fit when too big).",
+    description = "Red/Blue/Yellow and Gold/Silver/Crystal. MAX DETAIL (default): every Pokemon as detailed as it can be: at its own size when it fits its picture box, shrunk only as far as it must when it does not. SMALL / NORMAL / BIG: every Pokemon divided by 3 / 2 / 1, so their sizes stay in proportion (still shrunk to fit when too big). With WoobleView drawing the battle, its Pokemon are sized by their real height instead, as on Gen 3.",
   },
   {
     key = "sprite_anchor",

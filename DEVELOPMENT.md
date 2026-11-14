@@ -179,9 +179,14 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
     alone.
   - WoobleView (its Gen 1 support): each frame is tagged as Gen 3's battle pics are
     (`boxFrame`'s `hdSide`: `texture` / `quad` the full frame, `pivot` the feet (`ffr`; a back's
-    body-centre x and `bfr`), `lowPivot` where they sit in the box, `scale` the fit factor,
-    `top`, `side`, a back's `body`), so its capture of the original battle screen redraws it at
-    window resolution and Battle Fit pulls back for tall Pokémon. Not in the mono COLORS (the
+    body-centre x and `bfr`), `lowPivot` where they sit in the box, `top`, `side`, a back's
+    `body`), so its capture of the original battle screen redraws it at window resolution and
+    Battle Fit pulls back for tall Pokémon. Its `scale` is not the box's fit but the species'
+    size as on Gen 3 (`atlas.battleSize`: `sprite_scale.lua`'s hand-set size × realism × the
+    front's perspective, or a back's `bn`; × `all`, plus the hand-set nudge), times
+    `Atlas.GB_UNIT` (144 / 160: the same share of the screen as on the GBA). The box-fitted
+    size squeezed every big Pokémon to 56 px and drew small ones at their full size, so a
+    Diglett stood as tall as a Typhlosion; `sprite_size` only shapes the stand-in now. Not in the mono COLORS (the
     pics are drawn after the colour pass there). A mirrored 3DB FLIP frame adds `flip = true`
     (its `lowPivot` mirrored about the box, the rest as in the atlas), only where WoobleView
     has `features.flip`; with an older one it stays untagged. The contact shadow is in the
