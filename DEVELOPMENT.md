@@ -152,6 +152,15 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
 `src/hooks.lua` as above. Gen 1 runs `src/gen1.lua` on the same atlas; Gen 2 runs
 `src/gen2.lua`, which builds on it (see the next section).
 
+- **Save editor, Red to Crystal saves** (`src/editor.lua`): the editor loads a Gen 1 / 2
+  species' `spriteFront` PNG itself, so `MonEditor.sprite` is wrapped (once per process;
+  each load hands it its atlas through `MonEditor.__woobleEditor`). For a Gen 1 / 2 save it
+  answers the front art's first frame, copied out of the frame cache by `Hooks.fit`, with
+  shiny / female / Unown's letter as in the game (`Gen1.shinyOf`, `Gen1.femaleOf`, the letter
+  from `Unown.monLetter`). An egg or a species with no art gets the editor's own. It is
+  installed before the Gen 3 Pokémon module is required, which a Gen 1 / 2 editor session
+  does not have.
+
 - **Species:** Gen 1 names a species by id (`"ABRA"`). `atlas.keyFor(id, dex, base)` finds it
   by the index's own ids (the National Dex mods use the same ones), then by the record's
   `baseSpecies` (a Mega shows its base), then by dex number.
@@ -297,6 +306,7 @@ luajit tests/hooks_test.lua            # the gate test
 luajit tests/forms_coverage_test.lua   # forms coverage
 luajit tests/gen1_test.lua             # Red / Blue / Yellow: keys, box frames, options, hooks
 luajit tests/gen2_test.lua             # Gold / Silver / Crystal: pics, colour, anims, icons, exports
+luajit tests/editor_test.lua           # the save editor with a Red to Crystal save
 # plus the atlas layout, back framing, clean state, dex HD and gen3 coverage suites in tests/
 ```
 

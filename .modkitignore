@@ -33,6 +33,7 @@ tests/realism_test.lua
 tests/frame_cache_test.lua
 tests/gen1_test.lua
 tests/gen2_test.lua
+tests/editor_test.lua
 
 .claude/skills/lua-developer/SKILL.md
 

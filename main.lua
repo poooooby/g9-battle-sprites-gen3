@@ -161,14 +161,28 @@ return function(mod)
       mod.log:error("data/atlas_index.lua is missing -- reinstall the mod")
       return
     end
-    local okPok, Pokemon = pcall(require, "src.core.game3.pokemon")
-    if not (okPok and type(Pokemon) == "table") then
-      mod.log:error("the gen 3 Pokemon module is not available -- no sprites will draw")
-      return
-    end
     -- the save editor is the only host with its own `Gen` module (Hooks.fit)
     local okGen, Gen = pcall(require, "Gen")
     Hooks.inEditor = okGen and type(Gen) == "table" and type(Gen.bindGame3Data) == "function"
+    -- the editor with a Red to Crystal save open loads its pictures itself (src/editor.lua);
+    -- there the Gen 3 Pokemon module below is not loaded
+    if Hooks.inEditor then
+      local Gen1 = loadSibling(mod, "src/gen1.lua")
+      local Editor = loadSibling(mod, "src/editor.lua")
+      if Gen1 and Editor then
+        Gen1.options = function(key) return mod.options:get(key) end
+        if Editor.install(atlas, Gen1, Hooks.fit) then
+          mod.log:info("save editor: Gen 1 / 2 pictures drawn from the atlas")
+        end
+      end
+    end
+    local okPok, Pokemon = pcall(require, "src.core.game3.pokemon")
+    if not (okPok and type(Pokemon) == "table") then
+      if not Hooks.inEditor then
+        mod.log:error("the gen 3 Pokemon module is not available -- no sprites will draw")
+      end
+      return
+    end
     local n = Hooks.install(Pokemon, atlas)
     mod.log:info("hooked %d picture functions", n)
     if type(Pokemon.onReload) == "function" then

@@ -32,6 +32,8 @@ its place on Red, Blue, Yellow, Gold, Silver and Crystal.
 - 🌍 **Alternate forms:** Alolan, Galarian, Hisuian and Paldean forms, Rotom's appliances, Wormadam's cloaks,
   the Therian and Origin forms, Flabébé's colours and more each have their own sprites. A female
   Meowstic or Oinkologne shows her own picture in battle, the Pokédex and the summary.
+- 📝 **In the save editor too:** Gen1Recomp's save editor shows your Pokémon with this art on
+  every game, shiny and female ones and Unown's letters included.
 
 ### Looks Right
 
