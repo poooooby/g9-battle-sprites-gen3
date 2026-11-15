@@ -26,7 +26,7 @@
 --   Oak         OakSpeech:drawPic (the Pokemon he shows)
 --   photo       PhotoStudio:picFor
 --   Unown printer  UnownPrinter:picFor
---   party       PartyMenu:drawIcon, and the G9 PARTY SCREEN (PartyMenu:drawWidescreen)
+--   party       PartyMenu:drawIcon
 
 local Gen2 = {}
 
@@ -364,8 +364,7 @@ function Gen2.installScreens(atlas)
   return done
 end
 
--- The party icons. A Pokemon the game has an icon for (#1-251) keeps it, except on the G9
--- PARTY SCREEN; one it has none for (a National Dex species or form) gets ours. Two frames, in
+-- The party icons: ours for every Pokemon, #1-251 and the National Dex's alike. Two frames, in
 -- the game's own step; drawn through the party's palette in the colour modes that recolour.
 local iconCanvases, iconCount, iconEpoch = {}, 0, nil
 local function iconCanvas(atlas, entry, key, f, shades)
@@ -395,13 +394,10 @@ local function iconCanvas(atlas, entry, key, f, shades)
   return canvas
 end
 
-function Gen2.g9On() return opt("g9_party_screen", false) == true end
-
--- The atlas key of a Pokemon's icon, or nil when it keeps the game's own: one the game has
--- an icon for (`own`) keeps it, except on the G9 PARTY SCREEN.
-local function iconKey(atlas, data, mon, own)
+-- The atlas key of a Pokemon's icon, or nil when it keeps the game's own (PARTY ICONS off, an
+-- egg, no art): ours for every Pokemon, the game's own included (they share a few dozen shapes).
+local function iconKey(atlas, data, mon)
   if not on("party_icons") or type(mon) ~= "table" or mon.isEgg then return nil end
-  if own and not Gen2.g9On() then return nil end
   local key = Gen1.keyOf(atlas, data, Gen2.speciesOf(mon))
   if not key then return nil end
   if on("sprite_female") and Gen1.femaleOf(mon) then key = atlas.femaleKey(key) or key end
@@ -422,10 +418,7 @@ function Gen2.installIcons(atlas)
   local Party = require_("src.ui.gen2.PartyMenu")
   local ok = Gen1.wrap(Party, "drawIcon", function(orig)
     return function(self, mon, px, py, ...)
-      local okI, id = pcall(self.iconIdFor, self, mon)
-      local own = okI and id ~= nil and type(self.icons) == "table" and type(self.icons.icons) == "table"
-        and self.icons.icons[id] ~= nil
-      local key = iconKey(atlas, self.game and self.game.data, mon, own)
+      local key = iconKey(atlas, self.game and self.game.data, mon)
       if not key then return orig(self, mon, px, py, ...) end
       local entry = atlas.icon(key)
       local okF, f = pcall(self.iconFrame, self, mon)
@@ -463,10 +456,7 @@ function Gen2.installIcons(atlas)
   -- the trade tube's icon (the first frame, as the game's)
   Gen1.wrap(require_("src.ui.gen2.TradeAnim"), "drawIcon", function(orig)
     return function(self, record, x, y, ...)
-      local icons = type(self.data) == "table" and self.data.gen2Icons or nil
-      local id = type(record) == "table" and icons and icons.species and icons.species[record.species]
-      local own = id ~= nil and icons.icons ~= nil and icons.icons[id] ~= nil
-      local key = iconKey(atlas, self.data, record, own)
+      local key = iconKey(atlas, self.data, record)
       if not key then return orig(self, record, x, y, ...) end
       local keeps = Gen2.keepsColour()
       local canvas = iconCanvas(atlas, atlas.icon(key), key, 0, not keeps)
@@ -477,49 +467,6 @@ function Gen2.installIcons(atlas)
     end
   end)
   return done
-end
-
--- The G9 PARTY SCREEN on Gold / Silver / Crystal: the party list fills the window (the game
--- draws it at the largest whole scale that fits), every Pokemon with its own icon. A screen
--- pushed over it (a message box, the summary) is drawn at the same scale.
-local function fillScale(winW, winH)
-  local Chrome = require_("src.ui.gen2.Chrome")
-  local w, h = tonumber(winW) or 160, tonumber(winH) or 144
-  if Chrome and Chrome.playfieldRect then
-    local ok, _, _, pw, ph = pcall(Chrome.playfieldRect, winW, winH)
-    if ok and pw and ph then w, h = pw, ph end
-  end
-  local s = math.min(w / 160, h / 144)
-  return s > 0 and s or 1
-end
-
-function Gen2.installPartyScreen(PartyMenu)
-  if type(PartyMenu) ~= "table" or type(PartyMenu.drawPanel) ~= "function" then return false end
-  if PartyMenu.__woobleG9 then return true end
-  PartyMenu.__woobleG9 = true
-  local origScale = PartyMenu.battlePanelScale
-  PartyMenu.battlePanelScale = function(self, winW, winH, ...)
-    if Gen2.g9On() then return fillScale(winW, winH) end
-    if origScale then return origScale(self, winW, winH, ...) end
-    return nil
-  end
-  local origWide = PartyMenu.drawWidescreen
-  PartyMenu.drawWidescreen = function(self, winW, winH, ...)
-    if not Gen2.g9On() or type(origWide) ~= "function" then
-      if origWide then return origWide(self, winW, winH, ...) end
-      return
-    end
-    local Chrome = require_("src.ui.gen2.Chrome")
-    local G = love.graphics
-    local s = fillScale(winW, winH)
-    Chrome.letterbox(winW, winH, 1, 1, 1)
-    G.push()
-    G.translate(Chrome.fitOrigin(winW, winH, s))
-    G.scale(s, s)
-    self:drawPanel()
-    G.pop()
-  end
-  return true
 end
 
 --- The exports (src/gen1.lua Gen1.exports), with the summary picture drawn as Gold's: not
@@ -556,7 +503,6 @@ function Gen2.install(atlas, gen1)
   if Gen2.installBattle(atlas, require_("src.ui.gen2.BattleState")) then done[#done + 1] = "battle" end
   for _, name in ipairs(Gen2.installScreens(atlas)) do done[#done + 1] = name end
   for _, name in ipairs(Gen2.installIcons(atlas)) do done[#done + 1] = name end
-  if Gen2.installPartyScreen(require_("src.ui.gen2.PartyMenu")) then done[#done + 1] = "party screen" end
   return done
 end
 

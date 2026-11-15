@@ -33,7 +33,7 @@
     "g9-battle-sprites"
   ],
   "incompatible": [],
-  "description": "Animated, true-colour battle, Pokedex and summary pics for every National Dex species (#1-1025) on Red, Blue, Yellow, Gold, Silver, Crystal, FireRed, LeafGreen, Ruby, Sapphire and Emerald, and party icons for the species each game has none of. Drawn from packed atlases.",
+  "description": "Animated, true-colour battle, Pokedex and summary pics for every National Dex species (#1-1025) on Red, Blue, Yellow, Gold, Silver, Crystal, FireRed, LeafGreen, Ruby, Sapphire and Emerald, and party icons (every species on Red to Crystal, the ones the game has none of on FireRed to Emerald). Drawn from packed atlases.",
   "github": "poooooby/g9-battle-sprites-gen3",
   "dependency_sources": {
     "national_dex_gen3": "https://github.com/poooooby/national_dex_gen3",

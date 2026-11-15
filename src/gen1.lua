@@ -17,7 +17,6 @@
 
 local Gen1 = {}
 
-local CART_SPECIES = 151     -- the atlas keys of Red / Blue / Yellow's own species (1-151)
 local FRONT_BOX = 56         -- the enemy's 7x7-tile pic box
 local BACK_BOX = 64          -- the player's back pic (the cart's is 28x28 drawn at 2x; 64 as
                              -- g9-battle-sprites drew it, its feet on the text box at y 96)
@@ -444,14 +443,13 @@ function Gen1.installScreens(atlas)
     end
   end))
 
-  -- party icons: a National Dex species or form has none of its own in the game; #1-151 keep
-  -- the game's (atlas keys 1-151 are the cart's species), except on the G9 PARTY SCREEN, whose
-  -- page is drawn 4x for ours. Two frames, alternating as the game's own do.
+  -- party icons: ours for every Pokemon (the game's own are a handful of shared shapes), at
+  -- full detail on the HD party screen's 4x page (Gen1.installPartyScreen). Two frames,
+  -- alternating as the game's own do.
   hooked("party icons", wrap(require_("src.ui.PartyMenu"), "drawIcon", function(orig)
     return function(game, mon, x, y, selected, counter, forceAlt, obp, ...)
       local key = on("party_icons") and type(mon) == "table" and not mon.isEgg
         and Gen1.keyOf(atlas, game and game.data, mon.species) or nil
-      if key and key > 0 and key <= CART_SPECIES and not Gen1.g9On() then key = nil end
       local entry = key and atlas.icon(key)
       if not entry then return orig(game, mon, x, y, selected, counter, forceAlt, obp, ...) end
       local alt = forceAlt or false
@@ -571,15 +569,16 @@ function Gen1.exports(atlas, dataOf)
   return ex
 end
 
--- The G9 PARTY SCREEN (g9_party_screen): the party menu drawn on a 640x576 page, 4x the Game
--- Boy's screen and filling the window, from the game's own parts (rows, HP bars, cursor, its
--- own action list), so each Pokemon's icon shows at its own detail. A classic screen pushed
+-- The HD party screen, on whenever PARTY ICONS is (the game's 16x16 list would shrink our icons
+-- to its pixels): the party menu drawn on a 640x576 page, 4x the Game Boy's screen and filling
+-- the window, from the game's own parts (rows, HP bars, cursor, its own action list), so each
+-- Pokemon's icon shows at its own detail. A classic screen pushed
 -- over it (a message box, the summary) is drawn on the same page. tectorifter's
 -- g9-battle-sprites' party screen, as it drew it on Red / Blue / Yellow.
 local G9_SCALE = 4
 local G9_W, G9_H = 160 * G9_SCALE, 144 * G9_SCALE
 
-function Gen1.g9On() return opt("g9_party_screen", false) == true end
+function Gen1.hdParty() return on("party_icons") end
 
 -- `name` on a state, its own or through its class (an __index table or function)
 local function methodOf(state, name)
@@ -648,27 +647,27 @@ local function dress(state)
   if not draw then return end
   state.__woobleDressed = true
   state.uiSize = function()
-    if not Gen1.g9On() then return 160, 144 end
+    if not Gen1.hdParty() then return 160, 144 end
     return G9_W, G9_H
   end
-  state.isWideBattleLayout = function() return Gen1.g9On() end
-  state.wantsFillScale = function() return Gen1.g9On() end
+  state.isWideBattleLayout = function() return Gen1.hdParty() end
+  state.wantsFillScale = function() return Gen1.hdParty() end
   local sgb = methodOf(state, "sgbPalettes")
   if sgb then
     state.sgbPalettes = function(self, game)
       local zones = sgb(self, game)
-      if not Gen1.g9On() then return zones end
+      if not Gen1.hdParty() then return zones end
       return scaleZones(zones)
     end
   end
   state.draw = function(self, ...)
-    if not Gen1.g9On() then return draw(self, ...) end
+    if not Gen1.hdParty() then return draw(self, ...) end
     return drawOnPage(draw, self, ...)
   end
 end
 
---- Installs the page on the party menu and the dressing of what is pushed over it. With the
---- option off, everything answers as the game's own.
+--- Installs the page on the party menu and the dressing of what is pushed over it. With
+--- PARTY ICONS off, everything answers as the game's own.
 function Gen1.installPartyScreen(PartyMenu, StateStack)
   if type(PartyMenu) ~= "table" or type(PartyMenu.draw) ~= "function" then return false end
   if PartyMenu.__woobleG9 then return true end
@@ -677,20 +676,20 @@ function Gen1.installPartyScreen(PartyMenu, StateStack)
   -- (the engine asks uiSize every frame: the anchor hold, a plain field it reads from the
   -- stack, follows the option from there)
   PartyMenu.uiSize = function()
-    local g9 = Gen1.g9On()
+    local g9 = Gen1.hdParty()
     PartyMenu.holdsUIAnchors = g9 and function() return true end or nil
     if not g9 then return 160, 144 end
     return G9_W, G9_H
   end
-  PartyMenu.isWideBattleLayout = function() return Gen1.g9On() end
-  PartyMenu.wantsFillScale = function() return Gen1.g9On() end
+  PartyMenu.isWideBattleLayout = function() return Gen1.hdParty() end
+  PartyMenu.wantsFillScale = function() return Gen1.hdParty() end
   PartyMenu.draw = function(self, ...)
-    if not Gen1.g9On() then return draw(self, ...) end
+    if not Gen1.hdParty() then return draw(self, ...) end
     return drawOnPage(draw, self, ...)
   end
   PartyMenu.sgbPalettes = function(self, game)
     local zones = sgb and sgb(self, game) or nil
-    if not Gen1.g9On() then return zones end
+    if not Gen1.hdParty() then return zones end
     return scaleZones(zones)
   end
   -- every screen pushed while the page is on the stack is dressed for it (StateStack.push is
@@ -700,7 +699,7 @@ function Gen1.installPartyScreen(PartyMenu, StateStack)
     local push = StateStack.push
     StateStack.push = function(self, state, ...)
       local a, b = push(self, state, ...)
-      if Gen1.g9On() and type(self) == "table" and type(self.states) == "table" then
+      if Gen1.hdParty() and type(self) == "table" and type(self.states) == "table" then
         for i = 1, #self.states do
           local party = self.states[i]
           local mt = getmetatable(party)

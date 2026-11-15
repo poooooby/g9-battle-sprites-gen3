@@ -100,7 +100,7 @@ for name, m in pairs(preload) do package.loaded[name] = m end
 local done = Gen2.install(atlas, Gen1)
 local list = table.concat(done, ",")
 check(list:find("battle") and list:find("summary") and list:find("pokedex") and list:find("evolution")
-  and list:find("party icons") and list:find("party screen"), "installed: " .. list)
+  and list:find("party icons") and not list:find("party screen"), "installed: " .. list)
 local wrapped = Summary.picFor
 Gen2.install(atlas, Gen1)
 check(Summary.picFor == wrapped and BattleState.__woobleSprites2, "never wrapped twice")
@@ -246,11 +246,12 @@ do
   check(View.frame(View.start({ id = "NOT_A_MON" }, nil, "menu")) == "SHEET", "and for a species with no art")
 end
 
--- party icons: the game's own where it has one; ours for the rest, and for all on the G9 page
+-- party icons: ours for every Pokemon, the game's own species included
 do
   local p = setmetatable({ game = game, ids = { CHIKORITA = "ICON_CHIK" }, icons = { icons = { ICON_CHIK = {} } },
     palettes = { partyMenu = { { 1, 2, 3, 4 } } } }, Party)
-  check(p:drawIcon({ species = "CHIKORITA" }, 0, 0) == "VANILLA", "a cart species keeps its icon")
+  draws = {}
+  check(p:drawIcon({ species = "CHIKORITA" }, 0, 0) == nil and #draws > 0, "a cart species: ours on the game's list")
   draws = {}
   check(p:drawIcon({ species = "TURTWIG" }, 8, 4) == nil and #draws > 0, "a National Dex species: ours")
   check(draws[#draws].quad == 8 and draws[#draws].x == 4, "in the icon's slot (an unquadded draw: x, y)")
@@ -259,12 +260,9 @@ do
   check(#draws >= 4, "holding an item: three quarters and the game's marker")
   opts.party_icons = false
   check(p:drawIcon({ species = "TURTWIG" }, 0, 0) == "VANILLA", "PARTY ICONS off")
+  check(p:drawIcon({ species = "CHIKORITA" }, 0, 0) == "VANILLA", "PARTY ICONS off: a cart species keeps its icon")
   opts.party_icons = nil
-  check(p:battlePanelScale(800, 720) == nil and p:drawWidescreen(800, 720) == "VANILLA", "G9 off: the game's page")
-  opts.g9_party_screen = true
-  check(p:drawIcon({ species = "CHIKORITA" }, 0, 0) == nil, "G9 PARTY SCREEN: ours for every Pokemon")
-  check(p:battlePanelScale(800, 720) == 5 and p:drawWidescreen(800, 720) == nil, "and the page fills the window")
-  opts.g9_party_screen = nil
+  check(p:drawWidescreen(800, 720) == "VANILLA", "the party page is the game's own")
 end
 
 -- the exports

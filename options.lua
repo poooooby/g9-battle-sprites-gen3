@@ -140,13 +140,6 @@ return {
     label = "PARTY ICONS",
     type = "toggle",
     default = true,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): a National Dex species or form, which the game has no icon for, gets its own animated true-colour party icon. The game's own species (#1-151 on Red/Blue/Yellow, #1-251 on Gold/Silver/Crystal) keep the game's icons (with HD PARTY SCREEN on, every Pokemon gets ours). OFF: the game's own for all.",
-  },
-  {
-    key = "g9_party_screen",
-    label = "HD PARTY SCREEN",
-    type = "toggle",
-    default = false,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. Shows our party icons big and sharp. OFF (default): the normal party list, where icons are shrunk to the game's tiny 16x16 size. ON: the party list is drawn as large as your window, so every icon shows in full detail, and the game's own Pokemon (#1-151 / #1-251) get our icons too. Needs PARTY ICONS on. Anything opened from it (the summary, a message box) is drawn just as large.",
+    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): every Pokemon in the party list gets its own animated true-colour party icon, National Dex species and forms included, in place of the game's few shared shapes. On Red/Blue/Yellow the party list is drawn as large as your window so the icons show in full detail, and anything opened from it (the summary, a message box) is drawn just as large. OFF: the game's own icons and party list (no icon at all for a National Dex species).",
   },
 }

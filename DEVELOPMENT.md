@@ -227,14 +227,15 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
   with the species' palette as it does the game's own.
 - **Party icons:** the icon page holds every species' icon, #1–386 included (Gen 3's
   `Pokemon.icon` wrap leaves keys below 451 to the game). The icon sources are 2× pixel art, so
-  the 32 px cells hold every art pixel. On the game's list, keys 1–151 (the cart's species)
-  keep the game's icons.
-- **HD party screen** (option HD PARTY SCREEN, key `g9_party_screen`, `Gen1.installPartyScreen`): `PartyMenu.uiSize`
+  the 32 px cells hold every art pixel. Every species gets ours, keys 1–151 (the cart's
+  species) included: Red / Blue / Yellow's own icons are a handful of shared shapes.
+- **HD party screen** (`Gen1.installPartyScreen`, on whenever PARTY ICONS is: `Gen1.hdParty`;
+  the old `g9_party_screen` option is gone and a saved value is ignored): `PartyMenu.uiSize`
   answers 640×576, `isWideBattleLayout` / `wantsFillScale` true, and its draw runs under
   `scale(4)`, with `markTrueColor` rects and `sgbPalettes` zones scaled to match.
   `holdsUIAnchors`, a field the engine reads off the stack, is set from `uiSize`. A classic
-  screen pushed over the page (`StateStack.push`) is dressed the same way. Every icon is ours
-  there.
+  screen pushed over the page (`StateStack.push`) is dressed the same way. The icons are
+  the same `PartyMenu.drawIcon` ones, drawn in full on the 4x page.
 
 ## Gold, Silver and Crystal
 
@@ -282,12 +283,11 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
 - **Crystal's animated pics:** `MonAnimView.start` notes each view's scene and atlas key (from
   the species record it starts with), and `MonAnimView:frame` answers nil while that scene's
   screen shows ours (`serves[scene]`: `menu` the summary, `hatch`, `evolve`, `hof`, `trade`).
-- **Party icons:** a Pokémon the game has an icon for (`PartyMenu:iconIdFor`, `gen2Icons`)
-  keeps it; others get ours, drawn into a small canvas (shaded where the palette recolours)
-  so the game's held-item marker can replace its bottom-left quarter as the game does. On the
-  HD party screen every icon is ours, `battlePanelScale` answers the window's fill scale
-  (`panelBlit` draws a screen pushed over it at the same scale), and `drawWidescreen` draws
-  the panel at it.
+- **Party icons:** every Pokémon gets ours, the cart's species included (the game's own are
+  a few dozen shared shapes), in the party list and the trade tube, drawn into a small canvas
+  (shaded where the palette recolours) so the game's held-item marker can replace its
+  bottom-left quarter as the game does. The screens are drawn at window resolution, so the
+  icons are at full detail on the game's own party page (no HD party screen here).
 - **Exports:** as Gen 1's, with `drawSummaryFrame` unmirrored in the 7×7 block at the top left.
 
 ## Tests

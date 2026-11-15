@@ -287,34 +287,34 @@ do
   Summary.draw(s2)
   check(s2.other and s2.sprite ~= nil, "... and still gets our frame")
   local Party = package.loaded["src.ui.PartyMenu"]
-  check(Party.drawIcon({ data = data }, { species = "BULBASAUR" }, 0, 0) == "game's icon", "#1-151 keep the game's icons")
+  draws = {}
+  Party.drawIcon({ data = data }, { species = "BULBASAUR" }, 0, 0)
+  check(#draws == 1, "#1-151 get ours too")
   draws = {}
   Party.drawIcon({ data = data }, { species = "TURTWIG", hp = 10, stats = { hp = 10 } }, 8, 16)
   check(#draws == 1 and draws[1].x == 8 and draws[1].kx == 0.5, "a National Dex species gets ours, at 16x16")
   check(Party.drawIcon({ data = data }, { species = "TURTWIG", isEgg = true }, 0, 0) == "game's icon", "an egg keeps the game's")
 end
 
--- party icons: the game's own for #1-151 on its list, ours for the rest; ours for all on the
--- G9 PARTY SCREEN
+-- party icons: ours for every Pokemon with PARTY ICONS on; the game's own with it off
 do
   local opts = {}
   Gen1.options = function(key) return opts[key] end
   local Party = package.loaded["src.ui.PartyMenu"]
   data.pokemon.CHIKORITA = { dex = 152 }
-  check(Party.drawIcon({ data = data }, { species = "PIKACHU" }, 0, 0) == "game's icon", "Pikachu keeps the game's icon")
+  draws = {}
+  Party.drawIcon({ data = data }, { species = "PIKACHU" }, 0, 0)
+  check(#draws == 1 and draws[1].kx == 0.5, "Pikachu (#25) gets ours on the game's list, at 16x16")
   draws = {}
   Party.drawIcon({ data = data }, { species = "CHIKORITA" }, 0, 0)
   check(#draws == 1, "Chikorita (#152, none in the game) gets ours")
-  opts.g9_party_screen = true
-  draws = {}
-  Party.drawIcon({ data = data }, { species = "PIKACHU" }, 0, 0)
-  check(#draws == 1, "on the G9 PARTY SCREEN, Pikachu gets ours too")
   opts.party_icons = false
-  check(Party.drawIcon({ data = data }, { species = "CHIKORITA" }, 0, 0) == "game's icon", "PARTY ICONS off: the game's")
+  check(Party.drawIcon({ data = data }, { species = "PIKACHU" }, 0, 0) == "game's icon", "PARTY ICONS off: the game's")
+  check(Party.drawIcon({ data = data }, { species = "CHIKORITA" }, 0, 0) == "game's icon", "PARTY ICONS off: the game's for #152 too")
   Gen1.options = nil
 end
 
--- the G9 PARTY SCREEN: a 640x576 page drawn at 4x, the anchors held, and a classic screen pushed
+-- the HD party screen (with PARTY ICONS on): a 640x576 page drawn at 4x, the anchors held, and a classic screen pushed
 -- over it dressed for the same page
 do
   local opts = {}
@@ -324,10 +324,11 @@ do
   local StateStack = {}
   function StateStack:push(state) self.states[#self.states + 1] = state end
   check(Gen1.installPartyScreen(PartyMenu, StateStack), "party screen installed")
-  check(select(1, PartyMenu.uiSize()) == 160 and PartyMenu.holdsUIAnchors == nil, "off: the game's 160x144 page")
-  opts.g9_party_screen = true
+  opts.party_icons = false
+  check(select(1, PartyMenu.uiSize()) == 160 and PartyMenu.holdsUIAnchors == nil, "PARTY ICONS off: the game's 160x144 page")
+  opts.party_icons = nil
   local w, h = PartyMenu.uiSize()
-  check(w == 640 and h == 576 and PartyMenu.holdsUIAnchors ~= nil, "on: a 640x576 page, anchors held")
+  check(w == 640 and h == 576 and PartyMenu.holdsUIAnchors ~= nil, "PARTY ICONS on (default): a 640x576 page, anchors held")
   check(PartyMenu.isWideBattleLayout() and PartyMenu.wantsFillScale(), "... a wide page that fills the window")
   local z = PartyMenu.sgbPalettes({}, {})[1]
   check(z.x == 4 and z.y == 8 and z.w == 12 and z.h == 16, "its colour zones take the 4x")
@@ -344,8 +345,8 @@ do
   love.graphics.scale = function(k) sx = sx * k end
   box:draw()
   check(drawnAt == 4, "... and drawn at 4x")
-  opts.g9_party_screen = nil
-  check(select(1, box.uiSize()) == 160, "... and back to its own size with the option off")
+  opts.party_icons = false
+  check(select(1, box.uiSize()) == 160, "... and back to its own size with PARTY ICONS off")
   Gen1.options = nil
 end
 

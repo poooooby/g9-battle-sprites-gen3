@@ -19,9 +19,10 @@ its place on Red, Blue, Yellow, Gold, Silver and Crystal.
   animated front and back sprites, normal and shiny, in battle, in the Pokédex and on the
   summary screen. Generation 1–3 Pokémon get the same animated art, so every battle looks
   alike.
-- 🎒 **Party icons** for every species the game has none of, with their two-frame wiggle: from
-  #387 on FireRed to Emerald, #252 on Gold to Crystal and #152 on Red to Yellow. On Red to
-  Crystal, the HD party screen shows them big and sharp, for every Pokémon in your party.
+- 🎒 **Party icons** with their two-frame wiggle: on Red to Crystal, for every Pokémon in your
+  party in place of the games' few shared shapes, and on FireRed to Emerald for every species
+  the game has none of, from #387. On Red to Crystal they show in full detail: on Red, Blue
+  and Yellow the party list is drawn as large as your window to fit them.
 - 🎮 **Red, Blue and Yellow too:** the same art in battle, the Pokédex and the summary screen,
   and on the title screen, in Prof. Oak's speech, evolutions, trades, the Hall of Fame and its
   PC, and the credits.
@@ -78,7 +79,6 @@ layout. These are for Red, Blue, Yellow, Gold, Silver and Crystal.
 | SUMMARY SIZE | real size / 75% / 50% / 25% | real size |
 | OTHER SCREENS (Oak, evolution, trades, Hall of Fame, and more) | on / off | on |
 | PARTY ICONS | on / off | on |
-| HD PARTY SCREEN (the party list as large as your window, every icon big and sharp; needs PARTY ICONS) | on / off | off |
 
 ## 💾 Installation
 
