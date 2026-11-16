@@ -60,6 +60,10 @@ tests/editor_test.lua
 
 
 
+
+
+
+
 # battle pages: shipped as assets/numbers/ (managed by tools/build_dist.py; do not edit)
 assets/atlas/battle_back_0.png
 assets/atlas/battle_back_1.png
@@ -164,4 +168,5 @@ dist/g9-battle-sprites-gen3-1.6.2.zip
 dist/g9-battle-sprites-gen3-1.6.3.zip
 dist/g9-battle-sprites-gen3-1.6.4.zip
 dist/g9-battle-sprites-gen3-1.6.5.zip
+dist/g9-battle-sprites-gen3-1.6.6.zip
 # end dist/
