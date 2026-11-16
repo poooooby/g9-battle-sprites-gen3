@@ -287,7 +287,7 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
   With WoobleView (its Gen 2 support) the battle frames are tagged as Gen 1's are (`lowPivot`
   in the box's units, 56 / 48, not the canvas's DPI pixels), for its capture of the original
   white-background battle; only while they keep their own colours (GEN 2 colours, not during
-  the intro's blackout or a move's flash). The summary's, the Pokédex's and the Unown page's
+  a move's flash). The summary's, the Pokédex's and the Unown page's
   frames pass `hdDex`, as Gen 1's do (shaded ones under `features.shades`, which WoobleView
   then draws under the GbcPalette shader set at the time).
 - **Window resolution:** Gold draws its 160×144 panel scaled up on a window-sized canvas, so
@@ -296,12 +296,19 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
 - **Colour:** `GbcPalette` draws a true-colour pic as it is only in the GEN 2 colour mode
   (`Gen2.keepsColour`); in DMG, CLASSIC and a custom palette it maps the pic's shades to the
   palette, so the frame is drawn through `shadesShader` and answered as not true colour. The
-  battle's own colour effects and the evolution's blackout take the shaded frame too: the
-  intro's blackout, a pic's shade (`animPicState().shade`: Giga Drain, Growl ...) and the BG
-  palette register (`GbcPalette.bgp`, set while the battle is drawn: the flashes and inverts of
-  61 of the 251 moves, Thunder, Psychic, Night Shade ...). Both rest on the identity `0xE4`
-  (never nil during an animation), which is not an effect: every other move keeps the art in
-  its own colours.
+  battle's own colour effects and the evolution's blackout take the shaded frame too: a pic's
+  shade (`animPicState().shade`: Giga Drain, Growl ...) and the BG palette register
+  (`GbcPalette.bgp`, set while the battle is drawn: the flashes and inverts of 61 of the 251
+  moves, Thunder, Psychic, Night Shade ...). Both rest on the identity `0xE4` (never nil during
+  an animation), which is not an effect: every other move keeps the art in its own colours.
+  The intro's grey slide-in (`introGrayscale`) is not one either: the art keeps its colours.
+- **The intro's slide-in:** `BattleAnimView:presentSlide` bakes the scene into a canvas and
+  blits it in bands, which WoobleView never sees. While it runs, a wild Pokemon of ours is kept
+  out of the bake (`drawPic` skips the foe under `__woobleLiftEnemy`) and drawn after the bands
+  from `drawSceneBody`, translated by the top band's offset (`BattleAnimView.slideOffsets`:
+  the whole enemy box is in rows 0-63), as the engine does the player's back pic. It is drawn
+  as a method (`self:drawPic`): Battle Art's staged scene puts an empty `drawPic` on the battle.
+  A trainer's pic and a Pokemon with no art of ours are baked as before.
 - **Crystal's animated pics:** `MonAnimView.start` notes each view's scene and atlas key (from
   the species record it starts with), and `MonAnimView:frame` answers nil while that scene's
   screen shows ours (`serves[scene]`: `menu` the summary, `hatch`, `evolve`, `hof`, `trade`).

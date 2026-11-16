@@ -136,14 +136,14 @@ function Gen2.installBattle(atlas, BattleState)
       local side = back and "back" or "front"
       -- 3DB FRONTAL / 3DB FLIP: the player's Pokemon shows its front, optionally facing the foe
       local frontal = back and opt("battle_frontal", false) == true
-      -- the screen's own colour effects (the intro's blackout, a move's flash) recolour the
-      -- pic, so it goes in the four shades for them as it does in the mono colour modes. A
-      -- move recolours through the pic's shade or the BG palette register (a flash, an invert:
-      -- set on GbcPalette while the battle is drawn); both rest on the identity, 0xE4, which
-      -- recolours nothing, so a move that leaves them there keeps the art in its own colours
+      -- a move's colour effects recolour the pic, so it goes in the four shades for them as it
+      -- does in the mono colour modes. A move recolours through the pic's shade or the BG
+      -- palette register (a flash, an invert: set on GbcPalette while the battle is drawn);
+      -- both rest on the identity, 0xE4, which recolours nothing, so a move that leaves them
+      -- there keeps the art in its own colours. The intro's grey slide-in is not one of them:
+      -- the art keeps its colours (and WoobleView's real-height size) from the first frame
       local effect = false
       pcall(function()
-        if self:introGrayscale() then effect = true end
         local anim = self:animPicState(back and "player" or "enemy")
         local shade = anim and tonumber(anim.shade)
         if shade and shade ~= BGP_IDENTITY then effect = true end
@@ -184,6 +184,47 @@ function Gen2.installBattle(atlas, BattleState)
     function BattleState:frontAnimFrame(mon, ...)
       if type(mon) == "table" and managed[mon] then return nil end
       return origAnim(self, mon, ...)
+    end
+  end
+
+  -- The intro's slide-in: the scene is baked into a canvas and blitted in bands
+  -- (BattleAnimView:presentSlide), out of WoobleView's reach, so a wild Pokemon of ours would
+  -- slide in at its box size. It is left out of the bake and drawn after the bands instead,
+  -- moved with its band (the top one: rows 0-63 hold the whole enemy box), as the engine does
+  -- the player's back pic; WoobleView then sees it where it is drawn, at its real-height size.
+  local View = require_("src.ui.gen2.BattleAnimView")
+  local origBody, origDrawPic = BattleState.drawSceneBody, BattleState.drawPic
+  if type(origBody) == "function" and type(origDrawPic) == "function" and type(View) == "table"
+      and type(View.slideOffsets) == "function" and tonumber(View.SLIDE_FRAMES) then
+    function BattleState:drawPic(mon, back, ...)
+      if not back and self.__woobleLiftEnemy then return end
+      return origDrawPic(self, mon, back, ...)
+    end
+    function BattleState:drawSceneBody(...)
+      local frame = tonumber(self.slideFrame)
+      local enemy
+      if self.animView and frame and frame < View.SLIDE_FRAMES and not self.showEnemyTrainer then
+        local okA, mon = pcall(self.activeMon, self, "enemy")
+        if okA and type(mon) == "table" then
+          local okP, _, _, path = pcall(self.pic, self, mon, false)
+          if okP and type(path) == "string" and path:find("^wooble%-sprite:") then enemy = mon end
+        end
+      end
+      if not enemy then return origBody(self, ...) end
+      self.__woobleLiftEnemy = true
+      local ok, err = pcall(origBody, self, ...)
+      self.__woobleLiftEnemy = nil
+      if not ok then error(err, 0) end
+      local top = View.slideOffsets(frame)
+      local dx = -(tonumber(top) or 0)
+      if (tonumber(top) or 0) > 128 then dx = 256 - top end
+      -- (as a method: a mod drawing the battle its own way may have put an empty drawPic on
+      -- the battle meanwhile, Battle Art's staged scene, and then nothing is drawn here either)
+      local G = love.graphics
+      G.push()
+      G.translate(dx, 0)
+      pcall(self.drawPic, self, enemy, false)
+      G.pop()
     end
   end
   return true

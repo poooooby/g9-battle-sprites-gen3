@@ -69,6 +69,16 @@ local BattleState = class({
   animPicState = function(self, side)
     return self.shade and { shade = self.shade == true and 1 or self.shade } or nil
   end,
+  -- the scene: the two pics, in the engine's order (the intro bakes this, BattleAnimView)
+  activeMon = function(self, side) return side == "enemy" and self.enemyMon or self.playerMon end,
+  drawPic = function(self, mon, back)
+    local list = self.picDraws
+    if list then list[#list + 1] = { mon = mon, back = back, tx = tx } end
+  end,
+  drawSceneBody = function(self)
+    self:drawPic(self:activeMon("enemy"), false)
+    self:drawPic(self:activeMon("player"), true)
+  end,
 })
 local Summary = class({ picFor = function() return "VANILLA", false end })
 local Dex = class({ picFor = function() return "VANILLA", false end, drawUnownPic = function() return "VANILLA" end })
@@ -89,6 +99,8 @@ local preload = {
     index = function(l) return type(l) == "number" and l or ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"):find(l, 1, true) end,
     monLetter = function(mon) return mon.letter end },
   ["src.render.MonAnimView"] = View,
+  ["src.ui.gen2.BattleAnimView"] = { SLIDE_FRAMES = 72, slideOffsets = function(f)
+    return (0x90 - f * 2) % 256, (0x70 + f * 2) % 256 end },
   ["src.ui.gen2.BattleState"] = BattleState, ["src.ui.gen2.SummaryMenu"] = Summary,
   ["src.ui.gen2.PokedexMenu"] = Dex, ["src.ui.gen2.EvolutionAnim"] = Evo, ["src.ui.gen2.PartyMenu"] = Party,
   ["src.world.gen2.Palettes"] = { monColors = function() return { 1, 2, 3, 4 } end },
@@ -137,7 +149,7 @@ do
   check(select(2, b:pic(mon, false)) == false, "DMG: the shaded frame, for the palette")
   gbc.mode = "gbc"
   b.intro = true
-  check(select(2, b:pic(mon, false)) == false, "the intro's blackout takes it too")
+  check(select(2, b:pic(mon, false)) == true, "the intro's grey slide-in: still true colour")
   b.intro = nil
   b.shade = true
   check(select(2, b:pic(mon, false)) == false, "and a move's flash")
@@ -173,9 +185,42 @@ do
   check(hd.tags[b:pic(mon, false)] == nil, "DMG colours: not tagged")
   gbc.mode = "gbc"
   b.intro = true
-  check(hd.tags[b:pic(mon, false)] == nil, "the intro's blackout: not tagged")
+  local ti = b:pic(mon, false)
+  check(hd.tags[ti] and hd.tags[ti].side == "enemy", "the intro's slide-in: tagged (its real-height size)")
   b.intro = nil
   atlas.hd = nil
+end
+
+-- the intro's slide-in: a wild Pokemon of ours is left out of the baked bands and drawn after
+-- them, moved with the top band (so WoobleView sees it where it is drawn)
+do
+  local mine, foe = { species = "CYNDAQUIL" }, { species = "PIDGEY" }
+  local b = setmetatable({ game = game, animView = {}, enemyMon = foe, playerMon = mine }, BattleState)
+  local function scene(frame)
+    b.slideFrame, b.picDraws = frame, {}
+    b:drawSceneBody()
+    return b.picDraws
+  end
+  local d = scene(10)
+  check(#d == 2 and d[1].back == true and d[2].mon == foe and d[2].back == false,
+    "mid-slide: the player's pic in the scene, the foe once, after it")
+  check(d[2].tx == -(0x90 - 20), "... moved with the top band (SCX 124: 124 px left)")
+  check(scene(0)[2].tx == 256 - 0x90, "the slide's first frame: coming in from the other side (112 px right)")
+  d = scene(72)
+  check(#d == 2 and d[1].mon == foe and d[1].tx == 0, "after the slide: drawn in the scene as the engine does")
+  b.showEnemyTrainer = true
+  d = scene(10)
+  check(d[1].mon == foe and d[1].tx == 0, "a trainer's battle: its pic (the trainer's) in the scene")
+  b.showEnemyTrainer = nil
+  b.enemyMon = { species = "NOT_A_MON" }
+  d = scene(10)
+  check(d[1].back == false and d[1].tx == 0, "no art of ours: the game's own pic, baked as before")
+  b.enemyMon = foe
+  b.drawPic = function() end
+  b.picDraws = {}
+  b.slideFrame = 10
+  b:drawSceneBody()
+  check(#b.picDraws == 0, "a mod that empties the battle's drawPic (Battle Art): nothing drawn over it")
 end
 
 -- the screens
