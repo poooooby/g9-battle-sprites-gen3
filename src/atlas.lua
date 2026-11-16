@@ -13,7 +13,18 @@
 
 local Atlas = {}
 
-local PIC_BOX = 64          -- the engine's battle / summary pic box, in its own units
+-- LOVE's pop() puts the scissor back BEFORE the canvas, so the caller's scissor is converted at
+-- the DPI scale of the canvas still bound (ours: 4 for a pic) and the rest of the caller's draw
+-- is clipped to the wrong rectangle. A pic rendered in the middle of Crystal's battle panel cut
+-- the panel down to its right edge (with a battle scenery behind it, only the scenery showed: a
+-- flash). So a render that switches canvas reads the caller's scissor before its push and sets
+-- it again after its pop, with the caller's canvas bound. Pass what getScissor returned.
+function Atlas.rescissor(x, y, w, h)
+  local G = love.graphics
+  if x and G.setScissor then G.setScissor(x, y, w, h) end
+end
+
+local PIC_BOX = 64         -- the engine's battle / summary pic box, in its own units
 local PIC_SCALE = 4         -- detail: canvases are PIC_BOX * PIC_SCALE pixels, dpiscale = PIC_SCALE
 local PIC_SCALE_BIG = 2     -- ... for a canvas bigger than the box (a whole frame): bounds its memory
 local PIC_FPS = 8           -- animation rate of the sheets, frames per second
@@ -479,6 +490,8 @@ function Atlas.new(mod, load)
       pimg:setFilter("nearest", "nearest")
       local c = love.graphics.newCanvas(numberGrid:getWidth(), numberGrid:getHeight())
       local G = love.graphics
+      local sx, sy, sw, sh
+      if G.getScissor then sx, sy, sw, sh = G.getScissor() end
       G.push("all")
       local okDraw, err = pcall(function()
         G.origin()
@@ -493,6 +506,7 @@ function Atlas.new(mod, load)
         G.draw(nimg, 0, 0)
       end)
       G.pop()
+      Atlas.rescissor(sx, sy, sw, sh)
       nimg:release()
       pimg:release()
       if not okDraw then error(err, 0) end
@@ -695,10 +709,13 @@ function Atlas.new(mod, load)
   -- A pic is rendered the first time it is asked for, which can be in the middle of another
   -- screen's draw: that screen's scissor, transform, shader and colour would otherwise apply
   -- to the canvas too (the save editor draws its party rows inside a scissor, and the sprite
-  -- came out as a small clipped piece). push("all") also puts the previous canvas back.
+  -- came out as a small clipped piece). push("all") also puts the previous canvas back, and
+  -- Atlas.rescissor the caller's scissor at its own canvas's scale.
   local function drawClean(fn)
     local G = love.graphics
     if not (G.push and G.pop) then return fn() end
+    local sx, sy, sw, sh
+    if G.getScissor then sx, sy, sw, sh = G.getScissor() end
     G.push("all")
     local ok, err = pcall(function()
       G.origin()
@@ -709,6 +726,7 @@ function Atlas.new(mod, load)
       fn()
     end)
     G.pop()
+    Atlas.rescissor(sx, sy, sw, sh)
     if not ok then error(err, 0) end
   end
 

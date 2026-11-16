@@ -381,14 +381,20 @@ local function iconCanvas(atlas, entry, key, f, shades)
   canvas:setFilter("nearest", "nearest")
   local quad = entry.quads[f] or entry.quads[0]
   local sh = shades and atlas.shadesShader() or nil
+  -- (the party's scissor kept off the icon, then set again after the pop with its own canvas
+  -- bound: pop() converts it at our canvas's scale otherwise, see Atlas.rescissor)
+  local sx, sy, sw, sh2
+  if G.getScissor then sx, sy, sw, sh2 = G.getScissor() end
   G.push("all")
   G.origin()
+  if G.setScissor then G.setScissor() end
   G.setCanvas(canvas)
   G.clear(0, 0, 0, 0)
   G.setColor(1, 1, 1, 1)
   G.setShader(sh)
   G.draw(entry.image, quad, 0, 0, 0, 16 / entry.w, 16 / entry.h)
   G.pop()
+  if sx and G.setScissor then G.setScissor(sx, sy, sw, sh2) end
   iconCanvases[ck] = canvas
   iconCount = iconCount + 1
   return canvas

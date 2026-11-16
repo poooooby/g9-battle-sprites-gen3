@@ -145,6 +145,19 @@ new count it drops its blocks, frames, Pokédex and icon pics and redraws its li
 screen that keeps a pic it was handed earlier shows it blank until it asks again. Gen 2's
 party-icon canvases check `atlas.epoch()` the same way.
 
+**A render mid-draw puts the caller's scissor back itself.** A pic is rendered the first time
+it is asked for, often in the middle of another screen's draw, so every render runs in
+`drawClean` (`src/atlas.lua`): `push("all")`, the state cleared, the canvas drawn, `pop()`.
+LÖVE's `pop()` restores the scissor *before* the canvas, converting it to pixels at the DPI
+scale of the canvas still bound: ours, 4 for a pic. So `drawClean` reads the caller's scissor
+before the push and sets it again after the pop (`Atlas.rescissor`), with the caller's canvas
+bound. Gen 2's party-icon render and the GPU block decode do the same. Without it, a pic
+rendered inside Crystal's battle panel (scissored to the panel) clipped the rest of the panel
+to a rectangle four times too far right. Only the panel's right edge was left, which showed as
+the battle flashing whenever a new animation frame was rendered. It showed with Facets'
+battle scenery, which is drawn before the pics. `tests/clean_state_test.lua` restores in LÖVE's
+order and checks the scissor comes back at the caller's scale.
+
 ## Red, Blue and Yellow
 
 `main.lua` picks the game from `src.core.GameVersion.generation()` before it requires any engine
