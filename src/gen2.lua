@@ -215,9 +215,11 @@ function Gen2.installBattle(atlas, BattleState)
       local ok, err = pcall(origBody, self, ...)
       self.__woobleLiftEnemy = nil
       if not ok then error(err, 0) end
+      -- (the top band's scroll, 144 px to none: the box comes in from the left, its right edge
+      -- first, as on the cart. Not wrapped as the bands' blit wraps a scroll over 128, which
+      -- would park it right of the panel, in view on a screen WoobleView fills)
       local top = View.slideOffsets(frame)
       local dx = -(tonumber(top) or 0)
-      if (tonumber(top) or 0) > 128 then dx = 256 - top end
       -- (as a method: a mod drawing the battle its own way may have put an empty drawPic on
       -- the battle meanwhile, Battle Art's staged scene, and then nothing is drawn here either)
       local G = love.graphics

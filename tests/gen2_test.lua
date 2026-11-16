@@ -205,7 +205,7 @@ do
   check(#d == 2 and d[1].back == true and d[2].mon == foe and d[2].back == false,
     "mid-slide: the player's pic in the scene, the foe once, after it")
   check(d[2].tx == -(0x90 - 20), "... moved with the top band (SCX 124: 124 px left)")
-  check(scene(0)[2].tx == 256 - 0x90, "the slide's first frame: coming in from the other side (112 px right)")
+  check(scene(0)[2].tx == -0x90, "the slide's first frame: 144 px left, its right edge first (not wrapped to the right)")
   d = scene(72)
   check(#d == 2 and d[1].mon == foe and d[1].tx == 0, "after the slide: drawn in the scene as the engine does")
   b.showEnemyTrainer = true

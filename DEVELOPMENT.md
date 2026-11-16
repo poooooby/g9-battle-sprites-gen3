@@ -134,7 +134,11 @@ Each battle tag also passes `top`: the cell's `uy0` in `data/atlas_index.lua`, w
 first row of art over the whole animation, written by `tools/build_atlas.py`. With that,
 WoobleView's Battle Fit pulls the camera back to fit the art, not the frame's empty
 margin. Each tag also passes `side`, `"enemy"` or `"player"`. A back adds `body`, its resting
-body box (`cx0`…`cy1`). Battle Fit keeps that body's top at or below the tallest cart back sprite's (y 52). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
+body box (`cx0`…`cy1`). Each also passes `art`, the art's box over the whole animation (`ux0`…`uy1`),
+and `height`, the species' real height in metres (the index's `ht` / 10): with them WoobleView's
+Battle Fit sizes the two battlers against each other (the taller fills its room, the other is
+shrunk by height), not by the tag's `scale`. Battle Fit keeps the back's body top at or below the
+enemy's HP box (y 44; on the Game Boy, the enemy's HUD's bottom, y 32). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
 **A window mode change empties canvases.** `love.window.setMode` (and `updateMode`) can
 recreate the graphics context, which leaves every Canvas blank; an Image is reloaded by LOVE.
@@ -306,7 +310,10 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
   blits it in bands, which WoobleView never sees. While it runs, a wild Pokemon of ours is kept
   out of the bake (`drawPic` skips the foe under `__woobleLiftEnemy`) and drawn after the bands
   from `drawSceneBody`, translated by the top band's offset (`BattleAnimView.slideOffsets`:
-  the whole enemy box is in rows 0-63), as the engine does the player's back pic. It is drawn
+  the whole enemy box is in rows 0-63), as the engine does the player's back pic. The offset is
+  not wrapped as the bands' blit wraps a scroll over 128: unwrapped the box comes in from the
+  left, its right edge first, as on the cart, and is never parked right of the panel, where a
+  screen WoobleView's Fill Screen fills would show it. It is drawn
   as a method (`self:drawPic`): Battle Art's staged scene puts an empty `drawPic` on the battle.
   A trainer's pic and a Pokemon with no art of ours are baked as before.
 - **Crystal's animated pics:** `MonAnimView.start` notes each view's scene and atlas key (from

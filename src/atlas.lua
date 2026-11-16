@@ -386,6 +386,14 @@ function Atlas.new(mod, load)
   end
   self.battleSize = battleSize
 
+  -- A species' real height in metres (the index's `ht`, decimetres), or nil: WoobleView's Battle
+  -- Fit sizes the two battlers against each other by it.
+  local function heightOf(slot)
+    local rec = bySlot[tonumber(slot)]
+    local ht = rec and tonumber(rec.cells.ht)
+    return ht and ht > 0 and ht / 10 or nil
+  end
+
   -- A page is loaded once and kept. A failed load is NOT kept: assets:path()
   -- answers nil until the mod service is ready, so the next draw retries. The
   -- first failure of each page is logged, once, with the reason.
@@ -899,6 +907,10 @@ function Atlas.new(mod, load)
         -- mostly out from under the HP boxes and the text box
         side = isBack and "player" or "enemy",
         body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
+        -- the art's box over the whole animation (frame px) and the species' height (metres):
+        -- WoobleView's Battle Fit fills the taller battler's room with its art, the other by height
+        art = cell.ux0 and { cell.ux0, cell.uy0, cell.ux1, cell.uy1 } or nil,
+        height = heightOf(dex),
       })
     elseif dexHd then
       -- the Pokedex and the summary: the whole frame at window resolution, fitted to the box exactly as the
@@ -1155,6 +1167,8 @@ function Atlas.new(mod, load)
         spec.top = tonumber(cell.uy0)
         spec.side = opts.hdSide
         spec.body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
+        spec.art = cell.ux0 and { cell.ux0, cell.uy0, cell.ux1, cell.uy1 } or nil
+        spec.height = heightOf(key)
       end
       pcall(hd.tag, canvas, spec)
     elseif self.hd and type(self.hd.untag) == "function" then
