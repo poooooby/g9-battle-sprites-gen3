@@ -214,8 +214,10 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
     Diglett stood as tall as a Typhlosion; `sprite_size` only shapes the stand-in now. Not in the mono COLORS (the
     pics are drawn after the colour pass there). A mirrored 3DB FLIP frame adds `flip = true`
     (its `lowPivot` mirrored about the box, the rest as in the atlas), only where WoobleView
-    has `features.flip`; with an older one it stays untagged. The contact shadow is in the
-    stand-in only.
+    has `features.flip`; with an older one it stays untagged. The contact shadow is baked into
+    the stand-in, which WoobleView replaces, so the tag carries it too (`spec.shadow`: its
+    width and bottom-middle offset from the feet in the frame's pixels, so it follows the
+    species' size and the flip), where WoobleView has `features.shadow`.
 - **Other screens:** each `draw` (or the method that answers the pic) is wrapped to put the
   current frame where the screen keeps its pic:
 

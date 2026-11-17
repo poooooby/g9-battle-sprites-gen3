@@ -1106,6 +1106,20 @@ function Atlas.new(mod, load)
     -- the page is sampled nearest for this draw only (it keeps its own filter for picFrame)
     local fmin, fmag = img:getFilter()
     img:setFilter("nearest", "nearest")
+    -- the shadow, drawn first so the Pokemon is drawn over it: a share of its width (by the
+    -- pack's ShadowSize), on the box's bottom, under its middle plus the pack's x offset
+    local shadowAt
+    if shadow and not black then
+      local frac = shadowSize >= 1 and SHADOW_W.base + (shadowSize - 1) * SHADOW_W.step
+        or SHADOW_W.base + shadowSize * SHADOW_W.neg
+      frac = math.max(SHADOW_W.min, math.min(SHADOW_W.max, frac))
+      local sW = math.max(3, math.floor(dw * frac + 0.5))
+      local k = sW / shadow.cw
+      local sH = math.max(1, math.floor(shadow.ch * k + 0.5))
+      local d = isBack and PACK_BACK or PACK_FRONT
+      local shX = (tonumber(type(info.pm) == "table" and info.pm.sx) or 0) * 2 / d * s
+      shadowAt = { x = math.floor(ox + dw / 2 + shX - sW / 2 + 0.5), w = sW, h = sH, k = k }
+    end
     drawClean(function()
       local G = love.graphics
       G.setCanvas(canvas)
@@ -1115,18 +1129,8 @@ function Atlas.new(mod, load)
         G.scale(-1, 1)
       end
       if shades then G.setShader(shades) end
-      if shadow and not black then
-        -- the shadow first, so the Pokemon is drawn over it: a share of its width (by the
-        -- pack's ShadowSize), on the box's bottom, under its middle plus the pack's x offset
-        local frac = shadowSize >= 1 and SHADOW_W.base + (shadowSize - 1) * SHADOW_W.step
-          or SHADOW_W.base + shadowSize * SHADOW_W.neg
-        frac = math.max(SHADOW_W.min, math.min(SHADOW_W.max, frac))
-        local sW = math.max(3, math.floor(dw * frac + 0.5))
-        local k = sW / shadow.cw
-        local sH = math.max(1, math.floor(shadow.ch * k + 0.5))
-        local d = isBack and PACK_BACK or PACK_FRONT
-        local shX = (tonumber(type(info.pm) == "table" and info.pm.sx) or 0) * 2 / d * s
-        G.draw(shadow.image, shadow.quad, math.floor(ox + dw / 2 + shX - sW / 2 + 0.5), bh - sH, 0, k, k)
+      if shadowAt then
+        G.draw(shadow.image, shadow.quad, shadowAt.x, bh - shadowAt.h, 0, shadowAt.k, shadowAt.k)
       end
       if black then G.setColor(0, 0, 0, 1) end
       G.draw(img, quad, ox - x0 * s, oy - y0 * s, 0, s, s)
@@ -1169,6 +1173,15 @@ function Atlas.new(mod, load)
         spec.body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
         spec.art = cell.ux0 and { cell.ux0, cell.uy0, cell.ux1, cell.uy1 } or nil
         spec.height = heightOf(key)
+        -- the shadow, which WoobleView would otherwise drop with the stand-in: in the frame's
+        -- pixels from the feet (the pivot), so it keeps its place and share of the width at the
+        -- species' size (where WoobleView draws one: `features.shadow`)
+        local feats = type(hd.features) == "table" and hd.features or {}
+        if shadowAt and feats.shadow == true and s > 0 then
+          spec.shadow = { texture = shadow.image, quad = shadow.quad, w = shadowAt.w / s,
+                          dx = (shadowAt.x + shadowAt.w / 2 - lx) / s,
+                          dy = (bh - (by + py * s)) / s }
+        end
       end
       pcall(hd.tag, canvas, spec)
     elseif self.hd and type(self.hd.untag) == "function" then
