@@ -43,7 +43,7 @@ return {
   all = { front = 1, back = 1 },
 
   realism = { on = true, center = 1.65, grow = 0.25, shrink = 0.15, curve = 1.5,
-              shortest = 0.1, tallest = 20, front = 0.85, match_backs = true },
+              shortest = 0.1, tallest = 20, front = 0.9, match_backs = true },
 
   NOIVERN = { front = 0.6, front_dy = -2 },
 }
