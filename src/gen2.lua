@@ -192,12 +192,36 @@ function Gen2.installBattle(atlas, BattleState)
   -- slide in at its box size. It is left out of the bake and drawn after the bands instead,
   -- moved with its band (the top one: rows 0-63 hold the whole enemy box), as the engine does
   -- the player's back pic; WoobleView then sees it where it is drawn, at its real-height size.
+  -- It goes in just before that back pic (the engine's overlay over the bands), so the player's
+  -- trainer, sliding in from the right, passes in front of it.
   local View = require_("src.ui.gen2.BattleAnimView")
   local origBody, origDrawPic = BattleState.drawSceneBody, BattleState.drawPic
   if type(origBody) == "function" and type(origDrawPic) == "function" and type(View) == "table"
       and type(View.slideOffsets) == "function" and tonumber(View.SLIDE_FRAMES) then
+    -- the lifted foe, moved with the top band from where the drawing stands, `under` px of the
+    -- back pic's own move already in it. (as a method: a mod drawing the battle its own way may
+    -- have put an empty drawPic on the battle meanwhile, Battle Art's staged scene, and then
+    -- nothing is drawn here either)
+    local function drawLifted(self, under)
+      local mon, dx = self.__woobleLiftMon, self.__woobleLiftDx or 0
+      self.__woobleLiftMon = nil
+      local G = love.graphics
+      local lifting = self.__woobleLiftEnemy
+      self.__woobleLiftEnemy = nil
+      G.push()
+      G.translate(dx - (under or 0), 0)
+      pcall(self.drawPic, self, mon, false)
+      G.pop()
+      self.__woobleLiftEnemy = lifting
+    end
     function BattleState:drawPic(mon, back, ...)
       if not back and self.__woobleLiftEnemy then return end
+      -- (the back pic's overlay, not the baked panel's: the foe first, under it)
+      if back and self.__woobleLiftMon and not self.slidingBackpic then
+        local under = type(View.slideBackpicOffset) == "function"
+          and tonumber(View.slideBackpicOffset(tonumber(self.slideFrame) or 0)) or 0
+        drawLifted(self, under)
+      end
       return origDrawPic(self, mon, back, ...)
     end
     function BattleState:drawSceneBody(...)
@@ -211,22 +235,17 @@ function Gen2.installBattle(atlas, BattleState)
         end
       end
       if not enemy then return origBody(self, ...) end
-      self.__woobleLiftEnemy = true
-      local ok, err = pcall(origBody, self, ...)
-      self.__woobleLiftEnemy = nil
-      if not ok then error(err, 0) end
       -- (the top band's scroll, 144 px to none: the box comes in from the left, its right edge
       -- first, as on the cart. Not wrapped as the bands' blit wraps a scroll over 128, which
       -- would park it right of the panel, in view on a screen WoobleView fills)
       local top = View.slideOffsets(frame)
-      local dx = -(tonumber(top) or 0)
-      -- (as a method: a mod drawing the battle its own way may have put an empty drawPic on
-      -- the battle meanwhile, Battle Art's staged scene, and then nothing is drawn here either)
-      local G = love.graphics
-      G.push()
-      G.translate(dx, 0)
-      pcall(self.drawPic, self, enemy, false)
-      G.pop()
+      self.__woobleLiftEnemy, self.__woobleLiftMon, self.__woobleLiftDx = true, enemy, -(tonumber(top) or 0)
+      local ok, err = pcall(origBody, self, ...)
+      self.__woobleLiftEnemy = nil
+      -- (no back pic drawn over the bands, its box empty: the foe on its own, after them)
+      if ok and self.__woobleLiftMon then drawLifted(self, 0) end
+      self.__woobleLiftMon, self.__woobleLiftDx = nil, nil
+      if not ok then error(err, 0) end
     end
   end
   return true

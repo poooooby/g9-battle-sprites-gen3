@@ -9,6 +9,7 @@ end
 
 -- a graphics fake that records each draw and the transform it was made under
 local draws, color, tx, sx = {}, { 1, 1, 1, 1 }, 0, 1
+local stack = {}
 local function image(w, h)
   local f = "linear"
   return { getDimensions = function() return w or 4096, h or 4096 end,
@@ -27,7 +28,8 @@ love = {
       return c
     end,
     setCanvas = function() end, clear = function() end,
-    push = function() end, pop = function() tx, sx = 0, 1 end,
+    push = function() stack[#stack + 1] = { tx, sx } end,
+    pop = function() local t = table.remove(stack); if t then tx, sx = t[1], t[2] else tx, sx = 0, 1 end end,
     origin = function() tx, sx = 0, 1 end,
     translate = function(x) tx = tx + x end,
     scale = function(x) sx = sx * x end,
@@ -72,10 +74,25 @@ local BattleState = class({
   -- the scene: the two pics, in the engine's order (the intro bakes this, BattleAnimView)
   activeMon = function(self, side) return side == "enemy" and self.enemyMon or self.playerMon end,
   drawPic = function(self, mon, back)
+    -- (during the slide the back pic is the overlay's, not the baked panel's)
+    if back and self.slidingBackpic then return end
     local list = self.picDraws
     if list then list[#list + 1] = { mon = mon, back = back, tx = tx } end
   end,
+  -- the slide as the engine draws it (BattleState:drawSceneBody, BattleAnimView:presentSlide):
+  -- the panel baked, then the back pic over the bands, moved in from the right
   drawSceneBody = function(self)
+    if self.animView and (self.slideFrame or 72) < 72 then
+      self.slidingBackpic = true
+      self:drawPic(self:activeMon("enemy"), false)
+      self:drawPic(self:activeMon("player"), true)
+      self.slidingBackpic = nil
+      love.graphics.push()
+      love.graphics.translate((72 - self.slideFrame) * 2)
+      self:drawPic(self:activeMon("player"), true)
+      love.graphics.pop()
+      return
+    end
     self:drawPic(self:activeMon("enemy"), false)
     self:drawPic(self:activeMon("player"), true)
   end,
@@ -100,7 +117,8 @@ local preload = {
     monLetter = function(mon) return mon.letter end },
   ["src.render.MonAnimView"] = View,
   ["src.ui.gen2.BattleAnimView"] = { SLIDE_FRAMES = 72, slideOffsets = function(f)
-    return (0x90 - f * 2) % 256, (0x70 + f * 2) % 256 end },
+    return (0x90 - f * 2) % 256, (0x70 + f * 2) % 256 end,
+    slideBackpicOffset = function(f) return (72 - f) * 2 end },
   ["src.ui.gen2.BattleState"] = BattleState, ["src.ui.gen2.SummaryMenu"] = Summary,
   ["src.ui.gen2.PokedexMenu"] = Dex, ["src.ui.gen2.EvolutionAnim"] = Evo, ["src.ui.gen2.PartyMenu"] = Party,
   ["src.world.gen2.Palettes"] = { monColors = function() return { 1, 2, 3, 4 } end },
@@ -202,10 +220,11 @@ do
     return b.picDraws
   end
   local d = scene(10)
-  check(#d == 2 and d[1].back == true and d[2].mon == foe and d[2].back == false,
-    "mid-slide: the player's pic in the scene, the foe once, after it")
-  check(d[2].tx == -(0x90 - 20), "... moved with the top band (SCX 124: 124 px left)")
-  check(scene(0)[2].tx == -0x90, "the slide's first frame: 144 px left, its right edge first (not wrapped to the right)")
+  check(#d == 2 and d[1].mon == foe and d[1].back == false and d[2].back == true,
+    "mid-slide: the foe once, out of the bands, then the player's back pic over it (the player's in front)")
+  check(d[1].tx == -(0x90 - 20), "... the foe moved with the top band (SCX 124: 124 px left)")
+  check(d[2].tx == (72 - 10) * 2, "... the back pic where the engine puts it (" .. tostring(d[2].tx) .. ")")
+  check(scene(0)[1].tx == -0x90, "the slide's first frame: 144 px left, its right edge first (not wrapped to the right)")
   d = scene(72)
   check(#d == 2 and d[1].mon == foe and d[1].tx == 0, "after the slide: drawn in the scene as the engine does")
   b.showEnemyTrainer = true
