@@ -139,5 +139,48 @@ do
   check(big and near(big.scale, 0.5 * 1.25 * 0.9), "a hand-set size multiplies the realism")
 end
 
+-- a long Pokemon (its Pokedex height its length): `height` scales the height it is sized by,
+-- the one WoobleView is told and the realism's
+do
+  local atlas = newAtlas({ BIG = { height = 0.5 } })
+  local hd = fakeHd(); atlas.hd = hd
+  check(near(atlas.heightOf(465), 10), "height 0.5: a 20 m Pokemon told as 10 m (" .. tostring(atlas.heightOf(465)) .. ")")
+  check(near(atlas.heightOf(464), 1.65), "no height: the Pokedex's")
+  local big = hd.tags[atlas.picFrame(465, "front", atlas.cell(465, "front"), 0, true)]
+  check(big and near(big.height, 10), "the tag carries the halved height")
+  check(big and near(big.scale, R(100) * 0.9), "realism by the halved height (" .. tostring(big and big.scale) .. ")")
+end
+
+-- `size`: a share of the size it is drawn at, front and back (the realism by its own height,
+-- untouched) and, for Battle Fit, the art box grown to match (fitArt); the feet stay where they are
+do
+  local plain = newAtlas(nil)
+  local hp = fakeHd(); plain.hd = hp
+  local p0 = hp.tags[plain.picFrame(465, "front", plain.cell(465, "front"), 0, true)]
+  local pb = hp.tags[plain.picFrame(465, "back", plain.cell(465, "back"), 0, true)]
+  local atlas = newAtlas({ BIG = { size = 0.25 } })
+  local hd = fakeHd(); atlas.hd = hd
+  check(near(atlas.sizeOf(465), 0.25) and near(atlas.sizeOf(464), 1), "sizeOf: the tuning's, else 1")
+  check(near(atlas.heightOf(465), 20), "size leaves the height alone")
+  local f = hd.tags[atlas.picFrame(465, "front", atlas.cell(465, "front"), 0, true)]
+  check(f and near(f.scale, p0.scale * 0.25), "size 0.25: a quarter of the front (" .. tostring(f and f.scale) .. ")")
+  local b = hd.tags[atlas.picFrame(465, "back", atlas.cell(465, "back"), 0, true)]
+  check(b and near(b.scale, pb.scale * 0.25), "...and of the back")
+  local x0, y0 = feet(p0)
+  local x1, y1 = feet(f)
+  check(near(x0, x1) and near(y0, y1) and f.pivot[2] == p0.pivot[2], "...standing on the same feet")
+  -- Battle Fit: the art box (back: x 18-74, y 4-82, feet at 45, 80) grown 4x about the feet, so
+  -- the art fills a quarter of the room; with no size, the art's own box
+  local a = b and b.art
+  check(a and near(a[1], 45 - 27 * 4) and near(a[2], 80 - 76 * 4) and near(a[3], 45 + 29 * 4)
+    and near(a[4], 80 + 2 * 4), "Battle Fit's art box grown by 1 / size about the feet")
+  local mb = hd.tags[atlas.picFrame(464, "back", atlas.cell(464, "back"), 0, true)]
+  check(mb and mb.art and mb.art[1] == 18 and mb.art[2] == 4 and mb.art[3] == 74 and mb.art[4] == 82,
+    "no size: the art's own box")
+  local s1 = select(1, plain.battleSize(465, plain.cell(465, "front"), false))
+  local s2 = select(1, atlas.battleSize(465, atlas.cell(465, "front"), false))
+  check(near(s2, s1 * 0.25), "Gen 1 / 2's battleSize has it too")
+end
+
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 realism)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)

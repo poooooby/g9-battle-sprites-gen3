@@ -217,7 +217,8 @@ do
   draws = {}
   battle:drawPicsLayer()
   local foe, mine = hd.tags[layerSprites[1]], hd.tags[layerSprites[2]]
-  check(foe and foe.side == "enemy" and foe.texture and foe.quad and foe.body == nil, "WoobleView: the foe's frame is tagged")
+  check(foe and foe.side == "enemy" and foe.texture and foe.quad and type(foe.body) == "table" and #foe.body == 4,
+    "WoobleView: the foe's frame is tagged, with its resting body box (what Battle Fit's minimum measures)")
   check(mine and mine.side == "player" and type(mine.body) == "table", "and the player's, with its body box")
   local pcell = atlas.cell(16, "front")
   check(foe and foe.pivot[2] == (tonumber(pcell.ffr) or pcell.fs) and foe.top == pcell.uy0, "the foe's feet and its art's top")

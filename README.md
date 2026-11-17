@@ -33,7 +33,8 @@ Red to Crystal.
 - 📐 **Framed like the originals:** sprites sit where the game's own would, and big Pokémon are
   shown whole.
 - 🖥️ **HD with [WoobleView](https://github.com/poooooby/gen3-hd-sprites):** sprites are drawn
-  crisply at your screen's resolution and sized by each Pokémon's real height.
+  crisply at your screen's resolution and sized by each Pokémon's real height (a long one like
+  Gyarados, whose Pokédex height is its length nose to tail, by half of it).
 - 📱 **Phone-friendly:** small enough for Android.
 
 ## ⚙️ Options

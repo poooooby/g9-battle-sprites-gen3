@@ -471,6 +471,11 @@ def build_battle(sheets: Path, dbk: dict[str, str], species: list[tuple[int, str
                     # gen3-hd-sprites' Battle Fit fits under the top of the screen (not the frame's
                     # empty margin), and the whole box is what Gen 1 / 2 fit to their pic box
                     cell.update({"ux0": extent[0], "uy0": extent[1], "ux1": extent[2], "uy1": extent[3]})
+                    # and the creature at rest (its first frame, as a back's body is): what
+                    # WoobleView's Battle Fit measures it by against the other battler (a
+                    # flier's fluttering spans a box far bigger than itself: Cutiefly)
+                    if box:
+                        cell.update({"cx0": box[0], "cy0": box[1], "cx1": box[2], "cy1": box[3]})
                 if variant not in BACK_VARIANTS and front_fy(sid):
                     cell["fy"] = front_fy(sid)
                 if variant not in BACK_VARIANTS:
@@ -735,7 +740,9 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
         "-- row; frame n of a species is cell start + n. Back cells also carry cx0, cy0, cx1,",
         "-- cy1: the creature's typical box inside its frame (what it is anchored on); ux0, uy0,",
         "-- ux1, uy1: the union of its box over the whole animation (how much room it needs).",
-        "-- Front cells carry ux0, uy0, ux1, uy1: the union of the art over the whole animation.",
+        "-- Front cells carry ux0, uy0, ux1, uy1: the union of the art over the whole animation,",
+        "-- and cx0, cy0, cx1, cy1: its first frame's box (the creature at rest, what WoobleView's",
+        "-- Battle Fit measures it by; a flier's whole animation spans far more than itself).",
         "-- party_icons_<page>.png: `frames` 32x32 cells side by side from x, y.",
         "-- dex_fronts_<page>.png (dexpic): the cart's two 64x64 front frames side by side from x, y.",
         "-- fl: the art floats; pm: the pack's SpeciesMetrics (front fx, fy, back bx, by, shadow sx, sz).",

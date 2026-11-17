@@ -359,14 +359,58 @@ function Atlas.new(mod, load)
     for k, v in pairs(tuning.realism) do realismCfg[k] = v end
   end
   self.realismCfg = realismCfg
+  -- -> a species' height as it stands, in decimetres: the index's `ht` (the Pokedex's) times
+  -- its tuning's `height` (a long Pokemon's Pokedex height is its length, end to end: Gyarados
+  -- 0.5). A female sheet takes its species' tuning unless it has its own.
+  local function standingHt(rec)
+    local ht = rec and tonumber(rec.cells.ht)
+    if not ht then return nil end
+    local own = tuning[rec.id]
+    if type(own) ~= "table" and tonumber(rec.cells.female_of) then
+      local base = bySlot[tonumber(rec.cells.female_of)]
+      own = base and tuning[base.id]
+    end
+    local k = type(own) == "table" and tonumber(own.height) or 1
+    return ht * k
+  end
+
   -- -> the species' own tuning, the `all` row, and its realism scale (1 when off)
   local function tuned(slot)
     local rec = bySlot[tonumber(slot)]
     local own = rec and tuning[rec.id]
     local all = type(tuning.all) == "table" and tuning.all or {}
-    local real = rec and Atlas.realism(rec.cells.ht, realismCfg) or 1
+    local real = rec and Atlas.realism(standingHt(rec), realismCfg) or 1
     return type(own) == "table" and own or {}, all, real
   end
+
+  -- -> a species' `size` (its share of the size it would have, with or without Battle Fit), 1
+  -- by default; a female sheet takes its species' unless it has its own tuning
+  local function sizeOf(slot)
+    local rec = bySlot[tonumber(slot)]
+    if not rec then return 1 end
+    local own = tuning[rec.id]
+    if type(own) ~= "table" and tonumber(rec.cells.female_of) then
+      local base = bySlot[tonumber(rec.cells.female_of)]
+      own = base and tuning[base.id]
+    end
+    local k = type(own) == "table" and tonumber(own.size) or 1
+    return k > 0 and k or 1
+  end
+  self.sizeOf = sizeOf
+
+  -- A battle tag's `art` (the art's box over the whole animation, frame px) for WoobleView's
+  -- Battle Fit, which fills a battler's room with that box: for a species with a `size`, the box
+  -- grown about the feet (px, py) by 1 / size, so the art itself fills that share of the room.
+  -- The art's height at its fill is the same, so the other battler is sized as before.
+  local function fitArt(slot, cell, px, py)
+    if not cell.ux0 then return nil end
+    local x0, y0, x1, y1 = cell.ux0, cell.uy0, cell.ux1, cell.uy1
+    local k = sizeOf(slot)
+    if k == 1 then return { x0, y0, x1, y1 } end
+    local g = 1 / k
+    return { px - (px - x0) * g, py - (py - y0) * g, px + (x1 - px) * g, py + (y1 - py) * g }
+  end
+  self.fitArt = fitArt
 
   -- A battle pic's size on Gen 3's terms, in the atlas's own px (1 = the sprite's own size):
   -- hand-set x realism x (front) perspective or (back) its own front's size, x `all`; and the
@@ -377,22 +421,22 @@ function Atlas.new(mod, load)
     if isBack then
       local bn = 1
       if realismCfg.on ~= false and realismCfg.match_backs ~= false then bn = tonumber(cell.bn) or 1 end
-      return (tonumber(own.back) or 1) * real * bn * (tonumber(all.back) or 1),
+      return (tonumber(own.back) or 1) * real * bn * (tonumber(all.back) or 1) * sizeOf(slot),
         tonumber(own.back_dx) or 0, tonumber(own.back_dy) or 0
     end
     local persp = realismCfg.on == false and 1 or (tonumber(realismCfg.front) or 1)
-    return (tonumber(own.front) or 1) * real * persp * (tonumber(all.front) or 1),
+    return (tonumber(own.front) or 1) * real * persp * (tonumber(all.front) or 1) * sizeOf(slot),
       tonumber(own.front_dx) or 0, tonumber(own.front_dy) or 0
   end
   self.battleSize = battleSize
 
-  -- A species' real height in metres (the index's `ht`, decimetres), or nil: WoobleView's Battle
-  -- Fit sizes the two battlers against each other by it.
+  -- A species' real height in metres (standingHt: the Pokedex's, a long one's halved), or nil:
+  -- WoobleView's Battle Fit sizes the two battlers against each other by it.
   local function heightOf(slot)
-    local rec = bySlot[tonumber(slot)]
-    local ht = rec and tonumber(rec.cells.ht)
+    local ht = standingHt(bySlot[tonumber(slot)])
     return ht and ht > 0 and ht / 10 or nil
   end
+  self.heightOf = heightOf
 
   -- A page is loaded once and kept. A failed load is NOT kept: assets:path()
   -- answers nil until the mod service is ready, so the next draw retries. The
@@ -887,7 +931,8 @@ function Atlas.new(mod, load)
       end
       -- hand-tuned size and nudge (data/sprite_scale.lua); a back's own size and its realism
       -- are already in `ls` (backLayout); a front's realism carries the perspective factor too
-      local mul = tonumber(isBack and all.back or all.front) or 1
+      -- (and its `size`: on the HD frame only, the stand-in keeps its layout)
+      local mul = (tonumber(isBack and all.back or all.front) or 1) * sizeOf(dex)
       local dx = tonumber(isBack and own.back_dx or own.front_dx) or 0
       local dy = tonumber(isBack and own.back_dy or own.front_dy) or 0
       local k = 1
@@ -903,13 +948,15 @@ function Atlas.new(mod, load)
         -- the first row of art over the whole animation: gen3-hd-sprites' Battle Fit pulls the
         -- camera back to fit the art, not the frame's empty margin above it
         top = tonumber(cell.uy0),
-        -- whose Pokemon this is; a back's resting body box (frame px), which Battle Fit keeps
-        -- mostly out from under the HP boxes and the text box
+        -- whose Pokemon this is; its resting body box (frame px): a back's Battle Fit keeps
+        -- mostly out from under the HP boxes and the text box, and either side's is what
+        -- WoobleView's minimum size measures (a flier's animation spans far more than itself)
         side = isBack and "player" or "enemy",
-        body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
+        body = cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
         -- the art's box over the whole animation (frame px) and the species' height (metres):
         -- WoobleView's Battle Fit fills the taller battler's room with its art, the other by height
-        art = cell.ux0 and { cell.ux0, cell.uy0, cell.ux1, cell.uy1 } or nil,
+        -- (grown by a hand-set `size`, so Battle Fit draws it at that share: fitArt)
+        art = fitArt(dex, cell, (lx - ox) / ls, (ly - oy) / ls),
         height = heightOf(dex),
       })
     elseif dexHd then
@@ -1170,8 +1217,8 @@ function Atlas.new(mod, load)
       if opts.hdSide then
         spec.top = tonumber(cell.uy0)
         spec.side = opts.hdSide
-        spec.body = isBack and cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
-        spec.art = cell.ux0 and { cell.ux0, cell.uy0, cell.ux1, cell.uy1 } or nil
+        spec.body = cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
+        spec.art = fitArt(key, cell, px, py)
         spec.height = heightOf(key)
         -- the shadow, which WoobleView would otherwise drop with the stand-in: in the frame's
         -- pixels from the feet (the pivot), so it keeps its place and share of the width at the

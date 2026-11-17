@@ -11,6 +11,12 @@
 --   front    size of the ENEMY's front pic, 1 = 100%. Default 1 (the sprite's own size). It scales
 --            about the feet, so a smaller Pokemon keeps standing on its spot.
 --   back     size of YOUR Pokemon's back pic, 1 = 100%. Default 1, about the feet too.
+--   height   its height, 1 = the Pokedex's. Default 1. For a long Pokemon whose Pokedex height
+--            is its length end to end (Gyarados' 6.5 m): 0.5 sizes it by half that. WoobleView's
+--            Battle Fit sizes the two battlers against each other by height, and `realism` uses it.
+--   size     its share of the size it is drawn at, front and back, 1 = 100%. Default 1. Unlike
+--            front / back it holds with WoobleView's Battle Fit too, which otherwise sizes the
+--            battlers itself; the other battler keeps its size. About the feet, like the rest.
 --   front_dx, front_dy, back_dx, back_dy
 --            nudge in game pixels (positive = right / down), on top of where the sprite already
 --            stands: feet on the middle of its pad (worked out in the atlas, with or without HD
@@ -46,4 +52,27 @@ return {
               shortest = 0.1, tallest = 20, front = 0.9, match_backs = true },
 
   NOIVERN = { front = 0.6, front_dy = -2 },
+
+  -- long Pokemon: the Pokedex's height is their length, end to end
+  GYARADOS = { height = 0.5 },
+
+  -- long and coiled Pokemon too: the Pokedex measures them head to tail, so each is sized by
+  -- this share of it
+  EKANS = { height = 0.25 },
+  ARBOK = { height = 0.35 },
+  ONIX = { height = 0.5 },
+  DRATINI = { height = 0.5 },
+  DRAGONAIR = { height = 0.5 },
+  STEELIX = { height = 0.5 },
+  WURMPLE = { height = 0.6 },
+  SEVIPER = { height = 0.3 },
+  MILOTIC = { height = 0.35 },
+  HUNTAIL = { height = 0.3 },
+  GOREBYSS = { height = 0.5 },
+  SERPERIOR = { height = 0.8 },
+  ZYGARDE = { height = 0.6 },
+  DRAMPA = { height = 0.7 },
+  SILICOBRA = { height = 0.5 },
+  SANDACONDA = { height = 0.5 },
+  DREEPY = { height = 0.8 },
 }

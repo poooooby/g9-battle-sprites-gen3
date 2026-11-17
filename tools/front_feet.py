@@ -151,7 +151,7 @@ def main() -> int:
         feet = base - gap
         own = tuning.get(sid, {})
         dy = int(own.get("front_dy", 0))
-        k = own.get("front", 1.0) * mul
+        k = own.get("front", 1.0) * own.get("size", 1.0) * mul
 
         def plain_y(row: int) -> float:
             return base - (fs - row)

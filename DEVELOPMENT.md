@@ -132,11 +132,18 @@ tunes each Pokémon's front and back size and offset by hand (edit and restart, 
 Each battle tag also passes `top`: the cell's `uy0` in `data/atlas_index.lua`, which is the
 first row of art over the whole animation, written by `tools/build_atlas.py`. With that,
 WoobleView's Battle Fit pulls the camera back to fit the art, not the frame's empty
-margin. Each tag also passes `side`, `"enemy"` or `"player"`. A back adds `body`, its resting
-body box (`cx0`…`cy1`). Each also passes `art`, the art's box over the whole animation (`ux0`…`uy1`),
+margin. Each tag also passes `side`, `"enemy"` or `"player"`, and `body`, its resting body box
+(`cx0`…`cy1`: a back's typical box, a front's first frame's). Battle Fit keeps a back's body out
+from under the UI, and its minimum size (the smaller battler's body at least a share of the
+other's) measures both, so a flier whose animation spans far more than itself (Cutiefly) is
+not lost beside a big foe. Each also passes `art`, the art's box over the whole animation (`ux0`…`uy1`),
 and `height`, the species' real height in metres (the index's `ht` / 10): with them WoobleView's
 Battle Fit sizes the two battlers against each other (the taller fills its room, the other is
-shrunk by height), not by the tag's `scale`. Battle Fit keeps the back's body top at or below the
+shrunk by height), not by the tag's `scale`. A species' hand-set `size` (`atlas.sizeOf`: long
+and coiled Pokémon whose art reads too big) multiplies the `scale` (Battle Fit off) and grows
+the tag's `art` box about the feet by 1 / `size` (`atlas.fitArt`): Battle Fit fills the room with
+that box, so the art itself fills that share of it, and the art's height at its fill is the same,
+so the other battler is sized as before. Nothing in WoobleView is needed for it. Battle Fit keeps the back's body top at or below the
 enemy's HP box (y 44; on the Game Boy, the enemy's HUD's bottom, y 32). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
 **A window mode change empties canvases.** `love.window.setMode` (and `updateMode`) can
