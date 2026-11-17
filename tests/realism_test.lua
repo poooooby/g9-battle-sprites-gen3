@@ -99,10 +99,10 @@ do
   local atlas = newAtlas(nil)
   local hd = fakeHd(); atlas.hd = hd
   local mid = hd.tags[atlas.picFrame(464, "front", atlas.cell(464, "front"), 0, true)]
-  check(mid and near(mid.scale, 0.85), "a 1.65 m front: only the perspective, 85% (" .. tostring(mid and mid.scale) .. ")")
+  check(mid and near(mid.scale, 0.9), "a 1.65 m front: only the perspective, 90% (" .. tostring(mid and mid.scale) .. ")")
   check(mid and mid.pivot[2] == 90, "the front scales about its feet row (ffr)")
   local big = hd.tags[atlas.picFrame(465, "front", atlas.cell(465, "front"), 0, true)]
-  check(big and near(big.scale, 1.25 * 0.85), "a 20 m front: 125% x 85% (" .. tostring(big and big.scale) .. ")")
+  check(big and near(big.scale, 1.25 * 0.9), "a 20 m front: 125% x 90% (" .. tostring(big and big.scale) .. ")")
   local mx, my = feet(mid)
   local bx, by = feet(big)
   check(near(mx, bx) and near(my, by), "both stand on the same spot whatever their size")
@@ -136,7 +136,7 @@ do
   local atlas = newAtlas({ BIG = { front = 0.5 } })
   local hd = fakeHd(); atlas.hd = hd
   local big = hd.tags[atlas.picFrame(465, "front", atlas.cell(465, "front"), 0, true)]
-  check(big and near(big.scale, 0.5 * 1.25 * 0.85), "a hand-set size multiplies the realism")
+  check(big and near(big.scale, 0.5 * 1.25 * 0.9), "a hand-set size multiplies the realism")
 end
 
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 realism)", passed, passed + failed))

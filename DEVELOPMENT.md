@@ -104,10 +104,9 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
   the 0.3 power of real height but flattens above ~1.7 m (Charizard 81 px, Wailord 74), so the
   giants need the help and the small ones are already small. Each back is first brought to its
   own front's size (`bn` on back cells: the front's resting body height over the back's, held to
-  0.67–1.5; Tinkaton's back art is small, Tatsugiri's big), then fronts are a further ×0.85 for
-  perspective (the cart's own fronts are a median 0.90× the width of its backs; ×0.85 reads
-  better: Wailord's back vs Joltik's front then shows a bigger gap than the other way round, as
-  depth should). Every size change is made about the feet (`ffr` on front cells, `bfr` on back
+  0.67–1.5; Tinkaton's back art is small, Tatsugiri's big), then fronts are a further ×0.9 for
+  perspective (the cart's own fronts are a median 0.90× the width of its backs: Wailord's back vs
+  Joltik's front then shows a bigger gap than the other way round, as depth should). Every size change is made about the feet (`ffr` on front cells, `bfr` on back
   cells), so the Pokémon stays on its pad.
 
 Every file under `tools/` and `tests/` is listed by exact path in `.modkitignore` so none of

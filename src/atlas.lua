@@ -58,7 +58,7 @@ local BACK_RAISE = 4         -- px a back pic WITHOUT a cart reference is lifted
 -- ln(center / shortest))^curve, so only the true extremes reach the limits. Heights in metres;
 -- `htDm` is the index's `ht` (decimetres). Returns 1 when off, or with no height. Pure.
 Atlas.REALISM = { on = true, center = 1.65, grow = 0.25, shrink = 0.15, curve = 1.5,
-                  shortest = 0.1, tallest = 20, front = 0.85, match_backs = true }
+                  shortest = 0.1, tallest = 20, front = 0.9, match_backs = true }
 function Atlas.realism(htDm, cfg)
   cfg = cfg or Atlas.REALISM
   local h = tonumber(htDm)
