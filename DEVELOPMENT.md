@@ -137,7 +137,12 @@ margin. Each tag also passes `side`, `"enemy"` or `"player"`, and `body`, its re
 from under the UI, and its minimum size (the smaller battler's body at least a share of the
 other's) measures both, so a flier whose animation spans far more than itself (Cutiefly) is
 not lost beside a big foe. Each also passes `art`, the art's box over the whole animation (`ux0`…`uy1`),
-and `height`, the species' real height in metres (the index's `ht` / 10): with them WoobleView's
+and `height`, the real height in metres of that art box (the index's `ht` / 10 times
+`sprite_scale.lua`'s `height`, measured for every sprite by poke-scale-realism: feet row to the
+top of the art over the animation, over the Pokédex's height). That is measured on the front; a
+back's tag carries it times the back art's reach over its resting body (`uy0` / `cy0` from
+`bfr`) over the front's (from `ffr`), `atlas.tagHeight`, since some leap on one side only
+(Finizen's front: 0.46 on its back; Galarian Stunfisk's back: 1.59). With them WoobleView's
 Battle Fit sizes the two battlers against each other (the taller fills its room, the other is
 shrunk by height), not by the tag's `scale`. A species' hand-set `size` (`atlas.sizeOf`: long
 and coiled Pokémon whose art reads too big) multiplies the `scale` (Battle Fit off) and grows

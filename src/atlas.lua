@@ -438,6 +438,29 @@ function Atlas.new(mod, load)
   end
   self.heightOf = heightOf
 
+  -- -> the height a battle pic's tag carries: heightOf's, which is measured on the front (its art
+  -- from the feet row to the top of the art over the whole animation); a back's art can reach
+  -- far more, or less, over its resting body than the front's (Finizen leaps on its front only,
+  -- Galarian Stunfisk on its back), so a back's is that height times its art's share of its
+  -- resting height over the front's. `cell` is the pic's own (a back or a front).
+  local function headroom(c, feet)
+    local top, rest = c and tonumber(c.uy0), c and tonumber(c.cy0)
+    feet = tonumber(feet)
+    if not (top and rest and feet) or feet - rest <= 0 or feet - top <= 0 then return nil end
+    return (feet - top) / (feet - rest)
+  end
+  local function tagHeight(slot, cell, isBack)
+    local h = heightOf(slot)
+    if not (h and isBack) then return h end
+    local rec = bySlot[tonumber(slot)]
+    local front = rec and rec.cells.front
+    local fr = front and headroom(front, front.ffr or front.cy1)
+    local bk = headroom(cell, cell and (cell.bfr or cell.cy1))
+    if not (fr and bk) then return h end
+    return h * bk / fr
+  end
+  self.tagHeight = tagHeight
+
   -- A page is loaded once and kept. A failed load is NOT kept: assets:path()
   -- answers nil until the mod service is ready, so the next draw retries. The
   -- first failure of each page is logged, once, with the reason.
@@ -953,11 +976,11 @@ function Atlas.new(mod, load)
         -- WoobleView's minimum size measures (a flier's animation spans far more than itself)
         side = isBack and "player" or "enemy",
         body = cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
-        -- the art's box over the whole animation (frame px) and the species' height (metres):
+        -- the art's box over the whole animation (frame px) and its height (metres: tagHeight):
         -- WoobleView's Battle Fit fills the taller battler's room with its art, the other by height
         -- (grown by a hand-set `size`, so Battle Fit draws it at that share: fitArt)
         art = fitArt(dex, cell, (lx - ox) / ls, (ly - oy) / ls),
-        height = heightOf(dex),
+        height = tagHeight(dex, cell, isBack),
       })
     elseif dexHd then
       -- the Pokedex and the summary: the whole frame at window resolution, fitted to the box exactly as the
@@ -1219,7 +1242,7 @@ function Atlas.new(mod, load)
         spec.side = opts.hdSide
         spec.body = cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil
         spec.art = fitArt(key, cell, px, py)
-        spec.height = heightOf(key)
+        spec.height = tagHeight(key, cell, isBack)
         -- the shadow, which WoobleView would otherwise drop with the stand-in: in the frame's
         -- pixels from the feet (the pivot), so it keeps its place and share of the width at the
         -- species' size (where WoobleView draws one: `features.shadow`)

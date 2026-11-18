@@ -72,6 +72,13 @@ local index = { species = {
   NORM = { dex = 402, slot = 466, ht = 16.5,
     back = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 1, ox = 0, oy = 0, cx0 = 20, cy0 = 10,
              cx1 = 70, cy1 = 80, ux0 = 18, uy0 = 4, ux1 = 74, uy1 = 82, bfr = 80, bfl = 67, bn = 1.2 } },
+  -- a 1 m Pokemon that leaps on its front only: its front's art reaches 90 px over the feet,
+  -- resting 40; its back's 76, resting 70
+  LEAP = { dex = 403, slot = 467, ht = 10,
+    front = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 1, ox = 0, oy = 0, ffr = 90,
+              cx0 = 20, cy0 = 50, cx1 = 70, cy1 = 90, ux0 = 18, uy0 = 0, ux1 = 74, uy1 = 90 },
+    back = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 1, ox = 0, oy = 0, cx0 = 20, cy0 = 10,
+             cx1 = 70, cy1 = 80, ux0 = 18, uy0 = 4, ux1 = 74, uy1 = 82, bfr = 80, bfl = 67 } },
   BIG = { dex = 401, slot = 465, ht = 200,
     front = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 1, ox = 0, oy = 0, ffr = 90 },
     back = { sheet = 0, start = 0, fs = 96, cols = 10, frames = 1, ox = 0, oy = 0, cx0 = 20, cy0 = 10,
@@ -149,6 +156,23 @@ do
   local big = hd.tags[atlas.picFrame(465, "front", atlas.cell(465, "front"), 0, true)]
   check(big and near(big.height, 10), "the tag carries the halved height")
   check(big and near(big.scale, R(100) * 0.9), "realism by the halved height (" .. tostring(big and big.scale) .. ")")
+end
+
+-- the tag's height: measured on the front (its art from the feet to the top of its animation),
+-- so a back whose art reaches less far over its resting body carries that much less
+do
+  local atlas = newAtlas({ LEAP = { height = 2.25 } })
+  local hd = fakeHd(); atlas.hd = hd
+  local f = hd.tags[atlas.picFrame(467, "front", atlas.cell(467, "front"), 0, true)]
+  check(f and near(f.height, 2.25), "a front's tag: the measured height (" .. tostring(f and f.height) .. ")")
+  local b = hd.tags[atlas.picFrame(467, "back", atlas.cell(467, "back"), 0, true)]
+  local want = 2.25 * (76 / 70) / (90 / 40)
+  check(b and near(b.height, want), "a back's: by its art's reach over its rest against the front's (" ..
+    tostring(b and b.height) .. ", want " .. want .. ")")
+  local mb = hd.tags[atlas.picFrame(464, "back", atlas.cell(464, "back"), 0, true)]
+  check(mb and near(mb.height, 1.65), "a back whose front has no boxes: the height as it is")
+  check(near(atlas.tagHeight(467, atlas.cell(467, "back"), true), want) and
+    near(atlas.tagHeight(467, atlas.cell(467, "front"), false), 2.25), "tagHeight: the same, either side")
 end
 
 -- `size`: a share of the size it is drawn at, front and back (the realism by its own height,
