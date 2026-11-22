@@ -56,6 +56,22 @@ from the community projects that pokeemerald-expansion credits in its own `CREDI
 The same checkout's 64×64 back sprites are used by the build tools (`tools/back_framing.py`,
 `tools/back_fit.py`) as references for framing the battle back pics; they are not shipped.
 
+### Animated trainers and VS screens (FireRed to Emerald)
+
+The animated trainer sprites (`assets/trainers/fronts_*.png`, with the pack's shadows baked in)
+and the Bruno, Lance and generic bar VS art come from **Animated Trainer Intros** (a Deluxe
+Battle Kit add-on for Pokémon Essentials v21.1, v1.0.1) by **Lucidious89**, built on the animated
+sprite code of **EBDX** by **Luka S.J.**:
+
+- <https://www.pokecommunity.com/threads/animated-trainer-intros-dbk-add-on-v21-1.535934/#post-10927205>
+- <https://eeveeexpo.com/resources/1667/>
+
+The sprites are taken from the Generation 3, 4 and 5 games (© Nintendo / Creatures / GAME FREAK),
+the Generation 4 and 5 back sprites cut and resized by Lucidious89. The HGSS VS screen
+(`src/vs.lua`) is a port of **Pokémon Essentials v21.1**'s `VSTrainer` transition (Maruno and the
+Essentials team), and its logos (`hgss_vs1`, `hgss_vs2`), Kanto gym leader, Giovanni and champion
+portraits and bars come from Essentials' `Graphics/Transitions`.
+
 ## Graphical effects & backgrounds
 
 - **Transparent Dynamax Clouds:** bearbro123 (DeviantArt)

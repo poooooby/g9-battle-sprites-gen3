@@ -48,6 +48,7 @@ end
 -- the rest are Red to Crystal's only.
 local GEN3_OPTIONS = {
   enable_battle_sprites = true, animate_sprites = true, battle_frontal = true, battle_front_flip = true,
+  animated_trainers = true,
 }
 
 -- Gen 1 / 2: the same atlas, fitted to those games' pic boxes (src/gen1.lua, and src/gen2.lua
@@ -169,6 +170,38 @@ return function(mod)
     end
   end
   local atlas = nil
+  -- ANIMATED TRAINERS (src/trainers.lua, src/vs.lua): the pack's animated trainer fronts through
+  -- the engine's TrainerPic.front, and the HGSS VS screens in place of the transition's effect,
+  -- drawn over the whole window from render.hud
+  local trainers, vs = nil, nil
+  local function installTrainers()
+    local Trainers = loadSibling(mod, "src/trainers.lua")
+    local VS = loadSibling(mod, "src/vs.lua")
+    if not (Trainers and VS) then return end
+    local okT, TrainerPic = pcall(require, "src.core.game3.trainer_pic")
+    if not (okT and type(TrainerPic) == "table") then return end
+    trainers = trainers or Trainers.new(mod, function(path) return loadSibling(mod, path) end, Atlas)
+    if not trainers then return end
+    trainers.option = function(key) return mod.options:get(key) end
+    trainers.inBattle = Hooks._inBattle
+    trainers.hd = atlas and atlas.hd or nil
+    Trainers.install(trainers, TrainerPic)
+    if not vs then
+      vs = VS.new(mod, trainers)
+      if mod.hooks and mod.hooks.wrap then
+        mod.hooks:wrap("render.hud", function(nxt, game, viewport, ...)
+          local r = nxt(game, viewport, ...)
+          if type(viewport) == "table" then
+            local ok, err = pcall(vs.drawHud, viewport.width, viewport.height)
+            if not ok then mod.log:warn("VS screen: %s", tostring(err)) end
+          end
+          return r
+        end)
+      end
+    end
+    local okB, BT = pcall(require, "src.core.game3.battle_transition")
+    if okB then vs.install(BT) end
+  end
   local function install(game)
     if atlas then return end
     atlas = Atlas.new(mod, function(path) return loadSibling(mod, path) end)
@@ -205,6 +238,7 @@ return function(mod)
     if type(Pokemon.onReload) == "function" then
       Pokemon.onReload(function() Hooks.install(Pokemon, atlas) end, "g9-battle-sprites-gen3")
     end
+    if not Hooks.inEditor then installTrainers() end
   end
 
   -- gen3-hd-sprites (optional): battle pics are then drawn from the atlas at the window's
@@ -218,6 +252,7 @@ return function(mod)
     -- installed, so a pic asked for before then is the plain one
     atlas.hd = (type(ex) == "table" and type(ex.tag) == "function" and type(ex.enabled) == "function")
       and ex or nil
+    if trainers then trainers.hd = atlas.hd end
     local ok, active = pcall(function() return atlas.hd and atlas.hd.isActive() end)
     if ok and active and not hdLogged then
       hdLogged = true
@@ -249,7 +284,11 @@ return function(mod)
     linkHd()
   end, 0)
   -- the library may have finished installing after this mod's game.ready ran
-  mod.events:on("battle.started", function() linkHd() end)
+  mod.events:on("battle.started", function()
+    linkHd()
+    -- each battle's trainers play their strip again once they have slid in
+    if trainers then trainers.resetBattle() end
+  end)
   -- Also at load: tools that load mods without starting a game (the save
   -- editor) never fire game.ready, and draw species pics through the same
   -- Pokemon.frontPic. install() is idempotent, so the game.ready call above

@@ -151,10 +151,11 @@ that box, so the art itself fills that share of it, and the art's height at its 
 so the other battler is sized as before. Nothing in WoobleView is needed for it. Battle Fit keeps the back's body top at or below the
 enemy's HP box (y 44; on the Game Boy, the enemy's HUD's bottom, y 32). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
-**Gen 3 takes four options.** `main.lua` defines only `GEN3_OPTIONS` there
-(`enable_battle_sprites`, `animate_sprites`, `battle_frontal`, `battle_front_flip`), so the
-in-game Mod Manager lists only those; the launcher reads `options.lua` as data without knowing
-the game and lists all 16. They are read live through `atlas.option` (the mod's getter):
+**Gen 3 takes five options.** `main.lua` defines only `GEN3_OPTIONS` there
+(`enable_battle_sprites`, `animate_sprites`, `battle_frontal`, `battle_front_flip` and Gen 3's
+own `animated_trainers`, below), so the in-game Mod Manager lists only those; the launcher reads
+`options.lua` as data without knowing the game and lists all 17. The first four are read live
+through `atlas.option` (the mod's getter):
 
 - BATTLE SPRITES off (`Hooks._gameBattlePic`): inside `Battle.draw` `frontPic` hands on to the
   engine, `backPic` always, and `MonAnim.framePic` gives the cart's frame-1 art again, for
@@ -190,6 +191,65 @@ to a rectangle four times too far right. Only the panel's right edge was left, w
 the battle flashing whenever a new animation frame was rendered. It showed with Facets'
 battle scenery, which is drawn before the pics. `tests/clean_state_test.lua` restores in LÖVE's
 order and checks the scissor comes back at the caller's scale.
+
+## Animated trainers and VS screens (FireRed to Emerald)
+
+**Art.** `tools/build_trainers.py --zip "<Animated Trainer Intros.zip>" --essentials
+"<Pokemon Essentials v21.1>"` reads the pack (Lucidious89's DBK add-on) and Essentials without
+extracting either. It packs only what `data/trainer_map.lua` names:
+
+- `assets/trainers/fronts_<n>.png`: each strip's frames, read as the plugin reads them (square
+  frames as tall as the image, `ceil(w / h)` of them; a still if `w <= 2h`). The pack's shadow is
+  baked under each frame: the frame's silhouette at 1.1 × 0.25 of its size, 100/255 black,
+  bottom-centred, moved by the PBS `ShadowXY` (screen px at its `SpriteScale`, 2), none with
+  `HideShadow`.
+- `data/trainer_index.lua`: per sprite, the page, cell size, frames and cols, and the pivot (the
+  frame's bottom centre in its cell).
+- `assets/trainers/vs/`: the VS files as they are.
+
+Rebuild after editing the map.
+
+**The map.** `fronts[game][PIC]` keys each constants set (`firered`, `emerald`, `ruby`) by its
+`TRAINER_PIC_` name without the prefix. Notes on it:
+
+- A pic not listed keeps the game's own.
+- The pack's `RIVAL1` / `RIVAL2` are Silver and Hugh, so FRLG's three Blue pics use `CHAMPION`.
+- `vs[game][PIC]` is the HGSS screen: `foe` portrait and `bar`. It uses only foe-side art: the
+  pack's and Essentials' "POKEMONTRAINER_Red/Leaf" VS portraits are Ethan, Lyra, Nate and Rosa.
+- `scale` = 2 × 160 / 384 (Essentials draws trainers at 2× on 384 rows); `seconds` = 1.5.
+
+**Fronts** (`src/trainers.lua`). `Trainers.install` wraps the engine's `TrainerPic.front(picId)`
+(`src.core.game3.trainer_pic`; every trainer front pic goes through it). For a mapped pic, while
+`animated_trainers` is on, it answers one live 64×64 canvas per pic id (dpiscale 4). The current
+frame is drawn there with its pivot on the box's bottom centre, at the pack's scale, shrunk only to
+fit the box.
+
+The frame:
+- 0 while the enemy trainer (`battle.anim` stage `trainer.enemy`, `picId`/`pic2`) has `ox ~= 0`
+  (sliding in).
+- From the first frame it stands at 0, the strip plays once over `seconds` and holds its last
+  frame. `main.lua`'s `battle.started` handler resets the clocks.
+- Off the battle (a mugshot, the Hall of Fame): the last frame.
+
+In battle (`Hooks._inBattle`), with WoobleView's battle pass on, the canvas is tagged with the
+full frame: `texture`/`quad`, `pivot` = the cell's pivot, `lowPivot` = (32, 64), `scale`,
+`side = "enemy"`, `trainer = true`. WoobleView's own `TrainerPic.front` wrapper skips images
+already tagged, so it is drawn at window resolution and moves with the enemy's side (through the
+side bars under Fill Screen). Off the battle the tag is removed, so the transition's mugshot slice
+reads the plain canvas.
+
+**VS screens** (`src/vs.lua`). `vs.install` wraps `BattleTransition.start`, `tick` and `abort`.
+- `start`: if the battle gets a VS screen, it is kept as pending. That means a single battle (not
+  `doubleBattle`, wild, Trainer Tower or e-Reader) whose trainer (`scripting.trainers.get(
+  trainerId).pic`) is in `vs`, with the option on.
+- `tick`: the game's opening flashes run (`_phase` "intro"). From the next phase the screen
+  replaces the effect (the original `tick` is not called) and is drawn from a `render.hud` wrap
+  over the whole window. After `VS.DURATION` (4.0 s, real time) it calls `BattleTransition.finish()`,
+  which starts the battle as the game's own transition would.
+- The port follows Essentials' `Transitions::VSTrainer` timings and motion. The layout is 384 rows
+  tall and the window's width: the bar tiles across, the logo and the name keep their offset from
+  the centre, the foe from the right edge. The foe's silhouette is a shader of its alpha. The name
+  is the game's font at 3×.
 
 ## Red, Blue and Yellow
 
@@ -365,6 +425,7 @@ luajit tests/forms_coverage_test.lua   # forms coverage
 luajit tests/gen1_test.lua             # Red / Blue / Yellow: keys, box frames, options, hooks
 luajit tests/gen2_test.lua             # Gold / Silver / Crystal: pics, colour, anims, icons, exports
 luajit tests/editor_test.lua           # the save editor with a Red to Crystal save
+luajit tests/trainers_test.lua         # FireRed to Emerald: trainer map, fronts, clock, VS screen
 # plus the atlas layout, back framing, clean state, dex HD and gen3 coverage suites in tests/
 ```
 

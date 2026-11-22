@@ -5,8 +5,8 @@
 --
 -- They apply to Red, Blue, Yellow, Gold, Silver and Crystal. FireRed, LeafGreen, Ruby,
 -- Sapphire and Emerald place their sprites by the cart's own layout and take only BATTLE SPRITES,
--- ANIMATE, 3DB FRONTAL and 3DB FLIP (main.lua GEN3_OPTIONS): the in-game Mod Manager lists only
--- those there.
+-- ANIMATE, 3DB FRONTAL, 3DB FLIP and their own ANIMATED TRAINERS (main.lua GEN3_OPTIONS): the
+-- in-game Mod Manager lists only those there.
 return {
   {
     key = "enable_battle_sprites",
@@ -101,6 +101,13 @@ return {
     type = "toggle",
     default = false,
     description = "Every game. With 3DB FRONTAL on: your Pokemon's front art is mirrored so it faces the foe. Does nothing while your Pokemon shows its back.",
+  },
+  {
+    key = "animated_trainers",
+    label = "ANIMATED TRAINERS",
+    type = "toggle",
+    default = true,
+    description = "FireRed/LeafGreen and Ruby/Sapphire/Emerald. ON (default): trainers you battle are drawn from the Animated Trainer Intros pack and play their animation as they slide in, and Kanto's gym leaders, Giovanni, your rival, Bruno and Lance get an HGSS-style VS screen across the whole window before the battle. OFF: the game's own trainer pics and transitions.",
   },
   {
     key = "dex_sprites",

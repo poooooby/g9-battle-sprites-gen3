@@ -34,6 +34,8 @@ tests/frame_cache_test.lua
 tests/gen1_test.lua
 tests/gen2_test.lua
 tests/editor_test.lua
+tests/trainers_test.lua
+tools/build_trainers.py
 
 .claude/skills/lua-developer/SKILL.md
 

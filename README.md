@@ -24,6 +24,14 @@ Red to Crystal.
   back, facing you or turned toward the foe (3DB FRONTAL and 3DB FLIP).
 - 📝 **Save editor:** Gen1Recomp's save editor shows the same art.
 
+### FireRed to Emerald
+
+- 🧑‍🤝‍🧑 **Animated trainers:** the trainers you battle are drawn in a modern style and play
+  their own animation once they've slid in. That covers nearly every Kanto trainer and Hoenn's gym
+  leaders, Steven, Wally and the common classes.
+- ⚡ **VS screens:** Kanto's gym leaders, Giovanni, your rival, Bruno and Lance open their battles
+  with an HGSS-style VS screen that fills the whole window.
+
 ### Red to Crystal
 
 - 🎮 **Every screen:** evolutions, trades, the Hall of Fame, Prof. Oak's speech and the other
@@ -41,8 +49,9 @@ Red to Crystal.
 
 ## ⚙️ Options
 
-Four options work in every game; the rest are for Red to Crystal, since FireRed to Emerald
-follow the game's own layout (the in-game Mod Manager shows only the four there).
+Four options work in every game and one is for FireRed to Emerald only; the rest are for Red to
+Crystal, since FireRed to Emerald follow the game's own layout (the in-game Mod Manager shows
+only the five there).
 
 | Option | Games | Choices | Default |
 |---|---|---|---|
@@ -50,6 +59,7 @@ follow the game's own layout (the in-game Mod Manager shows only the four there)
 | ANIMATE | all | on / off | on |
 | 3DB FRONTAL (your Pokémon faces you) | all | on / off | off |
 | 3DB FLIP (...and faces the foe) | all | on / off | off |
+| ANIMATED TRAINERS (and VS screens) | FireRed to Emerald | on / off | on |
 | SPRITE SPEED | Red to Crystal | slow / normal / fast / very fast | normal |
 | SHINY ART | Red to Crystal | on / off | on |
 | FEMALE ART | Red to Crystal | on / off | on |
@@ -89,11 +99,19 @@ follow the game's own layout (the in-game Mod Manager shows only the four there)
 - On FireRed to Emerald, Castform's weather forms and the party icons of #1–386 are the game's
   own. With BATTLE SPRITES off there, battles show the game's own sprites for #1–386, and the
   pack's for the Pokémon the game has none of.
+- 🧑‍🤝‍🧑 Trainers without animated art keep the game's own: Hoenn's Elite Four, Teams Aqua and
+  Magma, the Battle Frontier and some Hoenn classes. Lorelei, Agatha and Hoenn's big battles keep
+  the game's own transitions. Your own character is always the game's sprite for the one you
+  chose.
+- 🖥️ The VS screens fill any window. Trainers slide in across the full width with WoobleView's
+  Fill Screen on.
 
 ## 🪪 Credits
 
 Sprites from the DBK sprite pack and the "icones animados" icon pack, by many artists: see
-[CREDITS.md](CREDITS.md). Ruby / Sapphire / Emerald Pokédex pictures from
+[CREDITS.md](CREDITS.md). Animated trainers from Lucidious89's
+[Animated Trainer Intros](https://www.pokecommunity.com/threads/animated-trainer-intros-dbk-add-on-v21-1.535934/#post-10927205)
+(built on Luka S.J.'s EBDX); VS screens from Pokémon Essentials v21.1. Ruby / Sapphire / Emerald Pokédex pictures from
 [pokeemerald-expansion](https://github.com/rh-hideout/pokeemerald-expansion). Based on
 [g9-battle-sprites](https://github.com/tectorifter/g9-battle-sprites) by tectorifter.
 
