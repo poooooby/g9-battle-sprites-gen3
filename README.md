@@ -20,6 +20,8 @@ Red to Crystal.
 - 🌍 **Forms included:** regional and alternate forms, female looks, and all 28 Unown letters.
 - 🎒 **Party icons:** for every Pokémon on Red to Crystal, and for #387 onward on FireRed to
   Emerald.
+- 🔄 **Face-to-face battles:** in every game, your Pokémon can show its front instead of its
+  back, facing you or turned toward the foe (3DB FRONTAL and 3DB FLIP).
 - 📝 **Save editor:** Gen1Recomp's save editor shows the same art.
 
 ### Red to Crystal
