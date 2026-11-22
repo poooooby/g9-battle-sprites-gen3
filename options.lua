@@ -107,7 +107,7 @@ return {
     label = "ANIMATED TRAINERS",
     type = "toggle",
     default = true,
-    description = "FireRed/LeafGreen and Ruby/Sapphire/Emerald. ON (default): trainers you battle are drawn from the Animated Trainer Intros pack and play their animation as they slide in, and Kanto's gym leaders, Giovanni, your rival, Bruno and Lance get an HGSS-style VS screen across the whole window before the battle. OFF: the game's own trainer pics and transitions.",
+    description = "FireRed/LeafGreen and Ruby/Sapphire/Emerald. ON (default): trainers you battle are drawn from the Animated Trainer Intros pack and play their animation as they slide in (those it has no art for keep the game's own), and on FireRed/LeafGreen Kanto's gym leaders, Giovanni, your rival, Bruno and Lance get an HGSS-style VS screen across the whole window before the battle. OFF: the game's own trainer pics and transitions.",
   },
   {
     key = "dex_sprites",

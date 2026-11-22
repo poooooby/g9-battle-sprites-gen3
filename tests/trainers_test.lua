@@ -91,6 +91,11 @@ do
   check(map.fronts.firered.RED == "POKEMONTRAINER_Red" and map.fronts.firered.LEAF == "POKEMONTRAINER_Leaf"
     and map.fronts.emerald.BRENDAN == "POKEMONTRAINER_Brendan" and map.fronts.emerald.MAY == "POKEMONTRAINER_May",
     "the heroes are the game's own: Red / Leaf, Brendan / May")
+  check(map.fronts.emerald.LEADER_ROXANNE == "LEADER_Roxanne" and map.fronts.ruby.ROXANNE == "LEADER_Roxanne"
+    and map.fronts.emerald.CHAMPION_WALLACE == "LEADER_Wallace", "Hoenn's leaders and Emerald's champion Wallace")
+  check(map.fronts.emerald.ELITE_FOUR_SIDNEY == nil and map.fronts.emerald.AQUA_GRUNT_M == nil,
+    "no pack art (Hoenn's Elite Four, Team Aqua): the game's own")
+  check(map.vs.emerald == nil and map.vs.ruby == nil, "VS screens: FireRed / LeafGreen only")
   local lass = index.LASS
   check(lass and lass.frames == 12 and lass.fw == 77 and lass.fh == 77, "LASS: 12 frames of 77 px (924 x 77)")
   check(lass and lass.px == lass.cw / 2 and lass.py == lass.fh, "the pivot is the frame's bottom centre")

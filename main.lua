@@ -171,8 +171,9 @@ return function(mod)
   end
   local atlas = nil
   -- ANIMATED TRAINERS (src/trainers.lua, src/vs.lua): the pack's animated trainer fronts through
-  -- the engine's TrainerPic.front, and the HGSS VS screens in place of the transition's effect,
-  -- drawn over the whole window from render.hud
+  -- the engine's TrainerPic.front, and (FireRed / LeafGreen: data/trainer_map.lua has no Hoenn VS
+  -- art) the HGSS VS screens in place of the transition's effect, drawn over the whole window from
+  -- render.hud
   local trainers, vs = nil, nil
   local function installTrainers()
     local Trainers = loadSibling(mod, "src/trainers.lua")

@@ -5,9 +5,10 @@
 -- fronts[game][PIC] = the pack's sprite, where PIC is the game's TRAINER_PIC_ name without its
 -- prefix (src/core/game3/constants/<game>/trainer_classes.lua) and game is the constants set:
 -- "firered" (FireRed / LeafGreen), "emerald", "ruby" (Ruby / Sapphire). A pic not listed keeps the
--- game's own.
+-- game's own: Hoenn's Elite Four, Teams Aqua and Magma, the Frontier Brains and some classes have
+-- no art in the pack.
 --
--- vs[game][PIC] = the HGSS-style VS screen shown before a single battle against that trainer:
+-- vs.firered[PIC] (FireRed / LeafGreen only: there are no Hoenn VS portraits) = the HGSS-style VS screen shown before a single battle against that trainer:
 -- `foe` the portrait (Graphics/Transitions hgss_vs_* / vsE4_*), `bar` the bar behind it. Only the
 -- foe is shown: the pack's and Essentials' player VS portraits are other games' heroes (Ethan,
 -- Lyra, Nate, Rosa), so the player appears as the game's own sprite, matching the chosen gender.
@@ -66,11 +67,13 @@ local firered = with(shared, {
 })
 for k, v in pairs(shared) do firered["RS_" .. k] = v end
 
+-- Emerald: Wallace is its champion (the pack has him as a leader)
 local emerald = with(shared, {
   RS_BRENDAN = "POKEMONTRAINER_Brendan", RS_MAY = "POKEMONTRAINER_May",
   CHAMPION_WALLACE = "LEADER_Wallace",
 })
 
+-- Ruby / Sapphire: the leaders' pics have no LEADER_ prefix
 local ruby = with(shared, {
   ROXANNE = "LEADER_Roxanne", BRAWLY = "LEADER_Brawly", WATTSON = "LEADER_Wattson",
   FLANNERY = "LEADER_Flannery", NORMAN = "LEADER_Norman", WINONA = "LEADER_Winona",
@@ -99,8 +102,6 @@ return {
       ELITE_FOUR_LANCE = { foe = "hgss_vs_ELITEFOUR_Lance", bar = GENERIC_BAR },
       RIVAL_EARLY = blue, RIVAL_LATE = blue, CHAMPION_RIVAL = blue,
     },
-    emerald = {},
-    ruby = {},
   },
   -- what every VS screen draws besides the foe and bar
   vsParts = { "hgss_vs1", "hgss_vs2" },

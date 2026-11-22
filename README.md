@@ -27,10 +27,11 @@ Red to Crystal.
 ### FireRed to Emerald
 
 - 🧑‍🤝‍🧑 **Animated trainers:** the trainers you battle are drawn in a modern style and play
-  their own animation once they've slid in. That covers nearly every Kanto trainer and Hoenn's gym
-  leaders, Steven, Wally and the common classes.
-- ⚡ **VS screens:** Kanto's gym leaders, Giovanni, your rival, Bruno and Lance open their battles
-  with an HGSS-style VS screen that fills the whole window.
+  their own animation once they've slid in. That covers nearly every trainer in Kanto and the
+  Sevii Islands, and in Hoenn the gym leaders, Steven, Wallace, Wally, Brendan, May and the most
+  common classes.
+- ⚡ **VS screens (FireRed and LeafGreen):** Kanto's gym leaders, Giovanni, your rival, Bruno and
+  Lance open their battles with an HGSS-style VS screen that fills the whole window.
 
 ### Red to Crystal
 
@@ -51,7 +52,7 @@ Red to Crystal.
 
 Four options work in every game and one is for FireRed to Emerald only; the rest are for Red to
 Crystal, since FireRed to Emerald follow the game's own layout (the in-game Mod Manager shows
-only the five there).
+only the ones for the game you're playing).
 
 | Option | Games | Choices | Default |
 |---|---|---|---|
@@ -99,10 +100,10 @@ only the five there).
 - On FireRed to Emerald, Castform's weather forms and the party icons of #1–386 are the game's
   own. With BATTLE SPRITES off there, battles show the game's own sprites for #1–386, and the
   pack's for the Pokémon the game has none of.
-- 🧑‍🤝‍🧑 Trainers without animated art keep the game's own: Hoenn's Elite Four, Teams Aqua and
-  Magma, the Battle Frontier and some Hoenn classes. Lorelei, Agatha and Hoenn's big battles keep
-  the game's own transitions. Your own character is always the game's sprite for the one you
-  chose.
+- 🧑‍🤝‍🧑 Trainers without animated art keep the game's own sprite: Hoenn's Elite Four, Teams
+  Aqua and Magma, the Battle Frontier and some Hoenn classes. VS screens are FireRed and LeafGreen
+  only (there's no Hoenn VS art); Lorelei, Agatha and every Hoenn battle keep the game's own
+  transition. Your own character is always the game's sprite for the one you chose.
 - 🖥️ The VS screens fill any window. Trainers slide in across the full width with WoobleView's
   Fill Screen on.
 

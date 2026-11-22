@@ -154,8 +154,8 @@ enemy's HP box (y 44; on the Game Boy, the enemy's HUD's bottom, y 32). When it 
 **Gen 3 takes five options.** `main.lua` defines only `GEN3_OPTIONS` there
 (`enable_battle_sprites`, `animate_sprites`, `battle_frontal`, `battle_front_flip` and Gen 3's
 own `animated_trainers`, below), so the in-game Mod Manager lists only those; the launcher reads
-`options.lua` as data without knowing the game and lists all 17. The first four are read live
-through `atlas.option` (the mod's getter):
+`options.lua` as data without knowing the game and lists all 17. The first four
+are read live through `atlas.option` (the mod's getter):
 
 - BATTLE SPRITES off (`Hooks._gameBattlePic`): inside `Battle.draw` `frontPic` hands on to the
   engine, `backPic` always, and `MonAnim.framePic` gives the cart's frame-1 art again, for
@@ -192,11 +192,16 @@ the battle flashing whenever a new animation frame was rendered. It showed with 
 battle scenery, which is drawn before the pics. `tests/clean_state_test.lua` restores in LÖVE's
 order and checks the scissor comes back at the caller's scale.
 
-## Animated trainers and VS screens (FireRed to Emerald)
+## Animated trainers (FireRed to Emerald) and VS screens (FireRed / LeafGreen)
+
+Coverage: FireRed / LeafGreen 118 of its 148 trainer pics, Emerald 57 of 93, Ruby / Sapphire 52
+of 83; the rest (Hoenn's Elite Four, Teams Aqua and Magma, the Frontier Brains, some classes) keep
+the game's own. VS screens are FireRed / LeafGreen only: neither source has Hoenn VS portraits.
 
 **Art.** `tools/build_trainers.py --zip "<Animated Trainer Intros.zip>" --essentials
 "<Pokemon Essentials v21.1>"` reads the pack (Lucidious89's DBK add-on) and Essentials without
-extracting either. It packs only what `data/trainer_map.lua` names:
+extracting either. It packs only what `data/trainer_map.lua` names for a pic the game has (its
+`TRAINER_PIC_` list, read from the gen1recomp checkout next to this repo):
 
 - `assets/trainers/fronts_<n>.png`: each strip's frames, read as the plugin reads them (square
   frames as tall as the image, `ceil(w / h)` of them; a still if `w <= 2h`). The pack's shadow is
@@ -210,11 +215,13 @@ extracting either. It packs only what `data/trainer_map.lua` names:
 Rebuild after editing the map.
 
 **The map.** `fronts[game][PIC]` keys each constants set (`firered`, `emerald`, `ruby`) by its
-`TRAINER_PIC_` name without the prefix. Notes on it:
+`TRAINER_PIC_` name without the prefix (FRLG's `RS_*` pics, the Trainer Tower's Hoenn classes,
+share the names; Ruby / Sapphire's leaders have no `LEADER_` prefix; Emerald's champion Wallace
+uses the pack's leader Wallace). Notes on it:
 
 - A pic not listed keeps the game's own.
 - The pack's `RIVAL1` / `RIVAL2` are Silver and Hugh, so FRLG's three Blue pics use `CHAMPION`.
-- `vs[game][PIC]` is the HGSS screen: `foe` portrait and `bar`. It uses only foe-side art: the
+- `vs.firered[PIC]` is the HGSS screen: `foe` portrait and `bar`. It uses only foe-side art: the
   pack's and Essentials' "POKEMONTRAINER_Red/Leaf" VS portraits are Ethan, Lyra, Nate and Rosa.
 - `scale` = 2 × 160 / 384 (Essentials draws trainers at 2× on 384 rows); `seconds` = 1.5.
 

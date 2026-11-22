@@ -8,7 +8,7 @@ Reads, without extracting:
   --essentials  a Pokemon Essentials v21.1 folder (Graphics/Transitions: hgss_vs1/2 and the
                 Kanto VS portraits and bars the pack does not ship)
 
-Writes, for the art data/trainer_map.lua names (nothing else is packed):
+Writes, for the art data/trainer_map.lua names for a pic the game has (nothing else is packed):
   assets/trainers/fronts_<n>.png  every front strip's frames, each with the pack's shadow baked
                                   under it (a black silhouette of the frame, 1.1 x 0.25 of its size,
                                   opacity 100/255, moved by the trainer type's ShadowXY; none with
@@ -52,7 +52,7 @@ def map_names() -> tuple[set[str], set[str]]:
     code = r"""
       local m = dofile("data/trainer_map.lua")
       local seen = {}
-      for _, game in pairs(m.fronts) do for _, n in pairs(game) do seen["F " .. n] = true end end
+      for game, t in pairs(m.fronts) do for pic, n in pairs(t) do seen["F " .. game .. " " .. pic .. " " .. n] = true end end
       for _, game in pairs(m.vs) do for _, e in pairs(game) do
         seen["V " .. e.foe] = true; seen["V " .. e.bar] = true end end
       for _, n in ipairs(m.vsParts or {}) do seen["V " .. n] = true end
@@ -63,10 +63,28 @@ def map_names() -> tuple[set[str], set[str]]:
     """
     res = subprocess.run(["luajit", "-e", code], cwd=ROOT, capture_output=True, text=True, check=True)
     fronts, vs = set(), set()
+    pics: dict[str, set[str]] = {}
     for line in res.stdout.splitlines():
-        kind, name = line.split(" ", 1)
-        (fronts if kind == "F" else vs).add(name)
+        kind, rest = line.split(" ", 1)
+        if kind == "V":
+            vs.add(rest)
+            continue
+        game, pic, name = rest.split(" ")
+        if game not in pics:
+            pics[game] = game_pics(game)
+        # only what the game has a pic for (the map's shared table names more)
+        if pics[game] is None or pic in pics[game]:
+            fronts.add(name)
     return fronts, vs
+
+
+def game_pics(game: str) -> set[str] | None:
+    """The game's TRAINER_PIC_ names without the prefix (gen1recomp next to this repo), or None."""
+    f = ROOT.parent / "gen1recomp" / "src" / "core" / "game3" / "constants" / game / "trainer_classes.lua"
+    if not f.exists():
+        return None
+    m = re.search(r"TRAINER_PIC_ = \{(.*?)\n    \}", f.read_text(encoding="utf-8"), re.S)
+    return set(re.findall(r'"TRAINER_PIC_([A-Z0-9_]+)"', m.group(1))) if m else None
 
 
 def read_pbs(text: str) -> dict[str, dict[str, str]]:
@@ -228,11 +246,11 @@ def main() -> int:
     gen1recomp = ROOT.parent / "gen1recomp" / "src" / "core" / "game3" / "constants"
     code = r"""
       local m = dofile("data/trainer_map.lua")
-      for _, g in ipairs({ "firered", "emerald", "ruby" }) do
+      for g, t in pairs(m.fronts) do
         local n = 0
-        for _ in pairs(m.fronts[g]) do n = n + 1 end
+        for _ in pairs(t) do n = n + 1 end
         local v = 0
-        for _ in pairs(m.vs[g]) do v = v + 1 end
+        for _ in pairs(m.vs[g] or {}) do v = v + 1 end
         io.write(g, " ", n, " ", v, "\n")
       end
     """
