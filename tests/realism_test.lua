@@ -22,6 +22,7 @@ love = { graphics = {
   setScissor = function(x, y, w, h) state.scissor = x and { x, y, w, h } or nil end,
   getScissor = function() return state.scissor and unpack(state.scissor) end,
   origin = function() state.identity = true end,
+  translate = function() state.identity = false end, scale = function() state.identity = false end,
   setShader = function() end, setBlendMode = function() end, setColor = function() end,
   clear = function() end,
   push = function(what)
@@ -204,6 +205,53 @@ do
   local s1 = select(1, plain.battleSize(465, plain.cell(465, "front"), false))
   local s2 = select(1, atlas.battleSize(465, atlas.cell(465, "front"), false))
   check(near(s2, s1 * 0.25), "Gen 1 / 2's battleSize has it too")
+end
+
+-- 3DB FRONTAL (Gen 3): the player's pic as its front art, stood where its back stands (the
+-- front's feet row on the back's feet line, body centred, sized as a back: realism, no
+-- perspective), tagged as the player's at the front's own height; 3DB FLIP mirrors it
+do
+  local atlas = newAtlas(nil)
+  local hd = fakeHd(); atlas.hd = hd
+  local fc = atlas.cell(467, "front")
+  local t = hd.tags[atlas.picFrame(467, "front", fc, 0, true, nil, "front")]
+  check(t and t.side == "player", "frontal: tagged as the player's")
+  check(t and near(t.lowPivot[2], 67) and near(t.lowPivot[1], 32), "frontal: its feet on the back's feet line, centred ("
+    .. tostring(t and t.lowPivot[1]) .. ", " .. tostring(t and t.lowPivot[2]) .. ")")
+  check(t and t.pivot[2] == 90 and near(t.pivot[1], 45), "frontal: about the front's feet row and body centre")
+  check(t and near(t.scale, R(10)), "frontal: realism, no perspective (" .. tostring(t and t.scale) .. ")")
+  check(t and near(t.height, atlas.heightOf(467)), "frontal: the front's own height")
+  check(t and not t.flip, "frontal: not mirrored")
+  local back = hd.tags[atlas.picFrame(467, "back", atlas.cell(467, "back"), 0, true)]
+  check(back and near(back.lowPivot[2], t.lowPivot[2]), "frontal: the same feet line as the back")
+  check(atlas.picFrame(467, "front", fc, 0, true) ~= atlas.picFrame(467, "front", fc, 0, true, nil, "front"),
+    "frontal: a canvas of its own, not the enemy's front")
+  -- FLIP: mirrored only where WoobleView mirrors a tag
+  local plain = atlas.picFrame(467, "front", fc, 0, true, nil, "flip")
+  check(hd.tags[plain] == nil, "flip without WoobleView's flip feature: the plain mirrored canvas, untagged")
+  hd.features = { flip = true }
+  local atlas2 = newAtlas(nil); atlas2.hd = hd
+  local f = hd.tags[atlas2.picFrame(467, "front", atlas2.cell(467, "front"), 0, true, nil, "flip")]
+  check(f and f.flip == true and near(f.lowPivot[1], 32) and near(f.lowPivot[2], 67), "flip: tagged mirrored, same feet")
+  -- (a back variant ignores it)
+  local b = hd.tags[atlas2.picFrame(467, "back", atlas2.cell(467, "back"), 0, true, nil, "flip")]
+  check(b and not b.flip and b.side == "player", "a back is never frontal")
+end
+
+-- ANIMATE (Gen 3: atlas.option) off: every pic on its first frame
+do
+  local atlas = newAtlas(nil)
+  local many = { frames = 40 }
+  NOW = 3.7
+  check(atlas.frameIndex(many) ~= 0, "animated by default")
+  local on = true
+  atlas.option = function(key) if key == "animate_sprites" then return on end end
+  check(atlas.frameIndex(many) ~= 0, "ANIMATE on: animated")
+  on = false
+  check(atlas.frameIndex(many) == 0, "ANIMATE off: the first frame")
+  atlas.option = function() error("broken") end
+  check(atlas.frameIndex(many) ~= 0, "an option getter that errors: animated")
+  NOW = nil
 end
 
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 realism)", passed, passed + failed))

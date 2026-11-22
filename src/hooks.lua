@@ -43,6 +43,23 @@ local function keyFor(atlas, Pokemon, slot, personality)
   return key
 end
 
+-- The player's options (main.lua sets atlas.option, the mod's option getter): `default` when
+-- unset or unreadable.
+local function opt(atlas, key, default)
+  local ok, v = pcall(function() return atlas.option and atlas.option(key) end)
+  if not ok or v == nil then return default end
+  return v
+end
+
+-- BATTLE SPRITES off: a battle pic is the game's own where the cart has one (Gen 1-3 and
+-- Unown's letters, below FIRST_NEW_SLOT); a species the cart has no pic for keeps the pack's.
+local function gameBattlePic(atlas, species)
+  local sp = tonumber(species)
+  return opt(atlas, "enable_battle_sprites", true) == false and sp ~= nil and sp > 0
+    and sp < FIRST_NEW_SLOT
+end
+Hooks._gameBattlePic = gameBattlePic
+
 -- A pic asked for in an alternate form (Castform's sun / rain / hail look) is not ours:
 -- the atlas has one sheet per species, so it would show the normal Castform in every
 -- weather.
@@ -53,7 +70,8 @@ end
 -- Pokemon.frontPic(species, form, shiny, personality) / backPic(species, form, shiny)
 -- `key`: the atlas key, from keyFor
 -- `kind`: what the engine says the pic is for ("dex" for the Pokedex screens)
-local function picFor(atlas, side, key, shiny, battle, kind)
+-- `frontal`: the player's battle pic as its front (3DB FRONTAL: "front", or "flip" mirrored)
+local function picFor(atlas, side, key, shiny, battle, kind, frontal)
   if not key then return nil end
   -- a shiny asks for the shiny sheet, and falls back to the normal one when
   -- the atlas has no shiny for the species
@@ -62,7 +80,7 @@ local function picFor(atlas, side, key, shiny, battle, kind)
   local cell = atlas.cell(key, variant)
   if not cell then return nil end
   local f = atlas.frameIndex(cell)
-  local canvas = atlas.picFrame(key, variant, cell, f, battle, kind)
+  local canvas = atlas.picFrame(key, variant, cell, f, battle, kind, frontal)
   if not canvas then return nil end
   return { image = canvas, w = 64, h = 64 }
 end
@@ -232,6 +250,9 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
         local canvas = cell and atlas.livePic(key, variant, cell, personality)
         if canvas then return { image = canvas, w = 64, h = 64 } end
       end
+      if inBattle() and gameBattlePic(atlas, species) then
+        return origFront(species, form, shiny, personality, kind, ...)
+      end
       local entry = not inForm(form)
         and picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, inBattle(), kind)
       if entry and Hooks.inEditor and kind == nil then return Hooks.fit(entry) end
@@ -247,10 +268,19 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
   local origBack = Pokemon.backPic
   if type(origBack) == "function" and not ours[origBack] then
     -- `...`: the engine's `kind` and the Pokemon (gen1recomp 0.3.95+), handed on untouched
-    Pokemon.backPic = function(species, form, shiny, ...)
-      local entry = not inForm(form) and picFor(atlas, "back", slotOf(atlas, species), shiny)
+    Pokemon.backPic = function(species, form, shiny, kind, mon, ...)
+      if gameBattlePic(atlas, species) then return origBack(species, form, shiny, kind, mon, ...) end
+      local entry
+      -- 3DB FRONTAL: its front art, standing where the back stands (3DB FLIP: facing the foe);
+      -- a female's own front where it has one (the Pokemon's personality)
+      if not inForm(form) and opt(atlas, "battle_frontal", false) == true then
+        local personality = type(mon) == "table" and mon.personality or nil
+        entry = picFor(atlas, "front", keyFor(atlas, Pokemon, species, personality), shiny, true, nil,
+          opt(atlas, "battle_front_flip", false) == true and "flip" or "front")
+      end
+      entry = entry or (not inForm(form) and picFor(atlas, "back", slotOf(atlas, species), shiny))
       if entry then return entry end
-      return origBack(species, form, shiny, ...)
+      return origBack(species, form, shiny, kind, mon, ...)
     end
     ours[Pokemon.backPic] = true
     wrapped = wrapped + 1
@@ -283,7 +313,11 @@ function Hooks.install(Pokemon, atlas, Battle, MonAnim)
   if type(origFrame) == "function" and not ours[origFrame] then
     engineFramePic = origFrame
     MonAnim.framePic = function(species, frame, shiny, ...)
-      if passThrough == 0 and slotOf(atlas, species) then return nil end
+      -- (BATTLE SPRITES off: the battle shows the cart's pic, and with it its frame-1 art)
+      if passThrough == 0 and slotOf(atlas, species)
+          and not (inBattle() and gameBattlePic(atlas, species)) then
+        return nil
+      end
       return origFrame(species, frame, shiny, ...)
     end
     ours[MonAnim.framePic] = true

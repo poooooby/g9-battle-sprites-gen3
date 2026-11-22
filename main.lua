@@ -44,6 +44,12 @@ local function generation()
   return (gen == 1 or gen == 2) and gen or 3
 end
 
+-- The options FireRed, LeafGreen, Ruby, Sapphire and Emerald take (src/hooks.lua, src/atlas.lua);
+-- the rest are Red to Crystal's only.
+local GEN3_OPTIONS = {
+  enable_battle_sprites = true, animate_sprites = true, battle_frontal = true, battle_front_flip = true,
+}
+
 -- Gen 1 / 2: the same atlas, fitted to those games' pic boxes (src/gen1.lua, and src/gen2.lua
 -- on top of it for Gold / Silver / Crystal).
 local function classic(mod, gen, Api, Atlas)
@@ -132,14 +138,23 @@ return function(mod)
   local Atlas = loadSibling(mod, "src/atlas.lua")
   if not (Hooks and Api and Atlas) then return end
 
-  -- the options (options.lua, also the manifest's options_schema): Red / Blue / Yellow's
+  -- the options (options.lua, also the manifest's options_schema). FireRed to Emerald take only
+  -- GEN3_OPTIONS, so the in-game Mod Manager lists only those there (the launcher, which knows
+  -- no game, reads options.lua itself and lists them all)
+  local gen = generation()
   local schema = loadSibling(mod, "options.lua")
+  if type(schema) == "table" and gen == 3 then
+    local rows = {}
+    for _, row in ipairs(schema) do
+      if type(row) == "table" and GEN3_OPTIONS[row.key] then rows[#rows + 1] = row end
+    end
+    schema = rows
+  end
   if type(schema) == "table" and mod.options and mod.options.define then
     local ok, err = pcall(mod.options.define, mod.options, schema)
     if not ok then mod.log:warn("options could not be defined: %s", tostring(err)) end
   end
 
-  local gen = generation()
   if gen ~= 3 then return classic(mod, gen, Api, Atlas) end
 
   -- national_dex_gen3 is optional: without it the species slots are simply
@@ -161,6 +176,8 @@ return function(mod)
       mod.log:error("data/atlas_index.lua is missing -- reinstall the mod")
       return
     end
+    -- the player's options (GEN3_OPTIONS), read as they are drawn so a change shows at once
+    atlas.option = function(key) return mod.options:get(key) end
     -- the save editor is the only host with its own `Gen` module (Hooks.fit)
     local okGen, Gen = pcall(require, "Gen")
     Hooks.inEditor = okGen and type(Gen) == "table" and type(Gen.bindGame3Data) == "function"

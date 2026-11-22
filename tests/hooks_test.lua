@@ -265,5 +265,66 @@ do
   love = savedLove
 end
 
+-- Gen 3's options (atlas.option, main.lua): BATTLE SPRITES off hands the battle the game's own
+-- pics where the cart has one; 3DB FRONTAL / FLIP give the player's side its front art
+do
+  local opts = {}
+  local seen = {}
+  local A = {
+    hasSlot = has,
+    cell = atlas.cell,
+    frameIndex = function() return 0 end,
+    picFrame = function(dex, variant, _c, _f, battle, kind, frontal)
+      seen[#seen + 1] = { dex = dex, variant = variant, battle = battle, frontal = frontal }
+      return { fake = variant }
+    end,
+    icon = atlas.icon,
+    option = function(key) return opts[key] end,
+  }
+  local inside
+  local Battle = { draw = function(fn) return fn() end }
+  local MonAnim = { framePic = function(species, frame) return { cart = species, frame = frame } end }
+  local P = { frontPic = origFront, backPic = origBack, icon = origIcon,
+              gender = function(_, personality) return personality % 2 == 1 and "F" or "M" end }
+  Hooks.install(P, A, Battle, MonAnim)
+  local function battle(fn) return Battle.draw(fn) end
+
+  -- the defaults: ours in battle, the back as the player's
+  check(battle(function() return P.frontPic(25, 0, false) end).image.fake == "front", "default: our front in battle")
+  check(P.backPic(25, 0, false).image.fake == "back", "default: our back")
+  check(battle(function() return MonAnim.framePic(25, 1, false) end) == nil, "default: our pic mid-intro")
+
+  -- BATTLE SPRITES off
+  opts.enable_battle_sprites = false
+  check(battle(function() return P.frontPic(25, 0, false) end).orig == "front", "off: the game's front in battle")
+  check(P.backPic(25, 0, false).orig == "back", "off: the game's back")
+  check(battle(function() return MonAnim.framePic(25, 1, false) end).cart == 25, "off: the cart's frame-1 art mid-intro")
+  check(P.frontPic(25, 0, false).image.fake == "front", "off: the Pokedex / summary keep our art")
+  check(MonAnim.framePic(25, 1, false) == nil, "off: outside the battle framePic keeps ours")
+  check(battle(function() return P.frontPic(451, 0, false) end).image.fake == "front",
+    "off: a species the cart has no pic for keeps ours in battle")
+  check(P.backPic(451, 0, false).image.fake == "back", "...its back too")
+  opts.enable_battle_sprites = nil
+
+  -- 3DB FRONTAL: the front art on the player's side, a battle pic; FLIP mirrors it
+  opts.battle_frontal = true
+  local e = P.backPic(25, 0, false, nil, { personality = 2 })
+  local s = seen[#seen]
+  check(e.image.fake == "front" and s.frontal == "front" and s.battle == true, "frontal: the front art, as a battle pic")
+  P.backPic(25, 0, true, nil, { personality = 2 })
+  check(seen[#seen].variant == "front_shiny", "frontal: a shiny's shiny front")
+  P.backPic(742, 0, false, nil, { personality = 3 })
+  check(seen[#seen].dex == -742, "frontal: a female Meowstic's own front")
+  opts.battle_front_flip = true
+  P.backPic(25, 0, false)
+  check(seen[#seen].frontal == "flip", "3DB FLIP: mirrored")
+  check(P.backPic(385, 2, false).orig == "back", "frontal: a weather Castform stays the game's")
+  opts.enable_battle_sprites = false
+  check(P.backPic(25, 0, false).orig == "back", "frontal with BATTLE SPRITES off: the game's back")
+  opts.enable_battle_sprites, opts.battle_frontal, opts.battle_front_flip = nil, nil, nil
+  P.backPic(25, 0, false)
+  check(seen[#seen].variant == "back" and seen[#seen].frontal == nil, "frontal off: the back again")
+end
+
 print(string.format("%d/%d checks passed (g9-battle-sprites-gen3 hooks)", passed, passed + failed))
 os.exit(failed == 0 and 0 or 1)

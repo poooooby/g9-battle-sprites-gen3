@@ -151,6 +151,24 @@ that box, so the art itself fills that share of it, and the art's height at its 
 so the other battler is sized as before. Nothing in WoobleView is needed for it. Battle Fit keeps the back's body top at or below the
 enemy's HP box (y 44; on the Game Boy, the enemy's HUD's bottom, y 32). When it can, it also keeps at most 30% of the body under the player's HP box and the text box. A back's `top` (its whole animation) only has to stay on the screen.
 
+**Gen 3 takes four options.** `main.lua` defines only `GEN3_OPTIONS` there
+(`enable_battle_sprites`, `animate_sprites`, `battle_frontal`, `battle_front_flip`), so the
+in-game Mod Manager lists only those; the launcher reads `options.lua` as data without knowing
+the game and lists all 16. They are read live through `atlas.option` (the mod's getter):
+
+- BATTLE SPRITES off (`Hooks._gameBattlePic`): inside `Battle.draw` `frontPic` hands on to the
+  engine, `backPic` always, and `MonAnim.framePic` gives the cart's frame-1 art again, for
+  slots under 451 (Gen 1-3 and Unown's letters). #387 onward keep the pack's, the cart has none.
+- ANIMATE off: `atlas.frameIndex` answers 0, and the live Pokédex pics hold the pack's own
+  two-frame `dexpic` (the cart's two frames are the game's and keep playing).
+- 3DB FRONTAL: `backPic` asks `picFrame` for the front variant with `frontal` "front" (or "flip"
+  with 3DB FLIP). It is laid out as a back (`backLayout`) from a copy of the front cell whose
+  `bfr` is the front's `ffr` and `bfl` the species' back's, so its feet land where the back's do,
+  centred on its body box, sized as a back (hand-set `back` x realism, no `bn`, no perspective).
+  Its tag is the player's, with the front's own height. FLIP mirrors the canvas (and its wide
+  pivot) and tags `flip = true`, only where WoobleView has `features.flip` (else the plain
+  mirrored canvas). A female's own front comes from the Pokémon's personality (`backPic`'s `mon`).
+
 **A window mode change empties canvases.** `love.window.setMode` (and `updateMode`) can
 recreate the graphics context, which leaves every Canvas blank; an Image is reloaded by LOVE.
 The colour-number blocks are decoded into canvases and every rendered frame is one, so

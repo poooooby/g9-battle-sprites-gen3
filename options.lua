@@ -4,22 +4,23 @@
 -- over and mods that read them keep working.
 --
 -- They apply to Red, Blue, Yellow, Gold, Silver and Crystal. FireRed, LeafGreen, Ruby,
--- Sapphire and Emerald place their sprites by the cart's own layout and are not changed by any
--- of them.
+-- Sapphire and Emerald place their sprites by the cart's own layout and take only BATTLE SPRITES,
+-- ANIMATE, 3DB FRONTAL and 3DB FLIP (main.lua GEN3_OPTIONS): the in-game Mod Manager lists only
+-- those there.
 return {
   {
     key = "enable_battle_sprites",
     label = "BATTLE SPRITES",
     type = "toggle",
     default = true,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): battle Pokemon use the animated true-colour art. OFF: battles keep the game's own pics.",
+    description = "Every game. ON (default): battle Pokemon use the animated true-colour art. OFF: battles keep the game's own pics (on FireRed to Emerald, a Pokemon the game has no pic for keeps the art).",
   },
   {
     key = "animate_sprites",
     label = "ANIMATE",
     type = "toggle",
     default = true,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. ON (default): the art plays its animation. OFF: its first frame only, as a still picture.",
+    description = "Every game. ON (default): the art plays its animation. OFF: its first frame only, as a still picture.",
   },
   {
     key = "sprite_fps",
@@ -92,14 +93,14 @@ return {
     label = "3DB FRONTAL",
     type = "toggle",
     default = false,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. OFF (default): your Pokemon shows its back in battle, as the game intends. ON: it shows its front, so both Pokemon face you. Turn on 3DB FLIP too to have it face the foe.",
+    description = "Every game. OFF (default): your Pokemon shows its back in battle, as the game intends. ON: it shows its front, so both Pokemon face you. Turn on 3DB FLIP too to have it face the foe.",
   },
   {
     key = "battle_front_flip",
     label = "3DB FLIP",
     type = "toggle",
     default = false,
-    description = "Red/Blue/Yellow and Gold/Silver/Crystal. With 3DB FRONTAL on: your Pokemon's front art is mirrored so it faces the foe. Does nothing while your Pokemon shows its back.",
+    description = "Every game. With 3DB FRONTAL on: your Pokemon's front art is mirrored so it faces the foe. Does nothing while your Pokemon shows its back.",
   },
   {
     key = "dex_sprites",

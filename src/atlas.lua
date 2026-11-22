@@ -761,7 +761,15 @@ function Atlas.new(mod, load)
 
   -- Which frame plays now. Each cell has `frames`; the clock is shared, so
   -- every battler of one species animates in step.
+  -- ANIMATE (Gen 3: main.lua sets `self.option`, the mod's option getter) off: the first frame.
+  local function still()
+    local ok, v = pcall(function() return self.option and self.option("animate_sprites") end)
+    return ok and v == false
+  end
+  self.still = still
+
   function self.frameIndex(cell)
+    if still() then return 0 end
     local n = math.max(1, cell.frames or 1)
     return math.floor(love.timer.getTime() * PIC_FPS) % n
   end
@@ -851,18 +859,41 @@ function Atlas.new(mod, load)
   -- off the battle screen is tagged for WoobleView (gen3-hd-sprites), which draws the ones its
   -- Pokedex and summary screens draw at window resolution (fitted to the box, the size the plain
   -- pic has); on any other screen the tagged canvas is simply drawn, as the plain pic.
-  function self.picFrame(dex, variant, cell, f, battle, kind)
+  --- `frontal` (3DB FRONTAL, the player's battle pic): nil, or "front" / "flip" with a front
+  --- variant: the front art stood where the back stands (its feet row `ffr` on the back's feet
+  --- line `bfl`, placed and sized as a back), "flip" mirrored to face the foe.
+  function self.picFrame(dex, variant, cell, f, battle, kind, frontal)
     fresh()
-    local isBack = variant == "back" or variant == "back_shiny"
+    local isFront = variant ~= "back" and variant ~= "back_shiny"
+    frontal = isFront and (frontal == "front" or frontal == "flip") and frontal or nil
+    -- (a frontal pic is laid out as a back: `lc` is its front cell with the back's feet line)
+    local isBack = not isFront or frontal ~= nil
+    local mirror = frontal == "flip"
+    local lc = cell
+    if frontal then
+      lc = {}
+      for k, v in pairs(cell) do lc[k] = v end
+      local back = self.cell(dex, "back")
+      lc.bfr = tonumber(cell.ffr) or tonumber(cell.cy1) or cell.fs
+      lc.bfl = back and back.bfl or nil
+      if not lc.bfl then lc.bfr = nil end
+      lc.bn = nil
+    end
     local big = isBack or battle == true
     -- gen3-hd-sprites (when installed and on): the pic is drawn from the atlas at the
-    -- window's resolution, so the canvas only has to be the low-res stand-in
+    -- window's resolution, so the canvas only has to be the low-res stand-in (a mirrored one
+    -- only where WoobleView mirrors a tag: its `features.flip`)
     local hd = big and self.hd and self.hd.enabled("battle") and self.hd or nil
+    if hd and mirror then
+      local feats = type(hd.features) == "table" and hd.features or {}
+      if feats.flip ~= true then hd = nil end
+    end
     local dexHd = not big and self.hd and self.hd.enabled("dex") and self.hd or nil
     -- battle pics sit by this game's offsets against FireRed's (Atlas.coordShift)
     local gdy = big and Atlas.coordShift[isBack and "back" or "front"][dex] or nil
     local key = tostring(dex) .. ":" .. variant .. ":" .. f
       .. (hd and ":hd" or big and ":w" or dexHd and ":dex" or "") .. (gdy and ":" .. gdy or "")
+      .. (frontal and ":" .. frontal or "")
     local hit = self.frames[key]
     if hit then
       touch(key)
@@ -889,8 +920,8 @@ function Atlas.new(mod, load)
         -- its size scales about the feet line: hand-set, times realism, times `bn` (the back art
         -- brought to its own front art's size, so a Pokemon is the same size from both sides)
         local bn = 1
-        if realismCfg.on ~= false and realismCfg.match_backs ~= false then bn = tonumber(cell.bn) or 1 end
-        ls, ox, oy = Atlas.backLayout(cell, true, true, (tonumber(own.back) or 1) * real * bn, gdy)
+        if realismCfg.on ~= false and realismCfg.match_backs ~= false then bn = tonumber(lc.bn) or 1 end
+        ls, ox, oy = Atlas.backLayout(lc, true, true, (tonumber(own.back) or 1) * real * bn, gdy)
       else
         ls, ox, oy = Atlas.frontLayout(cell, gdy)
       end
@@ -904,7 +935,7 @@ function Atlas.new(mod, load)
       -- is in source px, and `src` may be a reduced copy of the frame
       local ls
       wide = BACK_WIDE and installDrawWrap()
-      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(cell, wide, nil, nil, gdy)
+      ls, ox, oy, xmin, xmax, ymin, ymax = Atlas.backLayout(lc, wide, nil, nil, gdy)
       s = ls / (w / fw)
     else
       s = math.min(1, PIC_BOX / w, PIC_BOX / h)
@@ -935,6 +966,10 @@ function Atlas.new(mod, load)
     drawClean(function()
       love.graphics.setCanvas(canvas)
       love.graphics.clear(0, 0, 0, 0)
+      if mirror then
+        love.graphics.translate(cw, 0)
+        love.graphics.scale(-1, 1)
+      end
       if sq then
         love.graphics.draw(src, sq, ox - xmin, oy - ymin, 0, s, s)
       else
@@ -947,8 +982,8 @@ function Atlas.new(mod, load)
       -- / `bfr`), so a size change (hand-set, realism) keeps the Pokemon standing on its pad
       local lx, ly
       if isBack then
-        local cx = ((cell.cx0 or 0) + (cell.cx1 or fs)) / 2
-        lx, ly = ox + ls * cx, oy + ls * (tonumber(cell.bfr) or fs / 2)
+        local cx = ((lc.cx0 or 0) + (lc.cx1 or fs)) / 2
+        lx, ly = ox + ls * cx, oy + ls * (tonumber(lc.bfr) or fs / 2)
       else
         lx, ly = ox + ls * fs / 2, oy + ls * (tonumber(cell.ffr) or fs)
       end
@@ -965,9 +1000,11 @@ function Atlas.new(mod, load)
       end
       hd.tag(canvas, {
         texture = img, quad = quad,
-        lowPivot = { lx + dx, ly + dy },
+        -- (mirrored: the stand-in canvas is too, so its pivot is on the other side of the box)
+        lowPivot = { (mirror and PIC_BOX - lx or lx) + dx, ly + dy },
         pivot = { (lx - ox) / ls, (ly - oy) / ls },
         scale = ls * k * mul,
+        flip = mirror or nil,
         -- the first row of art over the whole animation: gen3-hd-sprites' Battle Fit pulls the
         -- camera back to fit the art, not the frame's empty margin above it
         top = tonumber(cell.uy0),
@@ -978,9 +1015,10 @@ function Atlas.new(mod, load)
         body = cell.cx0 and { cell.cx0, cell.cy0, cell.cx1, cell.cy1 } or nil,
         -- the art's box over the whole animation (frame px) and its height (metres: tagHeight):
         -- WoobleView's Battle Fit fills the taller battler's room with its art, the other by height
-        -- (grown by a hand-set `size`, so Battle Fit draws it at that share: fitArt)
+        -- (grown by a hand-set `size`, so Battle Fit draws it at that share: fitArt). A frontal
+        -- pic is the front art, so its height is the front's.
         art = fitArt(dex, cell, (lx - ox) / ls, (ly - oy) / ls),
-        height = tagHeight(dex, cell, isBack),
+        height = tagHeight(dex, cell, isBack and not frontal),
       })
     elseif dexHd then
       -- the Pokedex and the summary: the whole frame at window resolution, fitted to the box exactly as the
@@ -994,7 +1032,8 @@ function Atlas.new(mod, load)
       dexHd.tag(canvas, spec)
       self.dexSpecs[canvas] = spec
     elseif xmin ~= 0 or xmax ~= PIC_BOX or ymin ~= 0 or ymax ~= PIC_BOX then
-      pivots[canvas] = { PIC_BOX / 2 - xmin, PIC_BOX / 2 - ymin }
+      local px = PIC_BOX / 2 - xmin
+      pivots[canvas] = { mirror and cw - px or px, PIC_BOX / 2 - ymin }
     end
     remember(key, canvas)
     return canvas
@@ -1379,7 +1418,8 @@ function Atlas.new(mod, load)
     if rec.dex then
       -- the cart pic: its two frames in turn (never HD: it is 64x64 already)
       local f = math.floor(love.timer.getTime() / DEX_FRAME_TIME) % 2
-      if self.holdLive and self.holdLive() then f = 0 end
+      -- (ANIMATE off holds the pack's own two-frame pic; the cart's is the game's, left alone)
+      if (self.holdLive and self.holdLive()) or (still() and self.cell(rec.key, "dexpic")) then f = 0 end
       if f == rec.f then return end
       local src = self.dexPic(rec.key, f, rec.personality) or self.dexPic(rec.key, 0, rec.personality)
       if not src then return end

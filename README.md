@@ -39,26 +39,27 @@ Red to Crystal.
 
 ## ⚙️ Options
 
-For Red to Crystal only; FireRed to Emerald follow the game's own layout.
+Four options work in every game; the rest are for Red to Crystal, since FireRed to Emerald
+follow the game's own layout (the in-game Mod Manager shows only the four there).
 
-| Option | Choices | Default |
-|---|---|---|
-| BATTLE SPRITES | on / off | on |
-| ANIMATE | on / off | on |
-| SPRITE SPEED | slow / normal / fast / very fast | normal |
-| SHINY ART | on / off | on |
-| FEMALE ART | on / off | on |
-| SPRITE SIZE | max detail / small / normal / big | max detail |
-| GROUND ANCHOR | feet / pack / box | feet |
-| FLOATERS | on / off | on |
-| BATTLE SHADOWS | on / off | on |
-| 3DB FRONTAL (your Pokémon faces you) | on / off | off |
-| 3DB FLIP (...and faces the foe) | on / off | off |
-| DEX SPRITES | on / off | on |
-| SUMMARY SPRITES | on / off | on |
-| SUMMARY SIZE | real size / 75% / 50% / 25% | real size |
-| OTHER SCREENS | on / off | on |
-| PARTY ICONS | on / off | on |
+| Option | Games | Choices | Default |
+|---|---|---|---|
+| BATTLE SPRITES | all | on / off | on |
+| ANIMATE | all | on / off | on |
+| 3DB FRONTAL (your Pokémon faces you) | all | on / off | off |
+| 3DB FLIP (...and faces the foe) | all | on / off | off |
+| SPRITE SPEED | Red to Crystal | slow / normal / fast / very fast | normal |
+| SHINY ART | Red to Crystal | on / off | on |
+| FEMALE ART | Red to Crystal | on / off | on |
+| SPRITE SIZE | Red to Crystal | max detail / small / normal / big | max detail |
+| GROUND ANCHOR | Red to Crystal | feet / pack / box | feet |
+| FLOATERS | Red to Crystal | on / off | on |
+| BATTLE SHADOWS | Red to Crystal | on / off | on |
+| DEX SPRITES | Red to Crystal | on / off | on |
+| SUMMARY SPRITES | Red to Crystal | on / off | on |
+| SUMMARY SIZE | Red to Crystal | real size / 75% / 50% / 25% | real size |
+| OTHER SCREENS | Red to Crystal | on / off | on |
+| PARTY ICONS | Red to Crystal | on / off | on |
 
 ## 💾 Installation
 
@@ -84,7 +85,8 @@ For Red to Crystal only; FireRed to Emerald follow the game's own layout.
   Gold/Silver/Crystal. Other modes show the sprites in the palette's shades, like the game's own.
 - Mega and Gigantamax forms show their normal sprites; no Tera or Dynamax effects.
 - On FireRed to Emerald, Castform's weather forms and the party icons of #1–386 are the game's
-  own.
+  own. With BATTLE SPRITES off there, battles show the game's own sprites for #1–386, and the
+  pack's for the Pokémon the game has none of.
 
 ## 🪪 Credits
 
