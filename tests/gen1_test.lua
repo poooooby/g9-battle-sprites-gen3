@@ -97,16 +97,39 @@ do
 end
 -- floaters, the pack's metrics, shadows, mirror, silhouette
 do
-  local key = 16                       -- Pidgey: floats, has metrics
-  check(atlas.info(key).fl == true and type(atlas.info(key).pm) == "table", "Pidgey's pack data is in the index")
+  local bat = 41                       -- Zubat: floats
+  check(atlas.info(bat).fl == true, "Zubat floats")
+  draws = {}
+  atlas.boxFrame(bat, "front", 0, 56, 56)
+  local batGround = lastDraw().y
+  draws = {}
+  atlas.boxFrame(bat, "front", 0, 56, 56, { float = true })
+  check(lastDraw().y < batGround, "a floater is lifted off the ground")
+  check(atlas.boxFrame(1, "front", 0, 56, 56, { float = true }) == atlas.boxFrame(1, "front", 0, 56, 56),
+    "a grounded species is not (the same frame)")
+  -- Haunter: lifted by its own share of its height (tools/build_atlas.py FLOAT_LIFTS), not 35%
+  local ghost = 93
+  local cell = atlas.cell(ghost, "front")
+  local ch = cell.uy1 - cell.uy0
+  check(atlas.info(ghost).fl == 0.07, "Haunter's own lift share is in the index")
+  draws = {}
+  atlas.boxFrame(ghost, "front", 0, 56, 56)
+  local ghostGround = lastDraw().y
+  draws = {}
+  atlas.boxFrame(ghost, "front", 0, 56, 56, { float = true })
+  -- (src/atlas.lua boxFrame: the box's free rows less the lift, rounded down; 35% would be 17 px)
+  local s = math.min(1, 56 / (cell.ux1 - cell.ux0), 56 / ch)
+  local free = 56 - math.floor(ch * s + 0.5)
+  local lift = free - math.floor(free - math.max(2, math.floor(ch * 0.07 + 0.5)) * s)
+  check(lift == 4 and ghostGround - lastDraw().y == lift, "a floater with its own share is lifted by that share")
+  local key = 16                       -- Pidgey: a Flying type drawn standing, has metrics
+  check(atlas.info(key).fl == nil and type(atlas.info(key).pm) == "table",
+    "Pidgey stands (FLOAT_STANDS) and its pack metrics are in the index")
   draws = {}
   atlas.boxFrame(key, "front", 0, 56, 56)
   local ground, groundX = lastDraw().y, lastDraw().x
-  draws = {}
-  atlas.boxFrame(key, "front", 0, 56, 56, { float = true })
-  check(lastDraw().y < ground, "a floater is lifted off the ground")
-  check(atlas.boxFrame(1, "front", 0, 56, 56, { float = true }) == atlas.boxFrame(1, "front", 0, 56, 56),
-    "a grounded species is not (the same frame)")
+  check(atlas.boxFrame(key, "front", 0, 56, 56, { float = true }) == atlas.boxFrame(key, "front", 0, 56, 56),
+    "FLOATERS leaves a standing flyer on the ground")
   draws = {}
   atlas.boxFrame(key, "front", 0, 56, 56, { anchor = "pack" })
   -- Pidgey: fx 3 in the pack's units is 3 sheet px at its front scale, less half the margin

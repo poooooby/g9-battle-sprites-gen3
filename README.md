@@ -37,7 +37,8 @@ Red to Crystal.
 
 - 🎮 **Every screen:** evolutions, trades, the Hall of Fame, Prof. Oak's speech and the other
   screens that show a Pokémon use the art too.
-- 🌗 **Shadows and floaters:** Pokémon cast a soft shadow in battle, and flyers hover.
+- 🌗 **Shadows and floaters:** Pokémon cast a soft shadow in battle, and flyers hover. Birds
+  and others whose art shows them standing stay on the ground.
 
 ### Looks Right
 

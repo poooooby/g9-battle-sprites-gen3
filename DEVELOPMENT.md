@@ -291,6 +291,10 @@ module (a Gen 2 module on a Gen 1 boot is an error); the save editor is always G
   - `battle_shadows`: draws `assets/shadow/1..3.png` behind the Pokémon, sized by `pm.sz`.
 
   `fl` and `pm` come from the pack's `dbk_float.lua` and `dbk_metrics.lua` at build time.
+  `dbk_float.lua` is made from types and abilities, so it flags Flying types drawn standing
+  (Pidgey); `FLOAT_STANDS` in `tools/build_atlas.py` (picked by eye) drops their `fl`. A
+  floater is lifted 35% of its height (`FLOAT_LIFT` in `src/atlas.lua`), or by its own share
+  where `FLOAT_LIFTS` gives one: the index then has `fl = <share>` in place of `fl = true`.
 - **Battle** (`src/battle/BattleState.lua`):
   - `makeBattler` is local, so `drawPicsLayer` puts the current frame in each battler's
     `sprite`: front 56×56, back 64×64.

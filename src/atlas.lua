@@ -1193,7 +1193,9 @@ function Atlas.new(mod, load)
       if mx then offX = mx * 2 / d - ((fs - x1) - x0) / 2 end
       if my then offY = my * 2 / d - (fs - y1) end
     elseif float then
-      offY = -math.max(FLOAT_LIFT_MIN, math.floor(ch * FLOAT_LIFT + 0.5))
+      -- (`fl` is true, or the species' own share of its height: tools/build_atlas.py FLOAT_LIFTS)
+      local share = type(info.fl) == "number" and info.fl or FLOAT_LIFT
+      offY = -math.max(FLOAT_LIFT_MIN, math.floor(ch * share + 0.5))
     end
     local ox = math.floor((bw - dw) / 2 + offX * s)
     local oy = math.floor(bh - dh + offY * s)

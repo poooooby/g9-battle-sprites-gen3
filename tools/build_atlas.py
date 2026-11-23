@@ -87,7 +87,36 @@ ICON_STEMS = {
 # their stats): female id -> species id. Their sheets are packed under the female id and the
 # runtime picks them by the Pokemon's gender.
 FEMALE_SHEETS = {"MEOWSTIC_FEMALE": "MEOWSTIC", "OINKOLOGNE_FEMALE": "OINKOLOGNE"}
-ICON_CELL = 32            # the engine's own menu icon size
+
+# Flying or floating by the pack's dbk_float.lua (made from types and abilities), but drawn
+# standing: never lifted by Gen 1 / 2's FLOATERS. Picked by eye, one by one (2026-11-23).
+FLOAT_STANDS = {
+    "CHARIZARD", "PIDGEY", "PIDGEOT", "SPEAROW", "ARTICUNO", "DRAGONITE", "GENGAR", "SCYTHER",
+    "HOOTHOOT", "NOCTOWL", "LEDYBA", "TOGETIC", "NATU", "XATU", "MURKROW", "TAILLOW", "SWELLOW",
+    "SABLEYE", "VIBRAVA", "BANETTE", "DUSCLOPS", "TROPIUS", "SALAMENCE", "METAGROSS", "DEOXYS",
+    "STARLY", "STARAVIA", "STARAPTOR", "HONCHKROW", "CHINGLING", "SPIRITOMB", "CARNIVINE",
+    "MANTYKE", "DUSKNOIR", "GIRATINA", "GIRATINA_ORIGIN", "SHAYMIN", "SHAYMIN_SKY", "CHATOT",
+    "PIDOVE", "TRANQUILL", "UNFEZANT", "DUCKLETT", "SWANNA", "KLINK", "KLANG", "KLINKLANG",
+    "EELEKTRIK", "EELEKTROSS", "LITWICK", "GOLETT", "GOLURK", "RUFFLET", "VULLABY", "MANDIBUZZ",
+    "TORNADUS_THERIAN", "FLETCHLING", "GOURGEIST", "GOURGEIST_SMALL", "GOURGEIST_LARGE",
+    "GOURGEIST_SUPER", "DARTRIX", "PIKIPEK", "TRUMBEAK", "TOUCANNON", "ORICORIO", "ORICORIO_POM_POM",
+    "ORICORIO_PAU", "ORICORIO_SENSU", "ROOKIDEE", "CORVIKNIGHT", "CRAMORANT", "CURSOLA",
+    "ZAPDOS_GALAR", "ENAMORUS_THERIAN", "SQUAWKABILLY", "SLITHER_WING", "IRON_BUNDLE",
+    "IRON_VALIANT", "IRON_LEAVES", "GOUGING_FIRE", "RAGING_BOLT", "IRON_CROWN",
+}
+
+# Floaters lifted by their own share of their height instead of the runtime's 35%
+# (src/atlas.lua FLOAT_LIFT): written to the index as `fl = <share>`. Picked by eye (2026-11-23).
+FLOAT_LIFTS = {
+    # too high at 35%
+    "GYARADOS": 0.10, "PORYGON": 0.10, "PORYGON2": 0.12, "METANG": 0.09, "GOLBAT": 0.23,
+    "HAUNTER": 0.07, "KOFFING": 0.24, "ARTICUNO_GALAR": 0.22, "ZAPDOS": 0.22, "MOLTRES": 0.22,
+    "MOLTRES_GALAR": 0.18, "CROBAT": 0.21, "SKIPLOOM": 0.24, "YANMA": 0.24, "PELIPPER": 0.18,
+    "SOLROCK": 0.20, "BALTOY": 0.26, "BRONZONG": 0.18, "MAGNEZONE": 0.24,
+    # too low at 35%
+    "COMBEE": 0.57, "WOOBAT": 0.50, "TYNAMO": 0.78, "WATTREL": 0.49,
+}
+ICON_CELL = 32           # the engine's own menu icon size
 ICON_FRAMES = 2
 
 
@@ -746,7 +775,7 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
         "-- Battle Fit measures it by; a flier's whole animation spans far more than itself).",
         "-- party_icons_<page>.png: `frames` 32x32 cells side by side from x, y.",
         "-- dex_fronts_<page>.png (dexpic): the cart's two 64x64 front frames side by side from x, y.",
-        "-- fl: the art floats; pm: the pack's SpeciesMetrics (front fx, fy, back bx, by, shadow sx, sz).",
+        "-- fl: the art floats (true: lifted 35% of its height, or a number: its own share); pm: the pack's SpeciesMetrics (front fx, fy, back bx, by, shadow sx, sz).",
         "-- slot: the engine species slot the entry answers for. A form (WORMADAM_SANDY) has a",
         "-- slot of its own and its base species' dex; it reuses its base's cells where the",
         "-- pack has no sheet or icon of its own.",
@@ -794,8 +823,10 @@ def write_index(index: dict[str, dict], path: Path, species: list[tuple[int, str
             owner = f'slot = {slots[sid]}'
         if entry.get("ht"):
             owner += f', ht = {entry["ht"]}'      # height, dm (realism scaling)
-        if entry.get("fl"):
+        if entry.get("fl") is True:
             owner += ", fl = true"                 # the art floats (Gen 1 / 2 FLOATERS)
+        elif entry.get("fl"):
+            owner += f', fl = {entry["fl"]:g}'     # ...lifted by this share of its height
         if entry.get("pm"):
             pm = entry["pm"]
             owner += ", pm = { " + ", ".join(f"{k} = {pm[k]}" for k in METRIC_KEYS if k in pm) + " }"
@@ -921,8 +952,8 @@ def main() -> None:
     with_pm = 0
     for sid, entry in index.items():
         stem = dbk.get(sid)
-        if stem in floats:
-            entry["fl"] = True
+        if stem in floats and sid not in FLOAT_STANDS:
+            entry["fl"] = FLOAT_LIFTS.get(sid, True)
         if stem in metrics and metrics[stem]:
             entry["pm"] = metrics[stem]
             with_pm += 1
