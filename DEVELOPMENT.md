@@ -69,7 +69,7 @@ Output is deterministic: the same inputs give identical bytes. Supporting tools:
 - `tools/front_pose.py`: the resting pose of an animation (the frames most alike) and its median
   bottom row: where a Pokémon's feet are, for fronts and backs alike.
 - Fronts stand on the enemy pad's middle (y 66): `tools/front_feet.py --write` ->
-  `tools/front_drop.json` (grounded species floating 8 px or more are lowered), then
+  `tools/front_drop.json` (grounded species floating 4 px or more are lowered), then
   `tools/front_anchor.py write` -> `tools/front_anchor.json` (those resting too low are raised);
   `FRONT_NUDGE` in `tools/build_atlas.py` holds hand nudges. All of it is baked into the front
   cell's drop `fy`, so it holds with and without WoobleView. `front_feet.py --dips` /

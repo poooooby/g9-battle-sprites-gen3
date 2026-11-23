@@ -303,8 +303,7 @@ FRONT_RAISE = json.loads(_raise_file.read_text(encoding="utf-8")) if _raise_file
 # animation still dips into the player's health box or sits off (tools/front_feet.py --dips).
 FRONT_NUDGE = {
     "GLIMMET": -6, "TADBULB": -8, "CHI_YU": -4, "KYOGRE": -4, "IGGLYBUFF": -4, "KINGDRA": 4,
-    # floats 6 px, under front_feet.py's 8 px threshold; its collapse frame then just meets the HP box
-    "SANDYGAST": 6,
+    "TERAPAGOS": -1,  # lowered onto the line (front_drop.json), its stomp dipped into the HP box
 }
 
 

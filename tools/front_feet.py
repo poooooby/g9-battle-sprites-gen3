@@ -25,7 +25,7 @@ Where a frame row lands (game px from the top, singles):
   python tools/front_feet.py --only LITTEN HORSEA
   python tools/front_feet.py --write            # tools/front_drop.json: lower the floaters
 
---write lowers every grounded species floating --fix-from px or more (default 8) so its resting
+--write lowers every grounded species floating --fix-from px or more (default 4) so its resting
 feet stand on the line, except flyers and AIRBORNE. tools/build_atlas.py reads front_drop.json into
 the front cells' drop (`fy`), so it applies with and without gen3-hd-sprites; then rebuild the atlas
 and rerun tools/front_anchor.py write.
@@ -55,6 +55,10 @@ AIRBORNE = {
     "WATTREL", "KILOWATTREL", "SQUAWKABILLY", "ORICORIO", "TRUMBEAK", "EMOLGA",
     "FLABEBE", "FLABEBE_YELLOW", "FLABEBE_ORANGE", "FLABEBE_BLUE", "FLABEBE_WHITE",
     "ARTICUNO_GALAR",
+    # floating 4-7 px above the line, in the air or water on purpose (--fix-from 4)
+    "MEW", "TENTACRUEL", "MANTINE", "BEAUTIFLY", "SKIPLOOM", "GOREBYSS", "MAGNEZONE", "PHIONE",
+    "VANILLITE", "JELLICENT", "FLETCHINDER", "KLEFKI", "TAPU_FINI", "CELESTEELA", "DRAKLOAK",
+    "FLUTTER_MANE", "BRAVIARY_HISUI", "MOLTRES_GALAR",
 }
 
 
@@ -119,7 +123,7 @@ def main() -> int:
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--json", type=Path, help="also write every measured species here")
     ap.add_argument("--write", action="store_true", help="write tools/front_drop.json (see above)")
-    ap.add_argument("--fix-from", type=int, default=8, help="--write lowers species this far up or more")
+    ap.add_argument("--fix-from", type=int, default=4, help="--write lowers species this far up or more")
     ap.add_argument("--out", type=Path, default=ROOT / "tools" / "front_drop.json")
     args = ap.parse_args()
 
