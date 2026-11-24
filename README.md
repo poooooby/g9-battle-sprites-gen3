@@ -78,16 +78,17 @@ only the ones for the game you're playing).
 ## 💾 Installation
 
 1. FireRed to Emerald: install [WoobleDex](https://github.com/poooooby/national_dex_gen3)
-   (required). Red to Crystal: turn off G9 Battle Sprites.
+   (required). Red to Crystal: turn off G9 Battle Sprites, and add WoobleDex to meet the
+   Pokémon the game doesn't have.
 2. Download the latest [release](https://github.com/poooooby/g9-battle-sprites-gen3/releases).
 3. Import it with the Gen1Recomp Mod Manager and enable it.
 
 ## 🔗 Works With
 
-- [WoobleDex](https://github.com/poooooby/national_dex_gen3): the National Dex on FireRed to
-  Emerald.
-- [National Dex](https://github.com/sanjinpepic/gen1recomp-national-dex): the National Dex on
-  Red to Crystal.
+- [WoobleDex](https://github.com/poooooby/national_dex_gen3): all 1025 Pokémon in every game,
+  Red to Emerald.
+- [National Dex](https://github.com/sanjinpepic/gen1recomp-national-dex): another National Dex
+  for Red to Crystal (use it or WoobleDex, not both).
 - [WoobleView](https://github.com/poooooby/gen3-hd-sprites): HD battles, Pokédex and summary.
 - [NaviPlay](https://github.com/poooooby/PlayNav): Pokémon-Amie and Super Training use this
   art (on Red to Crystal, set its GEN 1/2 SPRITES to MODDED).
