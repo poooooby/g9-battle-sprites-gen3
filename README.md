@@ -78,8 +78,8 @@ only the ones for the game you're playing).
 ## 💾 Installation
 
 1. FireRed to Emerald: install [WoobleDex](https://github.com/poooooby/national_dex_gen3)
-   (required). Red to Crystal: turn off G9 Battle Sprites, and add WoobleDex to meet the
-   Pokémon the game doesn't have.
+   (required). Red to Crystal: WoobleDex is optional, to meet the Pokémon the game doesn't
+   have.
 2. Download the latest [release](https://github.com/poooooby/g9-battle-sprites-gen3/releases).
 3. Import it with the Gen1Recomp Mod Manager and enable it.
 
