@@ -436,6 +436,7 @@ luajit tests/forms_coverage_test.lua   # forms coverage
 luajit tests/gen1_test.lua             # Red / Blue / Yellow: keys, box frames, options, hooks
 luajit tests/gen2_test.lua             # Gold / Silver / Crystal: pics, colour, anims, icons, exports
 luajit tests/editor_test.lua           # the save editor with a Red to Crystal save
+luajit tests/host_test.lua             # the host: a game started after the save editor closed is a game
 luajit tests/trainers_test.lua         # FireRed to Emerald: trainer map, fronts, clock, VS screen
 # plus the atlas layout, back framing, clean state, dex HD and gen3 coverage suites in tests/
 ```

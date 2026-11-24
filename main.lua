@@ -30,11 +30,25 @@ local function loadSibling(mod, name)
   return result
 end
 
+-- Is the save editor the host? Only while it is open: its App has a session from App.load (made
+-- before it loads mods) until App.unload, and closing it evicts its modules. Its require path
+-- stays set for the rest of the run, so `require("Gen")` alone would also answer yes in a game
+-- started after the editor was opened (a Red to Crystal game then got the Gen 3 hooks, and drew
+-- the game's own pics). (Mods have no `package`: in such a game App is loaded afresh, with no
+-- session.)
+local function inEditor()
+  local okG, Gen = pcall(require, "Gen")
+  if not (okG and type(Gen) == "table" and type(Gen.bindGame3Data) == "function") then return false end
+  local okA, App = pcall(require, "App")
+  if not (okA and type(App) == "table" and type(App.getState) == "function") then return false end
+  local ok, S = pcall(App.getState)
+  return ok and S ~= nil
+end
+
 -- The generation being played: 1 or 2 from the engine's version, else 3. The save editor is a
 -- Gen 3 host whatever the version module says (its default version is Red's).
 local function generation()
-  local okE, Gen = pcall(require, "Gen")
-  if okE and type(Gen) == "table" and type(Gen.bindGame3Data) == "function" then return 3 end
+  if inEditor() then return 3 end
   local ok, GameVersion = pcall(require, "src.core.GameVersion")
   if not (ok and type(GameVersion) == "table" and type(GameVersion.generation) == "function") then
     return 3
@@ -212,9 +226,8 @@ return function(mod)
     end
     -- the player's options (GEN3_OPTIONS), read as they are drawn so a change shows at once
     atlas.option = function(key) return mod.options:get(key) end
-    -- the save editor is the only host with its own `Gen` module (Hooks.fit)
-    local okGen, Gen = pcall(require, "Gen")
-    Hooks.inEditor = okGen and type(Gen) == "table" and type(Gen.bindGame3Data) == "function"
+    -- (Hooks.fit; a FireRed to Emerald game started after the editor closed is a game)
+    Hooks.inEditor = inEditor()
     -- the editor with a Red to Crystal save open loads its pictures itself (src/editor.lua);
     -- there the Gen 3 Pokemon module below is not loaded
     if Hooks.inEditor then
