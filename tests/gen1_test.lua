@@ -222,7 +222,7 @@ do
   local mewKey = atlas.keyFor("MEW")
   check(type(layerSprites[2]) == "table"
         and layerSprites[2] == Gen1.frame(atlas, data, "MEW", "back", 64, 64, battle.player.mon,
-                                          { reuse = true, shadow = true, mirror = false }),
+                                          { shadow = true, mirror = false }),
         "a Transformed Pokemon shows the species it copied (" .. tostring(mewKey) .. ")")
   -- BATTLE SPRITES off: the game's pics back
   opts.enable_battle_sprites = false
@@ -287,6 +287,36 @@ do
   hd.features = nil
   opts.battle_frontal, opts.battle_front_flip = nil, nil
   atlas.hd = nil
+
+  -- battle after battle, their animations past the frame cache's cap: no picture a battle was
+  -- shown is ever handed to a later one. Battle Art knows a pic by its image (it caches what it
+  -- reads back from one), so a canvas rendered into again showed what it had held: the last
+  -- battle's Pokemon, flashing with this one's.
+  local seenIn = {}            -- canvas -> the battle it was shown in
+  local shared, shown = 0, 0
+  local pairsOf = { { "PIDGEY", "BULBASAUR" }, { "RATTATA", "CHARMANDER" }, { "SPEAROW", "SQUIRTLE" },
+                    { "CATERPIE", "PIKACHU" }, { "WEEDLE", "EEVEE" } }
+  for n, pair in ipairs(pairsOf) do
+    local b = { data = data, drawPicsLayer = BattleState.drawPicsLayer,
+      enemy = { sprite = "front/x.png", mon = { species = pair[1] } },
+      player = { sprite = "back/x.png", mon = { species = pair[2] }, isPlayer = true } }
+    for t = 0, 600 do
+      NOW = t / 60
+      b:drawPicsLayer()
+      for _, c in ipairs(layerSprites) do
+        if type(c) == "table" then
+          shown = shown + 1
+          if seenIn[c] and seenIn[c] ~= n then shared = shared + 1 end
+          seenIn[c] = seenIn[c] or n
+        end
+      end
+    end
+  end
+  NOW = nil
+  local canvases = 0
+  for _ in pairs(seenIn) do canvases = canvases + 1 end
+  check(canvases > 140, ("the battles' animations ran past the cache's cap (%d frames)"):format(canvases))
+  check(shared == 0, ("no battle's picture is handed to a later battle (%d were)"):format(shared))
 end
 
 -- the screen wraps: once each, and again over another mod's replacement

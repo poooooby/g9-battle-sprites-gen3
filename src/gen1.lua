@@ -154,7 +154,7 @@ function Gen1.installBattle(atlas, BattleState)
     -- battle screen; not in the mono modes, where the pics are drawn after the colour pass)
     local mono = Gen1.monoBattle()
     local frame = Gen1.frame(atlas, battle.data, species, frontal and "front" or side, box, box,
-      battler.mon, { reuse = true, shadow = on("battle_shadows"), shades = mono,
+      battler.mon, { shadow = on("battle_shadows"), shades = mono,
                      mirror = frontal and opt("battle_front_flip", false) == true,
                      hdSide = not mono and (back and "player" or "enemy") or nil })
     if frame then

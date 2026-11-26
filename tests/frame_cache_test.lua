@@ -12,7 +12,8 @@ end
 
 local made, target = 0, nil
 local drawsInto = {}           -- canvas -> how many times something was drawn into it
-local function image() return { getDimensions = function() return 4096, 4096 end, setFilter = function() end } end
+local function image() return { getDimensions = function() return 4096, 4096 end, setFilter = function() end,
+  getFilter = function() return "linear", "linear" end } end
 love = { graphics = {
   newImage = function() return image() end,
   newQuad = function() return {} end,
@@ -64,6 +65,30 @@ local before = made
 for f = 1, FRAMES - 1 do atlas.picFrame(451, "front", fcell, f, false) end
 check(made - before >= FRAMES - 1, "plain pics are made new, not reused")
 check(drawsInto[plain] == plainDraws, "a dropped plain pic is never drawn into again (its holder keeps it)")
+
+-- Gen 1 / 2's battle pics (boxFrame): two battlers' animations, then the next battle's, past the
+-- cap. A canvas handed out is never handed out again for another frame: Battle Art caches what
+-- it reads back from a pic by its image, and a reused canvas showed the frame it had held (the
+-- last battle's Pokemon, flashing with this one's)
+local handed = {}              -- canvas -> the frame it was handed out for
+local clash = 0
+-- (the next battle's frames are other keys - another shrink - as another species' would be)
+for _, shrink in ipairs({ 1, 0.9 }) do
+  for pass = 1, 2 do
+    for f = 0, FRAMES - 1 do
+      for _, v in ipairs({ "front", "back" }) do
+        local what = shrink .. ":" .. v .. ":" .. f
+        local c = atlas.boxFrame(451, v, f, 56, 56, { shrink = shrink, shadow = false })
+        if c then
+          if handed[c] and handed[c] ~= what then clash = clash + 1 end
+          handed[c] = handed[c] or what
+        end
+      end
+    end
+  end
+end
+check(next(handed) ~= nil, "box frames rendered")
+check(clash == 0, ("a box frame's canvas is never handed out again for another frame (%d were)"):format(clash))
 
 print(("%d/%d checks passed (g9-battle-sprites-gen3 frame cache)"):format(passed, passed + failed))
 if failed > 0 then os.exit(1) end

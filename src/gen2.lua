@@ -154,7 +154,7 @@ function Gen2.installBattle(atlas, BattleState)
       local shaded = effect or not Gen2.keepsColour()
       local f = Gen2.frame(atlas, self.game and self.game.data, Gen2.speciesOf(mon),
         frontal and "front" or side, back and BACK_BOX or FRONT_BOX, mon,
-        { reuse = true, shadow = on("battle_shadows"), shades = shaded,
+        { shadow = on("battle_shadows"), shades = shaded,
           mirror = frontal and opt("battle_front_flip", false) == true,
           -- tagged for WoobleView (window resolution in the original battle screen) when it
           -- keeps its own colours

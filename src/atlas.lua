@@ -660,7 +660,9 @@ function Atlas.new(mod, load)
   -- run through more frames than the cap, and a new canvas for each - ~30 a second - left hundreds
   -- for the collector to destroy in one frame, a hitch every few seconds. Any other pic is
   -- dropped, not released: whoever else still holds it (the save editor keeps the ones it has
-  -- drawn) keeps a valid image, and the collector frees it once nothing does.
+  -- drawn) keeps a valid image, and the collector frees it once nothing does. Gen 1 / 2's box
+  -- frames (boxFrame) are never rendered into again either: their battle mods know a pic by
+  -- its image.
   local SPARE_CAP = 8          -- dropped battle canvases kept per shape, to render into again
   local useTick, count = 0, 0
   local used = {}              -- key -> its last use
@@ -1117,8 +1119,6 @@ function Atlas.new(mod, load)
   ---   opts.dpi      the canvas's dpiscale (1: the game's own pixels)
   ---   opts.silhouette  all black (Gen 1's credits show each Pokemon as a silhouette)
   ---   opts.shades   in the Game Boy's four shades (shadesShader), for the game's colour pass
-  ---   opts.reuse    a battle pic (asked for every frame): its canvas is rendered into again
-  ---                 once dropped, as picFrame's battle canvases are
   ---   opts.hdSide   a battle pic in its own colours: "enemy" / "player". With WoobleView
   ---                 (gen3-hd-sprites) on for battles, the canvas is tagged so WoobleView draws
   ---                 the full frame at window resolution where the canvas is drawn (the canvas
@@ -1201,16 +1201,15 @@ function Atlas.new(mod, load)
     local oy = math.floor(bh - dh + offY * s)
     ox = math.max(0, math.min(bw - dw, ox))
     oy = math.max(0, math.min(bh - dh, oy))
-    local shape = opts.reuse and string.format("box:%dx%d:%g", bw, bh, dpi) or nil
-    local canvas = shape and spareFor(shape)
-    if not canvas then
-      local okC, made = pcall(love.graphics.newCanvas, bw, bh, { dpiscale = dpi })
-      if not okC then
-        warnCanvas("boxFrame", made)
-        return nil
-      end
-      canvas = made
-      if shape then shapeOf[canvas] = shape end
+    -- (always a new canvas, never a dropped one rendered into again: Gen 1 / 2's battle mods
+    -- know a pic by its image - Battle Art caches what it reads back from one and keeps the
+    -- battler's last one to put back - so a canvas that took another frame showed the frame it
+    -- had held, often the last battle's Pokemon. Their battles are singles, which never fill
+    -- the cache in one battle)
+    local okC, canvas = pcall(love.graphics.newCanvas, bw, bh, { dpiscale = dpi })
+    if not okC then
+      warnCanvas("boxFrame", canvas)
+      return nil
     end
     canvas:setFilter("nearest", "nearest")
     local quad = love.graphics.newQuad(qx, qy, fs, fs, img:getDimensions())
@@ -1295,9 +1294,6 @@ function Atlas.new(mod, load)
         end
       end
       pcall(hd.tag, canvas, spec)
-    elseif self.hd and type(self.hd.untag) == "function" then
-      -- (a reused canvas may carry an earlier frame's tag)
-      pcall(self.hd.untag, canvas)
     end
     remember(ckey, canvas)
     return canvas
